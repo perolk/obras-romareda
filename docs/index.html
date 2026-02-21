@@ -303,6 +303,26 @@
             display: block; font-size: 0.8rem; font-weight: 800; color: var(--zaragoza-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;
         }
 
+        /* --- TWITTER WIDGET --- */
+        .daily-summary {
+            display: flex;
+            flex-direction: column;
+        }
+        #twitter-widget-wrapper {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            flex: 1;
+            /* Altura dinámica: se ajusta via JS para coincidir con la columna izquierda */
+            min-height: 400px;
+        }
+        /* Forzar que el iframe del widget ocupe todo el wrapper */
+        #twitter-widget-wrapper iframe {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: inherit;
+        }
+
         /* --- ÁLBUMES SEMANALES --- */
         .daily-summary { display: flex; flex-direction: column; }
         .albums-header { margin-bottom: 25px; }
@@ -578,6 +598,8 @@
             .mobile-social { display: none !important; }
         }
     </style>
+    <!-- Script del widget oficial de Twitter -->
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body>
 
@@ -672,13 +694,20 @@
             </div>
 
             <div class="daily-summary">
-                <div class="albums-header">
-                    <h3>Galería Semanal</h3>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                    <i class="fa-brands fa-x-twitter" style="color:white; font-size:1.2rem;"></i>
+                    <h3 style="font-size:1.5rem; color:white; margin:0;">Últimos Tweets</h3>
                 </div>
-
-                <div id="sidebar-albums-container"></div>
-
-                <button id="loadMoreBtn" class="load-more-btn" onclick="openArchiveModal()">Ver archivo completo</button>
+                <!-- Widget oficial de Twitter -->
+                <div id="twitter-widget-wrapper" style="border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.3); flex:1;">
+                    <a class="twitter-timeline"
+                       data-theme="dark"
+                       data-chrome="noheader nofooter noborders transparent"
+                       data-tweet-limit="5"
+                       href="https://twitter.com/ObrasRomareda">
+                       Tweets de @ObrasRomareda
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1266,6 +1295,18 @@
         });
 
         // --- INICIALIZACIÓN ---
+        // Ajustar altura del widget Twitter para que coincida con la columna izquierda
+        function matchTwitterHeight() {
+            const leftCol = document.querySelector('.weekly-videos');
+            const twitterWrapper = document.getElementById('twitter-widget-wrapper');
+            if (!leftCol || !twitterWrapper) return;
+
+            const leftHeight = leftCol.offsetHeight;
+            const headerHeight = 20 + 28 + 20; // icono+titulo+margen
+            const availableHeight = leftHeight - headerHeight;
+            twitterWrapper.style.height = Math.max(400, availableHeight) + 'px';
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // ✅ MEJORA MEDIA: usa OBRAS_START_DATE de la zona de configuración
             const startDate = new Date(OBRAS_START_DATE + 'T00:00:00');
@@ -1278,6 +1319,10 @@
             renderSidebar();
             initComparisons();
             loadVideosFromJSON();  // Carga vídeos dinámicamente desde videos.json
+
+            // Ajustar altura del widget Twitter tras cargar
+            setTimeout(matchTwitterHeight, 500);
+            window.addEventListener('resize', matchTwitterHeight);
         });
 
         function openTab(evt, tabName) {
