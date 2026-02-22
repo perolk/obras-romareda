@@ -1014,7 +1014,7 @@
         async function loadVideosFromJSON() {
             try {
                 // Intenta cargar el JSON generado por la GitHub Action
-                const res = await fetch('videos.json');
+                const res = await fetch('./videos.json');
                 if (!res.ok) throw new Error('No encontrado');
                 const data = await res.json();
                 renderFeaturedVideo(data.featured);
