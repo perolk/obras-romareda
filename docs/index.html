@@ -675,7 +675,9 @@
                 <div class="albums-header">
                     <h3>Galería Semanal</h3>
                 </div>
+
                 <div id="sidebar-albums-container"></div>
+
                 <button id="loadMoreBtn" class="load-more-btn" onclick="openArchiveModal()">Ver archivo completo</button>
             </div>
         </div>
@@ -1265,6 +1267,7 @@
 
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', function() {
+            // ✅ MEJORA MEDIA: usa OBRAS_START_DATE de la zona de configuración
             const startDate = new Date(OBRAS_START_DATE + 'T00:00:00');
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -1274,9 +1277,7 @@
 
             renderSidebar();
             initComparisons();
-            loadVideosFromJSON();
-        });
-
+            loadVideosFromJSON();  // Carga vídeos dinámicamente desde videos.json
         });
 
         function openTab(evt, tabName) {
