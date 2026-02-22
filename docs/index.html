@@ -1277,7 +1277,12 @@
 
             renderSidebar();
             initComparisons();
-            loadVideosFromJSON();  // Carga vídeos dinámicamente desde videos.json
+            console.log('Iniciando carga de vídeos...');
+loadVideosFromJSON().then(() => {
+    console.log('Vídeos cargados OK');
+}).catch(e => {
+    console.error('Error cargando vídeos:', e);
+});
         });
 
         function openTab(evt, tabName) {
