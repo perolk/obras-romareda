@@ -1,14 +1,30 @@
 {
-  "updated": "2026-05-25T11:13:23Z",
+  "updated": "2026-06-01T12:41:45Z",
   "featured": {
-    "id": "Ln0eqhzBXvw",
-    "title": "Obras Romareda - Semana 95",
-    "date": "16 de may de 2026",
-    "duration": 963,
-    "thumbnail": "https://img.youtube.com/vi/Ln0eqhzBXvw/hqdefault.jpg",
-    "url": "https://www.youtube.com/watch?v=Ln0eqhzBXvw"
+    "id": "_jmgjs9T56w",
+    "title": "Obras Romareda - Semana 97",
+    "date": "30 de may de 2026",
+    "duration": 1092,
+    "thumbnail": "https://img.youtube.com/vi/_jmgjs9T56w/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=_jmgjs9T56w"
   },
   "history": [
+    {
+      "id": "4Y2WyuI8e8o",
+      "title": "Obras Romareda - Semana 96",
+      "date": "25 de may de 2026",
+      "duration": 1153,
+      "thumbnail": "https://img.youtube.com/vi/4Y2WyuI8e8o/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=4Y2WyuI8e8o"
+    },
+    {
+      "id": "Ln0eqhzBXvw",
+      "title": "Obras Romareda - Semana 95",
+      "date": "16 de may de 2026",
+      "duration": 963,
+      "thumbnail": "https://img.youtube.com/vi/Ln0eqhzBXvw/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=Ln0eqhzBXvw"
+    },
     {
       "id": "arlKgEtVcOg",
       "title": "Obras Romareda - Semana 94",
@@ -16,22 +32,6 @@
       "duration": 906,
       "thumbnail": "https://img.youtube.com/vi/arlKgEtVcOg/hqdefault.jpg",
       "url": "https://www.youtube.com/watch?v=arlKgEtVcOg"
-    },
-    {
-      "id": "tvccqRuq-4o",
-      "title": "Obras Romareda - Semana 93",
-      "date": "3 de may de 2026",
-      "duration": 1137,
-      "thumbnail": "https://img.youtube.com/vi/tvccqRuq-4o/hqdefault.jpg",
-      "url": "https://www.youtube.com/watch?v=tvccqRuq-4o"
-    },
-    {
-      "id": "2QnH35fytqU",
-      "title": "Obras Romareda - Avances a vista de dron",
-      "date": "29 de april de 2026",
-      "duration": 76,
-      "thumbnail": "https://img.youtube.com/vi/2QnH35fytqU/hqdefault.jpg",
-      "url": "https://www.youtube.com/watch?v=2QnH35fytqU"
     }
   ]
 }
