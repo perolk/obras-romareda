@@ -1,14 +1,22 @@
 {
-  "updated": "2026-07-13T10:30:43Z",
+  "updated": "2026-07-20T10:15:44Z",
   "featured": {
-    "id": "s1lYWVLUFw0",
-    "title": "Obras Romareda - Semana 104",
-    "date": "11 de july de 2026",
-    "duration": 1138,
-    "thumbnail": "https://img.youtube.com/vi/s1lYWVLUFw0/hqdefault.jpg",
-    "url": "https://www.youtube.com/watch?v=s1lYWVLUFw0"
+    "id": "LyO22vpj64Q",
+    "title": "Obras Romareda - Semana 105",
+    "date": "17 de july de 2026",
+    "duration": 731,
+    "thumbnail": "https://img.youtube.com/vi/LyO22vpj64Q/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=LyO22vpj64Q"
   },
   "history": [
+    {
+      "id": "s1lYWVLUFw0",
+      "title": "Obras Romareda - Semana 104",
+      "date": "11 de july de 2026",
+      "duration": 1138,
+      "thumbnail": "https://img.youtube.com/vi/s1lYWVLUFw0/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=s1lYWVLUFw0"
+    },
     {
       "id": "kKV5_4V8FZs",
       "title": "Obras Romareda - Semana 103",
@@ -24,14 +32,6 @@
       "duration": 1102,
       "thumbnail": "https://img.youtube.com/vi/p7OFIMV86_o/hqdefault.jpg",
       "url": "https://www.youtube.com/watch?v=p7OFIMV86_o"
-    },
-    {
-      "id": "gZGOGG6Bd9A",
-      "title": "Obras Romareda - Visita de la alcaldesa Natalia Chueca",
-      "date": "27 de june de 2026",
-      "duration": 493,
-      "thumbnail": "https://img.youtube.com/vi/gZGOGG6Bd9A/hqdefault.jpg",
-      "url": "https://www.youtube.com/watch?v=gZGOGG6Bd9A"
     }
   ]
 }
