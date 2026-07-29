@@ -475,6 +475,47 @@
 
         @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
 
+        /* --- GALERÍA CLOUDINARY --- */
+        .gallery-week-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+            background: white;
+        }
+        .gallery-week-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+        .gallery-week-card.active { border: 2px solid var(--zaragoza-blue); }
+        .gallery-week-thumb {
+            height: 110px;
+            background: var(--bg-light);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        .gallery-week-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+        .gallery-week-thumb .no-photo { color: #d1d5db; font-size: 2rem; }
+        .gallery-week-thumb.latest { background: rgba(0,82,159,0.08); }
+        .gallery-week-info { padding: 10px 12px; }
+        .gallery-week-badge {
+            font-size: 0.7rem; font-weight: 800; color: var(--zaragoza-blue);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;
+        }
+        .gallery-week-badge.latest { color: var(--zaragoza-blue); }
+        .gallery-week-name { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .gallery-week-count { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+        .gallery-skeleton {
+            border-radius: 12px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%; animation: shimmer 1.5s infinite; height: 160px;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        .viewer-photo {
+            border-radius: 8px; overflow: hidden; aspect-ratio: 4/3;
+            background: var(--bg-light); cursor: pointer;
+        }
+        .viewer-photo img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s; }
+        .viewer-photo:hover img { transform: scale(1.05); }
+
         /* --- FOOTER --- */
         footer { background: var(--zaragoza-blue); color: white; padding: 4rem 10%; text-align: center; border-top: 8px solid var(--zaragoza-light); }
         .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 20px; }
@@ -594,6 +635,7 @@
         <nav id="mainNav" aria-label="Navegación principal">
             <ul>
                 <li><a href="#videos">Actualidad</a></li>
+                <li><a href="#galeria">Galería</a></li>
                 <li><a href="#proyecto">El Proyecto</a></li>
                 <li><a href="#historia">Historia</a></li>
             </ul>
@@ -678,8 +720,40 @@
 
                 <div id="sidebar-albums-container"></div>
 
-                <button id="loadMoreBtn" class="load-more-btn" onclick="openArchiveModal()">Ver archivo completo</button>
+                <button id="loadMoreBtn" class="load-more-btn" onclick="openGallerySection()">Ver galería completa</button>
             </div>
+        </div>
+    </section>
+
+    <!-- ====== GALERÍA DE OBRA ====== -->
+    <section id="galeria" style="background: white; padding: 5rem 10%;">
+        <h2 class="section-title" style="color: var(--zaragoza-blue); text-align:center;">Galería de Obra</h2>
+        <p style="text-align:center; color:var(--text-muted); margin-top:-2rem; margin-bottom:3rem; font-size:1rem;">
+            Semana a semana desde el inicio · Haz clic en una semana para ver todas las fotos
+        </p>
+
+        <div id="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin-bottom:2rem;">
+            <div class="gallery-skeleton"></div>
+            <div class="gallery-skeleton"></div>
+            <div class="gallery-skeleton"></div>
+            <div class="gallery-skeleton"></div>
+        </div>
+
+        <div style="text-align:center; margin-bottom:2rem;">
+            <button id="gallery-load-more" class="tab-button" onclick="loadMoreWeeks()" style="display:none;">
+                <i class="fas fa-chevron-down"></i> Ver todas las semanas
+            </button>
+        </div>
+
+        <div id="week-viewer" style="display:none; background:var(--bg-light); border-radius:16px; padding:1.5rem; border:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                <div>
+                    <div id="viewer-badge" style="font-size:0.75rem; font-weight:800; color:var(--zaragoza-blue); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"></div>
+                    <div id="viewer-title" style="font-size:1.1rem; font-weight:700; color:var(--text-dark);"></div>
+                </div>
+                <button onclick="closeWeekViewer()" style="background:none; border:none; font-size:1.5rem; color:var(--text-muted); cursor:pointer; line-height:1;">×</button>
+            </div>
+            <div id="viewer-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px;"></div>
         </div>
     </section>
 
@@ -1016,7 +1090,7 @@
         async function loadVideosFromJSON() {
             try {
                 // Intenta cargar el JSON generado por la GitHub Action
-                const res = await fetch('./videos.json?nocache=' + new Date().getTime());
+                const res = await fetch('./videos.json');
                 if (!res.ok) throw new Error('No encontrado');
                 const data = await res.json();
                 renderFeaturedVideo(data.featured);
@@ -1277,13 +1351,133 @@
 
             renderSidebar();
             initComparisons();
-            console.log('Iniciando carga de vídeos...');
-loadVideosFromJSON().then(() => {
-    console.log('Vídeos cargados OK');
-}).catch(e => {
-    console.error('Error cargando vídeos:', e);
-});
+            loadVideosFromJSON();  // Carga vídeos dinámicamente desde videos.json
+            initGallery();         // Carga galería desde Cloudinary
         });
+
+        // =========================================
+        // GALERÍA CLOUDINARY
+        // =========================================
+        const CLOUD_NAME    = 'kyvegvxg';
+        const WEEKS_VISIBLE = 8;
+        let totalWeeks      = 0;
+        let weeksShown      = WEEKS_VISIBLE;
+
+        async function initGallery() {
+            totalWeeks = CURRENT_WEEK_NUM;
+            weeksShown = Math.min(WEEKS_VISIBLE, totalWeeks);
+            await renderGalleryGrid();
+        }
+
+        async function renderGalleryGrid() {
+            const grid = document.getElementById('gallery-grid');
+            const loadMoreBtn = document.getElementById('gallery-load-more');
+            grid.innerHTML = '';
+
+            const promises = [];
+            for (let w = totalWeeks; w > totalWeeks - weeksShown && w >= 1; w--) {
+                promises.push(buildWeekCard(w));
+            }
+            const cards = await Promise.all(promises);
+            cards.forEach(card => grid.appendChild(card));
+
+            loadMoreBtn.style.display = weeksShown < totalWeeks ? 'inline-flex' : 'none';
+        }
+
+        async function buildWeekCard(weekNum) {
+            const isLatest = weekNum === totalWeeks;
+            const tag = `semana-${weekNum}`;
+            let thumbUrl = '';
+            let photoCount = 0;
+
+            try {
+                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const resources = data.resources || [];
+                    photoCount = resources.length;
+                    if (resources.length > 0) {
+                        thumbUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,w_400,h_220,q_auto,f_auto/${resources[0].public_id}.jpg`;
+                    }
+                }
+            } catch(e) {}
+
+            const card = document.createElement('div');
+            card.className = 'gallery-week-card' + (isLatest ? ' active' : '');
+            card.onclick = () => openWeekViewer(weekNum);
+
+            const thumbContent = thumbUrl
+                ? `<img src="${thumbUrl}" alt="Semana ${weekNum}" loading="lazy">`
+                : `<i class="fas fa-camera no-photo"></i>`;
+
+            card.innerHTML = `
+                <div class="gallery-week-thumb ${isLatest ? 'latest' : ''}">${thumbContent}</div>
+                <div class="gallery-week-info">
+                    <div class="gallery-week-badge ${isLatest ? 'latest' : ''}">
+                        ${isLatest ? '★ ' : ''}Semana ${weekNum}
+                    </div>
+                    <div class="gallery-week-count">
+                        ${photoCount > 0
+                            ? `<i class="fas fa-images"></i> ${photoCount} fotos`
+                            : '<i class="fas fa-clock"></i> Próximamente'}
+                    </div>
+                </div>`;
+            return card;
+        }
+
+        async function loadMoreWeeks() {
+            weeksShown = Math.min(weeksShown + WEEKS_VISIBLE, totalWeeks);
+            await renderGalleryGrid();
+        }
+
+        async function openWeekViewer(weekNum) {
+            const viewer = document.getElementById('week-viewer');
+            const viewerGrid = document.getElementById('viewer-grid');
+            const badge = document.getElementById('viewer-badge');
+            const title = document.getElementById('viewer-title');
+
+            badge.textContent = `Semana ${weekNum}`;
+            title.textContent = 'Cargando fotos...';
+            viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>';
+            viewer.style.display = 'block';
+            viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            try {
+                const tag = `semana-${weekNum}`;
+                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const resources = data.resources || [];
+
+                title.textContent = `${resources.length} fotos · ${weekNum === totalWeeks ? 'Última semana' : `Semana ${weekNum}`}`;
+
+                if (resources.length === 0) {
+                    viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;"><i class="fas fa-inbox"></i> Aún no hay fotos en esta semana.</div>';
+                    return;
+                }
+
+                viewerGrid.innerHTML = resources.map((r, idx) => {
+                    const thumbUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,w_400,h_300,q_auto,f_auto/${r.public_id}.jpg`;
+                    const fullUrl  = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/q_auto,f_auto/${r.public_id}.jpg`;
+                    return `
+                        <div class="viewer-photo" onclick="openModal('${fullUrl}', 'Semana ${weekNum} · Foto ${idx+1}')">
+                            <img src="${thumbUrl}" alt="Semana ${weekNum} foto ${idx+1}" loading="lazy">
+                        </div>`;
+                }).join('');
+
+            } catch(e) {
+                title.textContent = 'Error al cargar';
+                viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;">No se pudieron cargar las fotos. Inténtalo de nuevo.</div>';
+            }
+        }
+
+        function closeWeekViewer() {
+            document.getElementById('week-viewer').style.display = 'none';
+        }
+
+        function openGallerySection() {
+            document.getElementById('galeria').scrollIntoView({ behavior: 'smooth' });
+        }
 
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
