@@ -1,1 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semana · Obras Romareda</title>
+    <meta name="description" content="Crónica semanal de las obras de la nueva Romareda">
+    <meta property="og:image" content="">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blue: #00529F;
+            --light: #4DA9FF;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+            --bg: #f9fafb;
+            --white: #ffffff;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
+
+        /* HEADER */
+        .top-bar {
+            background: var(--blue);
+            padding: 14px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top:0; z-index:100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .top-bar-logo {
+            font-family:'Calibri','Segoe UI',sans-serif;
+            font-weight:700; font-style:italic;
+            font-size:1.4rem; color:white;
+            text-decoration:none;
+        }
+        .top-bar-logo:hover { color:var(--light); }
+        .back-link {
+            display:flex; align-items:center; gap:8px;
+            color:rgba(255,255,255,0.7); font-size:0.9rem;
+            text-decoration:none; transition:color 0.2s;
+        }
+        .back-link:hover { color:white; }
+
+        /* HERO DE LA SEMANA */
+        .week-hero {
+            background: var(--blue);
+            padding: 3rem 10% 2.5rem;
+            color: white;
+        }
+        .week-badge {
+            display:inline-block;
+            background:rgba(255,255,255,0.15);
+            border:1px solid rgba(255,255,255,0.3);
+            color:white; font-size:0.8rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:1.5px;
+            padding:5px 14px; border-radius:20px;
+            margin-bottom:16px;
+        }
+        .week-title {
+            font-size:2.5rem; font-weight:900;
+            color:white; line-height:1.2;
+            margin-bottom:12px;
+        }
+        .week-meta {
+            font-size:0.9rem; color:rgba(255,255,255,0.6);
+            display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+        }
+        .week-meta span { display:flex; align-items:center; gap:6px; }
+
+        /* CONTENIDO PRINCIPAL */
+        .week-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 5%;
+        }
+
+        /* TEXTO */
+        .week-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 3rem;
+            white-space: pre-line;
+        }
+
+        /* VÍDEO */
+        .week-video-section { margin-bottom: 3rem; }
+        .week-video-section h2 {
+            font-size: 1.3rem; font-weight: 700;
+            color: var(--blue); margin-bottom: 1rem;
+            display:flex; align-items:center; gap:10px;
+        }
+        .video-wrapper {
+            position:relative; padding-bottom:56.25%; height:0;
+            overflow:hidden; border-radius:16px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.12);
+        }
+        .video-wrapper iframe {
+            position:absolute; top:0; left:0;
+            width:100%; height:100%; border:none;
+        }
+
+        /* FOTOS */
+        .week-photos-section { margin-bottom: 3rem; }
+        .week-photos-section h2 {
+            font-size: 1.3rem; font-weight: 700;
+            color: var(--blue); margin-bottom: 1rem;
+            display:flex; align-items:center; gap:10px;
+        }
+        .photos-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+            gap:12px;
+        }
+        .photo-item {
+            border-radius:10px; overflow:hidden;
+            aspect-ratio:4/3; cursor:pointer;
+            background:var(--bg);
+        }
+        .photo-item img {
+            width:100%; height:100%; object-fit:cover;
+            transition:transform 0.3s;
+            display:block;
+        }
+        .photo-item:hover img { transform:scale(1.05); }
+
+        /* NAVEGACIÓN ENTRE SEMANAS */
+        .week-nav {
+            display:flex; gap:12px;
+            border-top:1px solid #e5e7eb;
+            padding-top:2rem; margin-top:1rem;
+        }
+        .week-nav-btn {
+            flex:1; padding:14px;
+            background:white; border:1px solid #e5e7eb;
+            border-radius:12px; cursor:pointer;
+            font-family:'Inter',sans-serif;
+            transition:all 0.2s; text-decoration:none;
+            display:flex; align-items:center; gap:10px;
+        }
+        .week-nav-btn:hover { border-color:var(--blue); background:rgba(0,82,159,0.04); }
+        .week-nav-btn.prev { justify-content:flex-start; }
+        .week-nav-btn.next { justify-content:flex-end; text-align:right; }
+        .week-nav-label { font-size:0.75rem; color:var(--muted); display:block; }
+        .week-nav-name { font-size:0.9rem; font-weight:700; color:var(--blue); display:block; }
+
+        /* LIGHTBOX */
+        #lightbox {
+            display:none; position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.95);
+            z-index:2000; align-items:center;
+            justify-content:center; flex-direction:column;
+        }
+        #lightbox img {
+            max-width:90vw; max-height:85vh;
+            object-fit:contain; border-radius:4px;
+        }
+        #lightbox-close {
+            position:absolute; top:20px; right:28px;
+            color:white; font-size:2.5rem; cursor:pointer;
+            background:none; border:none; line-height:1;
+        }
+        #lightbox-prev, #lightbox-next {
+            position:absolute; top:50%; transform:translateY(-50%);
+            color:white; font-size:2rem; cursor:pointer;
+            background:rgba(0,0,0,0.4); border:none;
+            padding:16px 14px; transition:background 0.2s;
+        }
+        #lightbox-prev { left:0; border-radius:0 4px 4px 0; }
+        #lightbox-next { right:0; border-radius:4px 0 0 4px; }
+        #lightbox-prev:hover, #lightbox-next:hover { background:rgba(0,0,0,0.8); }
+        #lightbox-caption {
+            color:rgba(255,255,255,0.6); font-size:0.85rem;
+            margin-top:12px;
+        }
+
+        /* SKELETON */
+        .skeleton {
+            background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);
+            background-size:200% 100%;
+            animation:shimmer 1.5s infinite;
+            border-radius:8px;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* RESPONSIVE */
+        @media (max-width:768px) {
+            .week-title { font-size:1.8rem; }
+            .week-content { padding:2rem 5%; }
+            .photos-grid { grid-template-columns:repeat(2,1fr); }
+            .week-nav { flex-direction:column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="top-bar">
+        <a href="../index.html" class="top-bar-logo">@ObrasRomareda</a>
+        <a href="../index.html#galeria" class="back-link">
+            <i class="fas fa-arrow-left"></i> Volver a la galería
+        </a>
+    </div>
+
+    <!-- HERO -->
+    <div class="week-hero">
+        <div id="hero-badge" class="week-badge">Cargando...</div>
+        <h1 id="hero-title" class="week-title">Cargando semana...</h1>
+        <div class="week-meta">
+            <span><i class="fas fa-calendar"></i> <span id="hero-date"></span></span>
+            <span><i class="fas fa-images"></i> <span id="hero-photos">0 fotos</span></span>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="week-content">
+
+        <!-- Texto -->
+        <div id="week-text-section">
+            <div class="week-text" id="week-text"></div>
+        </div>
+
+        <!-- Vídeo -->
+        <div class="week-video-section" id="week-video-section" style="display:none;">
+            <h2><i class="fas fa-play-circle" style="color:var(--light);"></i> Vídeo de la semana</h2>
+            <div class="video-wrapper">
+                <iframe id="week-video-iframe" src="" title="Vídeo semanal" allowfullscreen loading="lazy"></iframe>
+            </div>
+        </div>
+
+        <!-- Fotos -->
+        <div class="week-photos-section">
+            <h2><i class="fas fa-camera" style="color:var(--light);"></i> Fotos <span id="photos-count"></span></h2>
+            <div class="photos-grid" id="photos-grid">
+                <div class="skeleton" style="aspect-ratio:4/3;"></div>
+                <div class="skeleton" style="aspect-ratio:4/3;"></div>
+                <div class="skeleton" style="aspect-ratio:4/3;"></div>
+                <div class="skeleton" style="aspect-ratio:4/3;"></div>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="week-nav">
+            <a id="nav-prev" class="week-nav-btn prev" href="#">
+                <i class="fas fa-chevron-left" style="color:var(--muted);"></i>
+                <div>
+                    <span class="week-nav-label">Semana anterior</span>
+                    <span class="week-nav-name" id="nav-prev-label">—</span>
+                </div>
+            </a>
+            <a id="nav-next" class="week-nav-btn next" href="#">
+                <div>
+                    <span class="week-nav-label">Semana siguiente</span>
+                    <span class="week-nav-name" id="nav-next-label">—</span>
+                </div>
+                <i class="fas fa-chevron-right" style="color:var(--muted);"></i>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox">
+        <button id="lightbox-close" onclick="closeLightbox()">×</button>
+        <button id="lightbox-prev" onclick="changeLightbox(-1)">&#10094;</button>
+        <img id="lightbox-img" src="" alt="">
+        <div id="lightbox-caption"></div>
+        <button id="lightbox-next" onclick="changeLightbox(1)">&#10095;</button>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const CLOUD_NAME   = 'kyvegvxg';
+        const TOTAL_WEEKS  = 86;  // ← actualiza este número cada semana
+
+        // Detectar número de semana desde la URL (semana-86.html → 86)
+        const urlMatch = window.location.pathname.match(/semana-(\d+)\.html/);
+        const WEEK_NUM = urlMatch ? parseInt(urlMatch[1]) : TOTAL_WEEKS;
+
+        let lightboxPhotos = [];
+        let lightboxIndex  = 0;
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Título de la pestaña
+            document.title = `Semana ${WEEK_NUM} · Obras Romareda`;
+
+            // Cargar metadatos y fotos en paralelo
+            const [meta, photos] = await Promise.all([
+                loadMeta(),
+                loadPhotos()
+            ]);
+
+            renderHero(meta, photos.length);
+            renderText(meta);
+            renderVideo(meta);
+            renderPhotos(photos);
+            renderNav();
+        });
+
+        // ============================================
+        // CARGA DE DATOS
+        // ============================================
+        async function loadMeta() {
+            try {
+                const res = await fetch(`semana-${WEEK_NUM}.json?v=${Date.now()}`);
+                if (res.ok) return await res.json();
+            } catch(e) {}
+            return {};
+        }
+
+        async function loadPhotos() {
+            try {
+                const tag = `semana-${WEEK_NUM}`;
+                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    return data.resources || [];
+                }
+            } catch(e) {}
+            return [];
+        }
+
+        // ============================================
+        // RENDER
+        // ============================================
+        function renderHero(meta, photoCount) {
+            document.getElementById('hero-badge').textContent = `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-title').textContent = meta.title || `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-date').textContent  = meta.date  || '';
+            document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
+
+            // OG image
+            if (meta.ogImage) {
+                document.querySelector('meta[property="og:image"]').setAttribute('content', meta.ogImage);
+            }
+        }
+
+        function renderText(meta) {
+            const el = document.getElementById('week-text');
+            if (meta.text) {
+                el.textContent = meta.text;
+            } else {
+                el.parentElement.style.display = 'none';
+            }
+        }
+
+        function renderVideo(meta) {
+            if (!meta.videoId) return;
+            const section = document.getElementById('week-video-section');
+            const iframe  = document.getElementById('week-video-iframe');
+            iframe.src = `https://www.youtube.com/embed/${meta.videoId}`;
+            section.style.display = 'block';
+        }
+
+        function renderPhotos(resources) {
+            const grid  = document.getElementById('photos-grid');
+            const count = document.getElementById('photos-count');
+            count.textContent = `(${resources.length})`;
+            lightboxPhotos = resources;
+
+            if (resources.length === 0) {
+                grid.innerHTML = '<p style="color:var(--muted); grid-column:1/-1;">Aún no hay fotos en esta semana.</p>';
+                return;
+            }
+
+            grid.innerHTML = resources.map((r, idx) => {
+                const thumb = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,w_600,h_450,q_auto,f_auto/${r.public_id}.jpg`;
+                return `
+                    <div class="photo-item" onclick="openLightbox(${idx})">
+                        <img src="${thumb}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="lazy">
+                    </div>`;
+            }).join('');
+        }
+
+        function renderNav() {
+            const prev = document.getElementById('nav-prev');
+            const next = document.getElementById('nav-next');
+
+            if (WEEK_NUM > 1) {
+                prev.href = `semana-${WEEK_NUM - 1}.html`;
+                document.getElementById('nav-prev-label').textContent = `Semana ${WEEK_NUM - 1}`;
+            } else {
+                prev.style.opacity = '0.3';
+                prev.style.pointerEvents = 'none';
+            }
+
+            if (WEEK_NUM < TOTAL_WEEKS) {
+                next.href = `semana-${WEEK_NUM + 1}.html`;
+                document.getElementById('nav-next-label').textContent = `Semana ${WEEK_NUM + 1}`;
+            } else {
+                next.style.opacity = '0.3';
+                next.style.pointerEvents = 'none';
+            }
+        }
+
+        // ============================================
+        // LIGHTBOX
+        // ============================================
+        function openLightbox(idx) {
+            lightboxIndex = idx;
+            showLightboxPhoto();
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        function showLightboxPhoto() {
+            const r    = lightboxPhotos[lightboxIndex];
+            const full = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/q_auto,f_auto/${r.public_id}.jpg`;
+            document.getElementById('lightbox-img').src = full;
+            document.getElementById('lightbox-caption').textContent =
+                `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
+        }
+
+        function changeLightbox(dir) {
+            lightboxIndex = (lightboxIndex + dir + lightboxPhotos.length) % lightboxPhotos.length;
+            showLightboxPhoto();
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.getElementById('lightbox-img').src = '';
+        }
+
+        document.addEventListener('keydown', e => {
+            const lb = document.getElementById('lightbox');
+            if (lb.style.display !== 'flex') return;
+            if (e.key === 'ArrowLeft')  changeLightbox(-1);
+            if (e.key === 'ArrowRight') changeLightbox(1);
+            if (e.key === 'Escape')     closeLightbox();
+        });
+
+        document.getElementById('lightbox').addEventListener('click', e => {
+            if (e.target === document.getElementById('lightbox')) closeLightbox();
+        });
+    </script>
+</body>
+</html>
 
