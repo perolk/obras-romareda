@@ -455,7 +455,41 @@
             </div>
         </div>
 
-        <!-- Drop zone -->
+        <!-- Metadatos de la semana -->
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; margin-bottom:1.5rem;">
+            <div style="font-size:0.85rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:1.2rem;">
+                <i class="fas fa-edit"></i> Contenido de la semana
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:6px; font-weight:600;">TÍTULO</label>
+                <input type="text" id="meta-title" placeholder="Ej: Cierre de la cubierta norte y montaje de vigas"
+                    style="width:100%; padding:10px 14px; background:var(--dark); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:0.95rem; font-family:'Inter',sans-serif; outline:none;">
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:6px; font-weight:600;">FECHA</label>
+                <input type="text" id="meta-date" placeholder="Ej: 14 jul 2025"
+                    style="width:100%; padding:10px 14px; background:var(--dark); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:0.95rem; font-family:'Inter',sans-serif; outline:none;">
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:6px; font-weight:600;">ID DEL VÍDEO DE YOUTUBE</label>
+                <input type="text" id="meta-video" placeholder="Ej: 5QnT7rXV6u0 (solo el ID, no la URL completa)"
+                    style="width:100%; padding:10px 14px; background:var(--dark); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:0.95rem; font-family:'Inter',sans-serif; outline:none;">
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-size:0.8rem; color:var(--muted); margin-bottom:6px; font-weight:600;">CRÓNICA DE LA SEMANA</label>
+                <textarea id="meta-text" placeholder="Escribe aquí el resumen de lo que pasó esta semana..." rows="5"
+                    style="width:100%; padding:10px 14px; background:var(--dark); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:0.95rem; font-family:'Inter',sans-serif; outline:none; resize:vertical; line-height:1.6;"></textarea>
+            </div>
+
+            <button class="btn-upload" onclick="saveMetadata()" style="width:100%; background:#1f6feb;">
+                <i class="fas fa-save"></i> Guardar texto y vídeo
+            </button>
+            <div id="meta-status" style="text-align:center; font-size:0.8rem; margin-top:8px; color:var(--muted); display:none;"></div>
+        </div>
         <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
             <i class="fas fa-cloud-upload-alt"></i>
             <h3>Arrastra las fotos aquí</h3>
@@ -516,6 +550,7 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             loadExistingPhotos();
+            loadExistingMeta();
         } else {
             document.getElementById('login-error').style.display = 'flex';
             document.getElementById('password-input').value = '';
@@ -536,6 +571,63 @@
         document.getElementById('btn-week').textContent = currentWeek;
         document.getElementById('upload-btn-text').innerHTML = `Subir fotos a la Semana <span id="btn-week">${currentWeek}</span>`;
         loadExistingPhotos();
+        loadExistingMeta();
+    }
+
+    // --- GUARDAR METADATOS (genera semana-N.json para descargar) ---
+    function saveMetadata() {
+        const title   = document.getElementById('meta-title').value.trim();
+        const date    = document.getElementById('meta-date').value.trim();
+        const videoId = document.getElementById('meta-video').value.trim();
+        const text    = document.getElementById('meta-text').value.trim();
+        const status  = document.getElementById('meta-status');
+
+        if (!title && !text && !videoId) {
+            status.style.display = 'block';
+            status.style.color = 'var(--error)';
+            status.textContent = 'Rellena al menos el título o el texto.';
+            return;
+        }
+
+        const meta = {
+            week: currentWeek,
+            title: title || `Semana ${currentWeek}`,
+            date,
+            videoId,
+            text,
+            updated: new Date().toISOString()
+        };
+
+        // Descargar el JSON para que lo subas a docs/semanas/
+        const blob = new Blob([JSON.stringify(meta, null, 2)], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `semana-${currentWeek}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        status.style.display = 'block';
+        status.style.color = 'var(--success)';
+        status.textContent = `✅ semana-${currentWeek}.json descargado. Súbelo a docs/semanas/ en GitHub.`;
+    }
+
+    // --- CARGAR METADATOS EXISTENTES ---
+    async function loadExistingMeta() {
+        try {
+            const res = await fetch(`../semanas/semana-${currentWeek}.json?v=${Date.now()}`);
+            if (!res.ok) throw new Error();
+            const meta = await res.json();
+            document.getElementById('meta-title').value  = meta.title   || '';
+            document.getElementById('meta-date').value   = meta.date    || '';
+            document.getElementById('meta-video').value  = meta.videoId || '';
+            document.getElementById('meta-text').value   = meta.text    || '';
+        } catch(e) {
+            document.getElementById('meta-title').value  = '';
+            document.getElementById('meta-date').value   = '';
+            document.getElementById('meta-video').value  = '';
+            document.getElementById('meta-text').value   = '';
+        }
     }
 
     // --- DRAG & DROP ---
