@@ -478,222 +478,221 @@
         /* --- ACTUALIDAD --- */
         .actualidad-container {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
             align-items: start;
         }
+
+        /* Tarjeta destacada */
         .actualidad-card {
             background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.3s;
+            cursor: pointer;
+            transition: transform 0.3s, border-color 0.3s;
+            text-decoration: none;
+            display: block;
         }
-        .actualidad-card:hover { transform: translateY(-4px); }
+        .actualidad-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.4); }
+        .actualidad-cover-wrap {
+            position: relative;
+            height: 220px;
+            background: rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
         .actualidad-cover {
-            width: 100%; height: 260px;
+            width: 100%; height: 100%;
             object-fit: cover; display: block;
+            transition: transform 0.4s;
         }
+        .actualidad-card:hover .actualidad-cover { transform: scale(1.04); }
         .actualidad-cover-placeholder {
-            width: 100%; height: 260px;
-            background: rgba(0,0,0,0.25);
+            width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
         }
-        .actualidad-body { padding: 24px; }
+        .actualidad-cover-badge {
+            position: absolute; top: 14px; left: 14px;
+            background: var(--zaragoza-light);
+            color: white; font-size: 0.75rem; font-weight: 700;
+            padding: 4px 12px; border-radius: 20px;
+        }
+        .actualidad-body { padding: 20px; }
         .actualidad-meta {
-            font-size: 0.8rem; color: rgba(255,255,255,0.5);
-            margin-bottom: 8px;
+            font-size: 0.78rem; color: rgba(255,255,255,0.5);
+            margin-bottom: 6px;
         }
         .actualidad-title {
-            font-size: 1.4rem; font-weight: 700;
-            color: white; margin-bottom: 10px; line-height: 1.3;
+            font-size: 1.2rem; font-weight: 700;
+            color: white; margin-bottom: 8px; line-height: 1.3;
         }
         .actualidad-text {
-            font-size: 0.95rem; color: rgba(255,255,255,0.7);
-            line-height: 1.65; margin-bottom: 20px;
+            font-size: 0.88rem; color: rgba(255,255,255,0.65);
+            line-height: 1.7; margin-bottom: 16px;
         }
         .actualidad-btn {
             display: inline-flex; align-items: center; gap: 8px;
             background: white; color: var(--zaragoza-blue);
-            padding: 10px 22px; border-radius: 30px;
-            font-weight: 700; font-size: 0.9rem;
+            padding: 9px 20px; border-radius: 30px;
+            font-weight: 700; font-size: 0.85rem;
             text-decoration: none; transition: transform 0.2s;
         }
         .actualidad-btn:hover { transform: translateY(-2px); }
 
-        .actualidad-prev-item {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 12px; padding: 12px;
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 10px; cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s;
+        /* Sidebar semanas anteriores */
+        .actualidad-sidebar { display: flex; flex-direction: column; }
+        .actualidad-sidebar-label {
+            font-size: 0.75rem; font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px;
         }
-        .actualidad-prev-item:hover { background: rgba(255,255,255,0.14); }
+        .actualidad-prev-item {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            display: flex; align-items: center;
+            overflow: hidden; margin-bottom: 10px;
+            cursor: pointer; text-decoration: none;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .actualidad-prev-item:hover {
+            background: rgba(255,255,255,0.13);
+            border-color: rgba(255,255,255,0.25);
+        }
         .actualidad-prev-thumb {
-            width: 52px; height: 40px;
-            border-radius: 8px; object-fit: cover; flex-shrink: 0;
+            width: 72px; height: 56px;
+            object-fit: cover; flex-shrink: 0; display: block;
         }
         .actualidad-prev-thumb-ph {
-            width: 52px; height: 40px;
-            border-radius: 8px; background: rgba(0,0,0,0.2);
-            flex-shrink: 0; display: flex;
-            align-items: center; justify-content: center;
+            width: 72px; height: 56px;
+            background: rgba(0,0,0,0.25); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .actualidad-prev-body {
+            padding: 0 12px; flex: 1; overflow: hidden;
+        }
+        .actualidad-prev-week {
+            font-size: 0.7rem; color: rgba(255,255,255,0.4);
+            margin-bottom: 2px;
         }
         .actualidad-prev-title {
-            font-size: 0.88rem; font-weight: 600; color: white;
-            margin-bottom: 2px; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis;
+            font-size: 0.85rem; font-weight: 600; color: white;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-bottom: 2px;
         }
         .actualidad-prev-count {
-            font-size: 0.75rem; color: rgba(255,255,255,0.45);
+            font-size: 0.72rem; color: rgba(255,255,255,0.4);
         }
         .actualidad-skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
+            border-radius: 16px;
         }
+        .actualidad-prev-skeleton {
+            height: 56px; border-radius: 10px; margin-bottom: 10px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        .ver-todas-btn {
+            width: 100%; margin-top: 4px; padding: 10px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.65); border-radius: 30px;
+            font-weight: 600; cursor: pointer; font-size: 0.82rem;
+            font-family: 'Inter', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .ver-todas-btn:hover { background: rgba(255,255,255,0.13); color: white; }
 
-        /* --- GALERÍA CLOUDINARY --- */
-        .gallery-week-card {
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: transform 0.25s, box-shadow 0.25s;
-            background: white;
-        }
-        .gallery-week-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
-        .gallery-week-card.active { border: 2px solid var(--zaragoza-blue); }
-        .gallery-week-thumb {
-            height: 110px;
-            background: var(--bg-light);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; position: relative;
-        }
-        .gallery-week-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-        .gallery-week-thumb .no-photo { color: #d1d5db; font-size: 2rem; }
-        .gallery-week-thumb.latest { background: rgba(0,82,159,0.08); }
-        .gallery-week-info { padding: 10px 12px; }
-        .gallery-week-badge {
-            font-size: 0.7rem; font-weight: 800; color: var(--zaragoza-blue);
-            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;
-        }
-        .gallery-week-badge.latest { color: var(--zaragoza-blue); }
-        .gallery-week-name { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .gallery-week-count { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-        .gallery-skeleton {
-            border-radius: 12px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%; animation: shimmer 1.5s infinite; height: 160px;
-        }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-        .viewer-photo {
-            border-radius: 8px; overflow: hidden; aspect-ratio: 4/3;
-            background: var(--bg-light); cursor: pointer;
-        }
-        .viewer-photo img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s; }
-        .viewer-photo:hover img { transform: scale(1.05); }
+        
 
         /* --- FOOTER --- */
         footer { background: var(--zaragoza-blue); color: white; padding: 4rem 10%; text-align: center; border-top: 8px solid var(--zaragoza-light); }
         .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 20px; }
         .footer-links a { color: white; font-size: 1.5rem; }
 
-        /* ✅ MEJORA ALTA: RESPONSIVE MEJORADO con menú hamburguesa */
+        /* ====== RESPONSIVE MÓVIL ====== */
         @media (max-width: 1024px) {
             .hero { background-attachment: scroll; }
-            .updates-container { grid-template-columns: 1fr; align-items: flex-start; }
-            .hero h1 { font-size: 3rem; }
+            .hero h1 { font-size: 2.8rem; }
+            .hero p { font-size: 1.2rem; margin-top: 24px; margin-bottom: 36px; }
 
-            /* Header: solo logo + hamburger en móvil */
+            /* Header hamburguesa */
             header {
-                flex-direction: row;  /* Mantener en fila, no columna */
+                flex-direction: row;
                 flex-wrap: nowrap;
                 align-items: center;
                 padding: 1rem 5%;
             }
-
             .hamburger { display: flex; }
-
-            /* Nav: oculto por defecto, desplegable */
             nav {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: var(--zaragoza-blue);
-                padding: 0;
-                max-height: 0;
-                overflow: hidden;
+                position: absolute; top: 100%; left: 0;
+                width: 100%; background: var(--zaragoza-blue);
+                padding: 0; max-height: 0; overflow: hidden;
                 transition: max-height 0.4s ease, padding 0.3s;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             }
-            nav.open {
-                max-height: 300px;
-                padding: 1rem 0 1.5rem;
-            }
-            nav ul {
-                flex-direction: column;
-                align-items: center;
-                gap: 0;
-            }
-            nav ul li {
-                width: 100%;
-                text-align: center;
-            }
-            nav a {
-                display: block;
-                padding: 12px 20px;
-                font-size: 1.1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-            }
+            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
+            nav ul { flex-direction: column; align-items: center; gap: 0; }
+            nav ul li { width: 100%; text-align: center; }
+            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
             nav ul li:last-child a { border-bottom: none; }
-
-            /* Redes sociales: en el menú desplegable */
-            .social-header {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                /* Se mostrará dentro del nav como último elemento */
-                display: none; /* ocultamos el original */
+            .social-header { display: none; }
+            .mobile-social {
+                display: flex !important; justify-content: center;
+                gap: 2rem; padding: 15px 0 5px;
             }
+            .mobile-social a { color: white; font-size: 1.4rem; transition: color 0.3s, transform 0.3s; }
+            .mobile-social a:hover { color: var(--zaragoza-light); transform: translateY(-3px); }
 
-            section { padding: 4rem 5%; }
+            /* Secciones */
+            section { padding: 3.5rem 5%; }
+
+            /* Actualidad en móvil */
             .actualidad-container { grid-template-columns: 1fr; }
-            .video-scroll-container { grid-template-columns: 1fr; }
-            .mini-video-card { max-width: 300px; margin: 0 auto; }
-            .modal-content { width: 95%; }
-            .history-timeline { padding-left: 25px; }
-            .project-item, .history-grid img { max-width: 100%; flex-basis: 100%; }
-            
+            .actualidad-cover-wrap { height: 200px; }
+            .actualidad-sidebar { margin-top: 4px; }
+
+            /* Galería en móvil */
+
+            /* Fases en móvil */
             .phases-container { flex-direction: column; align-items: flex-start; padding-left: 20px; }
             .phase-item { flex-direction: row; width: 100%; margin-bottom: 30px; text-align: left; }
             .phase-circle { margin-bottom: 0; margin-right: 20px; }
             .phase-line { position: absolute; left: 43px; top: 50px; width: 4px; height: 100%; margin-top: 0; }
             .phase-item:last-child .phase-line { display: none; }
-            .phases-container > .phase-line { display: none; } 
+            .phases-container > .phase-line { display: none; }
             .phase-item::after { content: ''; position: absolute; left: 23px; top: 50px; width: 4px; height: 40px; background: #e0e0e0; z-index: 1; }
             .phase-item:last-child::after { display: none; }
             .phase-item.completed::after { background: var(--zaragoza-blue); }
 
-            .img-comp-container { height: 300px; }
+            /* Comparador */
+            .img-comp-container { height: 260px; }
 
-            /* Redes sociales en móvil - dentro del nav */
-            .mobile-social {
-                display: flex !important;
-                justify-content: center;
-                gap: 2rem;
-                padding: 15px 0 5px;
-            }
-            .mobile-social a {
-                color: white;
-                font-size: 1.4rem;
-                transition: color 0.3s, transform 0.3s;
-            }
-            .mobile-social a:hover { color: var(--zaragoza-light); transform: translateY(-3px); }
+            /* Modales */
+            .modal-content { width: 95%; }
+            .history-timeline { padding-left: 25px; }
+            .project-item, .history-grid img { max-width: 100%; flex-basis: 100%; }
+
+            /* Section title */
+            .section-title { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; letter-spacing: -0.5px; }
+            .hero p { font-size: 1rem; }
+            .construction-counter { font-size: 0.95rem; }
+            .cta-btn { padding: 13px 30px; font-size: 1rem; }
+            section { padding: 3rem 5%; }
+            .section-title { font-size: 1.8rem; margin-bottom: 2.5rem; }
+            .actualidad-cover-wrap { height: 180px; }
+            .actualidad-title { font-size: 1.05rem; }
+            .actualidad-text { font-size: 0.82rem; }
+            .album-grid-content { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+            footer { padding: 3rem 5%; }
         }
 
         @media (min-width: 1025px) {
@@ -716,7 +715,7 @@
         <nav id="mainNav" aria-label="Navegación principal">
             <ul>
                 <li><a href="#videos">Actualidad</a></li>
-                <li><a href="#galeria">Galería</a></li>
+
                 <li><a href="#proyecto">El Proyecto</a></li>
                 <li><a href="#historia">Historia</a></li>
             </ul>
@@ -753,49 +752,20 @@
         <div class="actualidad-container">
             <!-- Semana destacada -->
             <div id="actualidad-featured">
-                <!-- Skeleton -->
-                <div class="actualidad-skeleton" style="height:420px; border-radius:20px;"></div>
+                <div class="actualidad-skeleton" style="height:380px;"></div>
             </div>
             <!-- Semanas anteriores -->
             <div class="actualidad-sidebar">
-                <div style="font-size:0.85rem; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Semanas anteriores</div>
-                <div id="actualidad-prev"></div>
-                <button onclick="openGallerySection()" style="width:100%; margin-top:12px; padding:10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); border-radius:30px; font-weight:600; cursor:pointer; font-size:0.85rem; font-family:'Inter',sans-serif; transition:all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
-                    Ver todas las semanas <i class="fas fa-chevron-down"></i>
+                <div class="actualidad-sidebar-label">Semanas anteriores</div>
+                <div id="actualidad-prev">
+                    <div class="actualidad-prev-skeleton"></div>
+                    <div class="actualidad-prev-skeleton"></div>
+                    <div class="actualidad-prev-skeleton"></div>
+                </div>
+                <button class="ver-todas-btn" onclick="openGallerySection()">
+                    Ver todas las semanas <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
             </div>
-        </div>
-    </section>
-
-    <!-- ====== GALERÍA DE OBRA ====== -->
-    <section id="galeria" style="background: white; padding: 5rem 10%;">
-        <h2 class="section-title" style="color: var(--zaragoza-blue); text-align:center;">Galería de Obra</h2>
-        <p style="text-align:center; color:var(--text-muted); margin-top:-2rem; margin-bottom:3rem; font-size:1rem;">
-            Semana a semana desde el inicio · Haz clic en una semana para ver todas las fotos
-        </p>
-
-        <div id="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin-bottom:2rem;">
-            <div class="gallery-skeleton"></div>
-            <div class="gallery-skeleton"></div>
-            <div class="gallery-skeleton"></div>
-            <div class="gallery-skeleton"></div>
-        </div>
-
-        <div style="text-align:center; margin-bottom:2rem;">
-            <button id="gallery-load-more" class="tab-button" onclick="loadMoreWeeks()" style="display:none;">
-                <i class="fas fa-chevron-down"></i> Ver todas las semanas
-            </button>
-        </div>
-
-        <div id="week-viewer" style="display:none; background:var(--bg-light); border-radius:16px; padding:1.5rem; border:1px solid var(--border-color);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
-                <div>
-                    <div id="viewer-badge" style="font-size:0.75rem; font-weight:800; color:var(--zaragoza-blue); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;"></div>
-                    <div id="viewer-title" style="font-size:1.1rem; font-weight:700; color:var(--text-dark);"></div>
-                </div>
-                <button onclick="closeWeekViewer()" style="background:none; border:none; font-size:1.5rem; color:var(--text-muted); cursor:pointer; line-height:1;">×</button>
-            </div>
-            <div id="viewer-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px;"></div>
         </div>
     </section>
 
@@ -1151,21 +1121,26 @@
             const el = document.getElementById('actualidad-featured');
             const thumbHtml = w.thumb
                 ? `<img src="${w.thumb}" class="actualidad-cover" alt="Semana ${w.weekNum}">`
-                : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:3rem; color:rgba(255,255,255,0.2);"></i></div>`;
-            const excerpt = w.text ? w.text.substring(0, 180) + (w.text.length > 180 ? '...' : '') : 'Haz clic para ver todas las fotos y el vídeo de esta semana.';
+                : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:2.5rem; color:rgba(255,255,255,0.15);"></i></div>`;
+            const excerpt = w.text
+                ? w.text.substring(0, 160) + (w.text.length > 160 ? '...' : '')
+                : 'Haz clic para ver todas las fotos de esta semana.';
 
             el.innerHTML = `
-                <div class="actualidad-card">
-                    ${thumbHtml}
+                <a href="semanas/semana-${w.weekNum}.html" class="actualidad-card">
+                    <div class="actualidad-cover-wrap">
+                        ${thumbHtml}
+                        <div class="actualidad-cover-badge">★ Semana ${w.weekNum} · Última</div>
+                    </div>
                     <div class="actualidad-body">
-                        <div class="actualidad-meta">Semana ${w.weekNum}${w.date ? ' · ' + w.date : ''}${w.photoCount ? ' · ' + w.photoCount + ' fotos' : ''}</div>
+                        <div class="actualidad-meta">${w.date ? w.date + ' · ' : ''}${w.photoCount ? w.photoCount + ' fotos' : ''}</div>
                         <div class="actualidad-title">${w.title}</div>
                         <div class="actualidad-text">${excerpt}</div>
-                        <a href="semanas/semana-${w.weekNum}.html" class="actualidad-btn">
-                            Ver semana completa <i class="fas fa-arrow-right"></i>
-                        </a>
+                        <span class="actualidad-btn">
+                            Ver semana completa <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </span>
                     </div>
-                </div>`;
+                </a>`;
         }
 
         function renderPrevItem(w) {
@@ -1174,14 +1149,15 @@
             a.className = 'actualidad-prev-item';
             const thumbHtml = w.thumb
                 ? `<img src="${w.thumb}" class="actualidad-prev-thumb" alt="Semana ${w.weekNum}">`
-                : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1rem; color:rgba(255,255,255,0.2);"></i></div>`;
+                : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);"></i></div>`;
             a.innerHTML = `
                 ${thumbHtml}
-                <div style="flex:1; overflow:hidden;">
+                <div class="actualidad-prev-body">
+                    <div class="actualidad-prev-week">Semana ${w.weekNum}</div>
                     <div class="actualidad-prev-title">${w.title}</div>
                     <div class="actualidad-prev-count">${w.photoCount ? w.photoCount + ' fotos' : 'Próximamente'}</div>
                 </div>
-                <i class="fas fa-chevron-right" style="color:rgba(255,255,255,0.3); font-size:0.8rem;"></i>`;
+                <i class="fas fa-chevron-right" style="color:rgba(255,255,255,0.25); font-size:0.75rem; margin-right:12px; flex-shrink:0;" aria-hidden="true"></i>`;
             return a;
         }
 
@@ -1238,6 +1214,10 @@
         }
 
         // --- MODALES ---
+        function openGallerySection() {
+            document.getElementById('fases').scrollIntoView({ behavior: 'smooth' });
+        }
+
         function openArchiveModal() {
             initArchive();
             document.getElementById('archiveModal').style.display = 'block';
@@ -1357,131 +1337,11 @@
 
             initComparisons();
             loadActualidad();
-            initGallery();
+
         });
 
         // =========================================
-        // GALERÍA CLOUDINARY
-        // =========================================
-        const CLOUD_NAME    = 'kyvegvxg';
-        const WEEKS_VISIBLE = 8;
-        let totalWeeks      = 0;
-        let weeksShown      = WEEKS_VISIBLE;
-
-        async function initGallery() {
-            totalWeeks = CURRENT_WEEK_NUM;
-            weeksShown = Math.min(WEEKS_VISIBLE, totalWeeks);
-            await renderGalleryGrid();
-        }
-
-        async function renderGalleryGrid() {
-            const grid = document.getElementById('gallery-grid');
-            const loadMoreBtn = document.getElementById('gallery-load-more');
-            grid.innerHTML = '';
-
-            const promises = [];
-            for (let w = totalWeeks; w > totalWeeks - weeksShown && w >= 1; w--) {
-                promises.push(buildWeekCard(w));
-            }
-            const cards = await Promise.all(promises);
-            cards.forEach(card => grid.appendChild(card));
-
-            loadMoreBtn.style.display = weeksShown < totalWeeks ? 'inline-flex' : 'none';
-        }
-
-        async function buildWeekCard(weekNum) {
-            const isLatest = weekNum === totalWeeks;
-            const tag = `semana-${weekNum}`;
-            let thumbUrl = '';
-            let photoCount = 0;
-
-            try {
-                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const resources = data.resources || [];
-                    photoCount = resources.length;
-                    if (resources.length > 0) {
-                        thumbUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,w_400,h_220,q_auto,f_auto/${resources[0].public_id}.jpg`;
-                    }
-                }
-            } catch(e) {}
-
-            const card = document.createElement('div');
-            card.className = 'gallery-week-card' + (isLatest ? ' active' : '');
-            card.onclick = () => openWeekViewer(weekNum);
-
-            const thumbContent = thumbUrl
-                ? `<img src="${thumbUrl}" alt="Semana ${weekNum}" loading="lazy">`
-                : `<i class="fas fa-camera no-photo"></i>`;
-
-            card.innerHTML = `
-                <div class="gallery-week-thumb ${isLatest ? 'latest' : ''}">${thumbContent}</div>
-                <div class="gallery-week-info">
-                    <div class="gallery-week-badge ${isLatest ? 'latest' : ''}">
-                        ${isLatest ? '★ ' : ''}Semana ${weekNum}
-                    </div>
-                    <div class="gallery-week-count">
-                        ${photoCount > 0
-                            ? `<i class="fas fa-images"></i> ${photoCount} fotos`
-                            : '<i class="fas fa-clock"></i> Próximamente'}
-                    </div>
-                </div>`;
-            return card;
-        }
-
-        async function loadMoreWeeks() {
-            weeksShown = Math.min(weeksShown + WEEKS_VISIBLE, totalWeeks);
-            await renderGalleryGrid();
-        }
-
-        async function openWeekViewer(weekNum) {
-            const viewer = document.getElementById('week-viewer');
-            const viewerGrid = document.getElementById('viewer-grid');
-            const badge = document.getElementById('viewer-badge');
-            const title = document.getElementById('viewer-title');
-
-            badge.textContent = `Semana ${weekNum}`;
-            title.textContent = 'Cargando fotos...';
-            viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>';
-            viewer.style.display = 'block';
-            viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-            try {
-                const tag = `semana-${weekNum}`;
-                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${tag}.json`);
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                const resources = data.resources || [];
-
-                title.textContent = `${resources.length} fotos · ${weekNum === totalWeeks ? 'Última semana' : `Semana ${weekNum}`}`;
-
-                if (resources.length === 0) {
-                    viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;"><i class="fas fa-inbox"></i> Aún no hay fotos en esta semana.</div>';
-                    return;
-                }
-
-                viewerGrid.innerHTML = resources.map((r, idx) => {
-                    const thumbUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,w_400,h_300,q_auto,f_auto/${r.public_id}.jpg`;
-                    const fullUrl  = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/q_auto,f_auto/${r.public_id}.jpg`;
-                    return `
-                        <div class="viewer-photo" onclick="openModal('${fullUrl}', 'Semana ${weekNum} · Foto ${idx+1}')">
-                            <img src="${thumbUrl}" alt="Semana ${weekNum} foto ${idx+1}" loading="lazy">
-                        </div>`;
-                }).join('');
-
-            } catch(e) {
-                title.textContent = 'Error al cargar';
-                viewerGrid.innerHTML = '<div style="color:var(--text-muted); padding:1rem; grid-column:1/-1;">No se pudieron cargar las fotos. Inténtalo de nuevo.</div>';
-            }
-        }
-
-        function closeWeekViewer() {
-            document.getElementById('week-viewer').style.display = 'none';
-        }
-
-        function openGallerySection() {
-            document.getElementById('galeria').scrollIntoView({ behavior: 'smooth' });
+        );
         }
 
         function openTab(evt, tabName) {
