@@ -1,14 +1,22 @@
 {
-  "updated": "2026-08-03T21:42:15Z",
+  "updated": "2026-08-09T13:45:16Z",
   "featured": {
-    "id": "CFv_86cODCw",
-    "title": "Obras Romareda - Semana 107",
-    "date": "30 de july de 2026",
-    "duration": 1053,
-    "thumbnail": "https://img.youtube.com/vi/CFv_86cODCw/hqdefault.jpg",
-    "url": "https://www.youtube.com/watch?v=CFv_86cODCw"
+    "id": "CSC6oEmUD5w",
+    "title": "Obras Romareda - Semana 108",
+    "date": "7 de august de 2026",
+    "duration": 980,
+    "thumbnail": "https://img.youtube.com/vi/CSC6oEmUD5w/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=CSC6oEmUD5w"
   },
   "history": [
+    {
+      "id": "CFv_86cODCw",
+      "title": "Obras Romareda - Semana 107",
+      "date": "30 de july de 2026",
+      "duration": 1053,
+      "thumbnail": "https://img.youtube.com/vi/CFv_86cODCw/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=CFv_86cODCw"
+    },
     {
       "id": "jOe4I6K_M_8",
       "title": "Obras Romareda - Semana 106",
@@ -24,14 +32,6 @@
       "duration": 731,
       "thumbnail": "https://img.youtube.com/vi/LyO22vpj64Q/hqdefault.jpg",
       "url": "https://www.youtube.com/watch?v=LyO22vpj64Q"
-    },
-    {
-      "id": "s1lYWVLUFw0",
-      "title": "Obras Romareda - Semana 104",
-      "date": "11 de july de 2026",
-      "duration": 1138,
-      "thumbnail": "https://img.youtube.com/vi/s1lYWVLUFw0/hqdefault.jpg",
-      "url": "https://www.youtube.com/watch?v=s1lYWVLUFw0"
     }
   ]
 }
