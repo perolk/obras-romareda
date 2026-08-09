@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada · Obras Romareda</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #00529F;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            color: white;
+        }
+
+        .logo {
+            font-family: 'Calibri', 'Segoe UI', sans-serif;
+            font-weight: 700; font-style: italic;
+            font-size: 1.4rem; color: white;
+            text-decoration: none; margin-bottom: 3rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .logo:hover { opacity: 1; }
+
+        .error-number {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            color: rgba(255,255,255,0.15);
+            margin-bottom: -1rem;
+        }
+
+        .crane-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            animation: sway 3s ease-in-out infinite;
+        }
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50%       { transform: rotate(3deg); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+        p {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.65);
+            max-width: 380px;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: #00529F;
+            padding: 13px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        .hint {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="/obras-romareda/" class="logo">@ObrasRomareda</a>
+
+    <div class="error-number">404</div>
+    <span class="crane-icon">🏗️</span>
+
+    <h1>Página en construcción</h1>
+    <p>Esta página no existe o ha sido movida. Pero las obras siguen adelante — vuelve al inicio para ver los últimos avances.</p>
+
+    <a href="/obras-romareda/" class="btn-home">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
+
+    <p class="hint">¿Buscabas una semana concreta? Encuéntrala en la sección de Actualidad.</p>
+
+</body>
+</html>

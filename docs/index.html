@@ -698,7 +698,23 @@
         @media (min-width: 1025px) {
             .mobile-social { display: none !important; }
         }
+        /* 3. ANIMACIONES DE ENTRADA AL HACER SCROLL */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
     </style>
+
+    <!-- 9. Precargar imagen del hero para carga instantánea -->
+    <link rel="preload" as="image" href="https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg">
 </head>
 <body>
 
@@ -769,7 +785,7 @@
         </div>
     </section>
 
-    <section id="fases" style="background: white; padding: 4rem 10%;">
+    <section id="fases" class="fade-in" style="background: white; padding: 4rem 10%;">
         <h2 class="section-title" style="color: var(--zaragoza-blue); text-align: center;">Estado de la Obra</h2>
         
         <div class="phases-container">
@@ -811,24 +827,24 @@
         </div>
     </section>
 
-    <section id="comparador" style="background: var(--bg-light); padding: 4rem 10%;">
+    <section id="comparador" class="fade-in" style="background: var(--bg-light); padding: 4rem 10%;">
         <h2 class="section-title" style="color: var(--zaragoza-blue); text-align: center;">El Cambio: Antes y Después</h2>
         
         <div class="comparison-wrapper">
             <div class="img-comp-container">
                 <div class="img-comp-img">
-                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render artístico de la nueva Romareda (IDOM)">
+                    <img loading="lazy" src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render artístico de la nueva Romareda (IDOM)">
                     <div class="img-comp-overlay-label" style="right: 20px;">FUTURO (Render)</div>
                 </div>
                 <div class="img-comp-img img-comp-overlay">
-                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes de la demolición">
+                    <img loading="lazy" src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes de la demolición">
                     <div class="img-comp-overlay-label" style="left: 20px;">ANTES</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="proyecto">
+    <section id="proyecto" class="fade-in">
         <h2 class="section-title">El Proyecto (IDOM)</h2>
         <p style="text-align: center; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
             Planos, renders y detalles técnicos de la futura casa del Real Zaragoza.
@@ -841,39 +857,39 @@
 
         <div id="renders" class="project-gallery tab-content">
             <div class="project-item">
-                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg" alt="Render: Plaza Eduardo Ibarra">
+                <img loading="lazy" src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg" alt="Render: Plaza Eduardo Ibarra">
                 <div class="caption">Plaza Eduardo Ibarra</div>
             </div>
             <div class="project-item">
-                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" alt="Render: Vista Interior Noche">
+                <img loading="lazy" src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" alt="Render: Vista Interior Noche">
                 <div class="caption">Vista Interior Noche</div>
             </div>
             <div class="project-item">
-                <img src="https://pbs.twimg.com/media/GLIp4cAWkAAjB8S?format=jpg&name=large" alt="Render: Vista Aérea General">
+                <img loading="lazy" src="https://pbs.twimg.com/media/GLIp4cAWkAAjB8S?format=jpg&name=large" alt="Render: Vista Aérea General">
                 <div class="caption">Vista Aérea General</div>
             </div>
         </div>
 
         <div id="plantas" class="project-gallery tab-content">
             <div class="project-item">
-                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Planta+General" alt="Planta General">
+                <img loading="lazy" src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Planta+General" alt="Planta General">
                 <div class="caption">Planta General</div>
             </div>
             <div class="project-item">
-                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Distribucion" alt="Distribución de Accesos">
+                <img loading="lazy" src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Distribucion" alt="Distribución de Accesos">
                 <div class="caption">Distribución de Accesos</div>
             </div>
         </div>
 
         <div id="secciones" class="project-gallery tab-content">
             <div class="project-item">
-                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Seccion+Grada" alt="Sección Constructiva de Grada">
+                <img loading="lazy" src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Seccion+Grada" alt="Sección Constructiva de Grada">
                 <div class="caption">Sección Constructiva de Grada</div>
             </div>
         </div>
     </section>
 
-    <section id="historia">
+    <section id="historia" class="fade-in">
         <h2 class="section-title">Memoria Histórica</h2>
         <div class="history-timeline">
             <div class="history-item">
@@ -882,37 +898,37 @@
                 
                 <div class="history-grid">
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://statics-maker.llt-services.com/zar/images/2023/03/22/xlarge/89db9591-f362-4ba0-a080-0f445a8ef4a2.jpg" 
+                        <img loading="lazy" src="https://statics-maker.llt-services.com/zar/images/2023/03/22/xlarge/89db9591-f362-4ba0-a080-0f445a8ef4a2.jpg" 
                              alt="Inauguración: 8 de Septiembre de 1957" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">1957: La Inauguración</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://as01.epimg.net/futbol/imagenes/2022/06/17/reportajes/1655460674_524206_1655460833_noticia_normal.jpg" 
+                        <img loading="lazy" src="https://as01.epimg.net/futbol/imagenes/2022/06/17/reportajes/1655460674_524206_1655460833_noticia_normal.jpg" 
                              alt="Sede del Mundial España '82" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">1982: Sede Mundialista</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://www.heraldo.es/uploads/imagenes/2015/05/08/_C7F9301_3a720520.jpg" 
+                        <img loading="lazy" src="https://www.heraldo.es/uploads/imagenes/2015/05/08/_C7F9301_3a720520.jpg" 
                              alt="La Recopa en casa ante una Romareda llena" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">1995: La Recopa en Casa</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" 
+                        <img loading="lazy" src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" 
                              alt="Concierto Michael Jackson History Tour 1996" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">1996: Michael Jackson</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://phantom-marca.unidadeditorial.es/f520297447740d32295799ce6cc50392/resize/828/f/jpg/assets/multimedia/imagenes/2023/02/08/16758536782412.jpg" 
+                        <img loading="lazy" src="https://phantom-marca.unidadeditorial.es/f520297447740d32295799ce6cc50392/resize/828/f/jpg/assets/multimedia/imagenes/2023/02/08/16758536782412.jpg" 
                              alt="Noche mágica de Copa: 6-1 al Real Madrid" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">2006: Noche Mágica de Copa</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img src="https://estaticos-cdn.prensaiberica.es/clip/bdc97986-08c6-4004-824b-0e60370f533d_16-9-aspect-ratio_default_0.jpg" 
+                        <img loading="lazy" src="https://estaticos-cdn.prensaiberica.es/clip/bdc97986-08c6-4004-824b-0e60370f533d_16-9-aspect-ratio_default_0.jpg" 
                              alt="El último partido antes de la demolición" 
                              onclick="openModal(this.src, this.alt)">
                         <p class="caption" style="margin-top:8px; color:#6b7280;">2024: El Último Partido</p>
@@ -1120,7 +1136,7 @@
         function renderFeatured(w) {
             const el = document.getElementById('actualidad-featured');
             const thumbHtml = w.thumb
-                ? `<img src="${w.thumb}" class="actualidad-cover" alt="Semana ${w.weekNum}">`
+                ? `<img loading="lazy" src="${w.thumb}" class="actualidad-cover" alt="Semana ${w.weekNum}">`
                 : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:2.5rem; color:rgba(255,255,255,0.15);"></i></div>`;
             const excerpt = w.text
                 ? w.text.substring(0, 160) + (w.text.length > 160 ? '...' : '')
@@ -1148,7 +1164,7 @@
             a.href = `semanas/semana-${w.weekNum}.html`;
             a.className = 'actualidad-prev-item';
             const thumbHtml = w.thumb
-                ? `<img src="${w.thumb}" class="actualidad-prev-thumb" alt="Semana ${w.weekNum}">`
+                ? `<img loading="lazy" src="${w.thumb}" class="actualidad-prev-thumb" alt="Semana ${w.weekNum}">`
                 : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);"></i></div>`;
             a.innerHTML = `
                 ${thumbHtml}
@@ -1239,7 +1255,7 @@
                     const photoCard = document.createElement('div');
                     photoCard.className = 'album-photo-card';
                     photoCard.innerHTML = `
-                        <img src="${photo.src}" alt="${photo.desc}" onclick="openGallerySlide('${weekId}', ${index})">
+                        <img loading="lazy" src="${photo.src}" alt="${photo.desc}" onclick="openGallerySlide('${weekId}', ${index})">
                         <div class="album-photo-desc">${photo.desc}</div>
                     `;
                     content.appendChild(photoCard);
@@ -1356,6 +1372,19 @@
             evt.currentTarget.className += " active";
         }
 
+        // 3. ANIMACIONES DE ENTRADA AL HACER SCROLL
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+        // Smooth scroll para enlaces internos
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
