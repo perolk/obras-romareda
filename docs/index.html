@@ -1075,6 +1075,12 @@
         // =========================================
         // ACTUALIDAD — carga desde Cloudinary + semana.json
         // =========================================
+        // SUPABASE
+        // =========================================
+        const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // =========================================
         async function loadActualidad() {
             const featured = document.getElementById('actualidad-featured');
             const prev     = document.getElementById('actualidad-prev');
