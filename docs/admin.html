@@ -366,8 +366,26 @@ async function loadWeek() {
     await loadPhotos_list();
 }
 
+function extractVideoId(input) {
+    if (!input) return '';
+    input = input.trim();
+    // Si ya es un ID puro (11 chars)
+    if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+    // Extraer de URLs de YouTube
+    const m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : input;
+}
+
 async function saveWeek() {
-    const videoId   = document.getElementById('video-id').value.trim();
+    const rawVideo  = document.getElementById('video-id').value.trim();
+    const videoId   = extractVideoId(rawVideo);
+
+    // Actualizar el campo visualmente con el ID limpio
+    if (videoId !== rawVideo) {
+        document.getElementById('video-id').value = videoId;
+        previewVideo();
+    }
+
     const weekData  = {
         numero:      currentWeek,
         video_id:    videoId || null,
@@ -399,7 +417,8 @@ function setStatus(html) {
 // VÍDEO
 // ============================================
 function previewVideo() {
-    const id      = document.getElementById('video-id').value.trim();
+    const raw     = document.getElementById('video-id').value.trim();
+    const id      = extractVideoId(raw);
     const preview = document.getElementById('video-preview');
     const iframe  = document.getElementById('video-iframe');
     if (id) {
