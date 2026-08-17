@@ -713,6 +713,8 @@
         .fade-in-delay-3 { transition-delay: 0.3s; }
     </style>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- 9. Precargar imagen del hero para carga instantánea -->
     <link rel="preload" as="image" href="https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg">
 </head>
@@ -1135,23 +1137,20 @@
 
         function renderFeatured(w) {
             const el = document.getElementById('actualidad-featured');
-            const thumbHtml = w.thumb
-                ? `<img loading="lazy" src="${w.thumb}" class="actualidad-cover" alt="Semana ${w.weekNum}">`
+            const thumbHtml = w.portada_url
+                ? `<img src="${w.portada_url}" class="actualidad-cover" alt="Semana ${w.numero}" loading="eager">`
                 : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:2.5rem; color:rgba(255,255,255,0.15);"></i></div>`;
-            const excerpt = w.text
-                ? w.text.substring(0, 160) + (w.text.length > 160 ? '...' : '')
-                : 'Haz clic para ver todas las fotos de esta semana.';
 
             el.innerHTML = `
-                <a href="semanas/semana-${w.weekNum}.html" class="actualidad-card">
+                <a href="semana.html?n=${w.numero}" class="actualidad-card">
                     <div class="actualidad-cover-wrap">
                         ${thumbHtml}
-                        <div class="actualidad-cover-badge">★ Semana ${w.weekNum} · Última</div>
+                        <div class="actualidad-cover-badge">★ Semana ${w.numero} · Última</div>
                     </div>
                     <div class="actualidad-body">
-                        <div class="actualidad-meta">${w.date ? w.date + ' · ' : ''}${w.photoCount ? w.photoCount + ' fotos' : ''}</div>
-                        <div class="actualidad-title">${w.title}</div>
-                        <div class="actualidad-text">${excerpt}</div>
+                        <div class="actualidad-meta">Semana ${w.numero}${w.video_id ? ' · Con vídeo' : ''}</div>
+                        <div class="actualidad-title">Avances de la semana ${w.numero}</div>
+                        <div class="actualidad-text">Fotos y evolución de las obras esta semana.</div>
                         <span class="actualidad-btn">
                             Ver semana completa <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </span>
@@ -1161,17 +1160,17 @@
 
         function renderPrevItem(w) {
             const a = document.createElement('a');
-            a.href = `semanas/semana-${w.weekNum}.html`;
+            a.href = `semana.html?n=${w.numero}`;
             a.className = 'actualidad-prev-item';
-            const thumbHtml = w.thumb
-                ? `<img loading="lazy" src="${w.thumb}" class="actualidad-prev-thumb" alt="Semana ${w.weekNum}">`
+            const thumbHtml = w.portada_url
+                ? `<img src="${w.portada_url}" class="actualidad-prev-thumb" alt="Semana ${w.numero}" loading="lazy">`
                 : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);"></i></div>`;
             a.innerHTML = `
                 ${thumbHtml}
                 <div class="actualidad-prev-body">
-                    <div class="actualidad-prev-week">Semana ${w.weekNum}</div>
-                    <div class="actualidad-prev-title">${w.title}</div>
-                    <div class="actualidad-prev-count">${w.photoCount ? w.photoCount + ' fotos' : 'Próximamente'}</div>
+                    <div class="actualidad-prev-week">Semana ${w.numero}</div>
+                    <div class="actualidad-prev-title">Semana ${w.numero}</div>
+                    <div class="actualidad-prev-count">${w.video_id ? '▶ Con vídeo' : 'Ver fotos'}</div>
                 </div>
                 <i class="fas fa-chevron-right" style="color:rgba(255,255,255,0.25); font-size:0.75rem; margin-right:12px; flex-shrink:0;" aria-hidden="true"></i>`;
             return a;
