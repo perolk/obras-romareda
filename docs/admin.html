@@ -163,7 +163,60 @@
             background:var(--light); color:white; font-size:.65rem;
             padding:2px 6px; border-radius:10px; font-weight:700;
         }
-        .upload-bar { height:4px; background:var(--border); border-radius:4px; overflow:hidden; margin-top:.75rem; display:none; }
+        /* COMPRESOR */
+        .compress-card {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:16px; padding:1.25rem; margin-bottom:1rem;
+        }
+        .compress-title {
+            font-size:.78rem; font-weight:700; color:var(--muted);
+            text-transform:uppercase; letter-spacing:1px;
+            margin-bottom:1rem; display:flex; align-items:center; gap:8px;
+        }
+        .compress-title i { color:var(--light); }
+        .compress-tabs { display:flex; gap:8px; margin-bottom:1rem; }
+        .compress-tab {
+            flex:1; padding:8px; font-size:.82rem; font-weight:600;
+            border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif;
+            transition:all .2s;
+        }
+        .compress-tab.active {
+            border:2px solid var(--light); background:rgba(77,169,255,.12); color:var(--light);
+        }
+        .compress-tab.inactive {
+            border:1px solid var(--border); background:none; color:var(--muted);
+        }
+        .compress-slider-row {
+            display:flex; align-items:center; gap:12px; margin-bottom:6px;
+        }
+        .compress-slider-row label { font-size:.82rem; color:var(--muted); white-space:nowrap; }
+        .compress-slider-row input[type=range] { flex:1; }
+        .compress-val { font-size:.95rem; font-weight:700; color:var(--light); min-width:52px; text-align:right; }
+        .compress-hint { font-size:.75rem; color:var(--muted); margin:0; }
+
+        /* Preview cards con peso */
+        .photo-item .photo-size {
+            position:absolute; bottom:4px; left:4px;
+            background:rgba(0,0,0,.7); color:white;
+            font-size:.65rem; font-weight:700;
+            padding:2px 6px; border-radius:6px; line-height:1.4;
+        }
+        .photo-item .photo-saving {
+            position:absolute; bottom:4px; right:4px;
+            background:rgba(16,185,129,.85); color:white;
+            font-size:.65rem; font-weight:700;
+            padding:2px 6px; border-radius:6px; line-height:1.4;
+        }
+        .compress-summary {
+            background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3);
+            border-radius:10px; padding:10px 14px;
+            display:flex; justify-content:space-between; align-items:center;
+            margin-top:10px; font-size:.82rem;
+        }
+        .compress-summary span { color:var(--muted); }
+        .compress-summary strong { color:var(--success); }
+
+        /* Upload bar */
         .upload-bar-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--light)); border-radius:4px; width:0; transition:width .3s; }
 
         /* TOAST */
@@ -256,6 +309,33 @@
                     <i class="fas fa-upload"></i>
                     <span id="portada-btn-text">Subir foto de portada</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- Compresor -->
+        <div class="compress-card">
+            <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+            <div class="compress-tabs">
+                <button class="compress-tab active" id="tab-calidad" onclick="setCompressMode('calidad')">Por calidad (%)</button>
+                <button class="compress-tab inactive" id="tab-res" onclick="setCompressMode('resolucion')">Por resolución (px)</button>
+            </div>
+            <div id="panel-calidad">
+                <div class="compress-slider-row">
+                    <label>Calidad</label>
+                    <input type="range" min="10" max="100" value="75" step="1"
+                        id="slider-calidad" oninput="updateSlider()">
+                    <span class="compress-val" id="val-calidad">75%</span>
+                </div>
+                <p class="compress-hint">70–80% es un buen equilibrio entre calidad visual y peso.</p>
+            </div>
+            <div id="panel-resolucion" style="display:none;">
+                <div class="compress-slider-row">
+                    <label>Ancho máx.</label>
+                    <input type="range" min="400" max="4000" value="1920" step="100"
+                        id="slider-res" oninput="updateSlider()">
+                    <span class="compress-val" id="val-res">1920px</span>
+                </div>
+                <p class="compress-hint">Las imágenes más anchas se redimensionan manteniendo la proporción.</p>
             </div>
         </div>
 
@@ -510,18 +590,89 @@ async function uploadPhotos(files) {
     bar.style.display = 'block';
 
     let done = 0;
+    let totalOriginal   = 0;
+    let totalCompressed = 0;
+    const total = files.length;
+
     for (const file of Array.from(files)) {
-        const path = `semana-${currentWeek}/${Date.now()}_${file.name}`;
-        await sb.storage.from(BUCKET).upload(path, file, { upsert: true });
+        const { blob, originalSize, compressedSize, name } = await compressImage(file);
+        totalOriginal   += originalSize;
+        totalCompressed += compressedSize;
+
+        const path = `semana-${currentWeek}/${Date.now()}_${name}`;
+        await sb.storage.from(BUCKET).upload(path, blob, {
+            upsert: true, contentType: 'image/jpeg'
+        });
+
         done++;
-        fill.style.width = (done / files.length * 100) + '%';
+        fill.style.width = (done / total * 100) + '%';
     }
 
     bar.style.display = 'none';
     fill.style.width  = '0';
     document.getElementById('photos-file').value = '';
-    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''}`, 'ok');
+
+    const saving = Math.round((1 - totalCompressed / totalOriginal) * 100);
+    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOriginal)} → ${formatBytes(totalCompressed)} (−${saving}%)`, 'ok');
     await loadPhotos_list();
+}
+
+// ============================================
+// COMPRESOR
+// ============================================
+let compressMode = 'calidad';
+
+function setCompressMode(mode) {
+    compressMode = mode;
+    document.getElementById('tab-calidad').className = mode === 'calidad' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('tab-res').className     = mode === 'resolucion' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('panel-calidad').style.display    = mode === 'calidad' ? 'block' : 'none';
+    document.getElementById('panel-resolucion').style.display = mode === 'resolucion' ? 'block' : 'none';
+}
+
+function updateSlider() {
+    document.getElementById('val-calidad').textContent = document.getElementById('slider-calidad').value + '%';
+    document.getElementById('val-res').textContent     = document.getElementById('slider-res').value + 'px';
+}
+
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+async function compressImage(file) {
+    return new Promise((resolve) => {
+        const quality  = parseInt(document.getElementById('slider-calidad').value) / 100;
+        const maxWidth = parseInt(document.getElementById('slider-res').value);
+        const reader   = new FileReader();
+        reader.onload  = (e) => {
+            const img  = new Image();
+            img.onload = () => {
+                let w = img.width;
+                let h = img.height;
+                if (compressMode === 'resolucion' && w > maxWidth) {
+                    h = Math.round(h * maxWidth / w);
+                    w = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width  = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const q = compressMode === 'calidad' ? quality : 0.85;
+                canvas.toBlob((blob) => {
+                    resolve({
+                        blob,
+                        originalSize:   file.size,
+                        compressedSize: blob.size,
+                        name: file.name.replace(/\.[^.]+$/, '.jpg')
+                    });
+                }, 'image/jpeg', q);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
 async function deletePhoto(path, btn) {
