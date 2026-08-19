@@ -216,6 +216,79 @@
         .compress-summary span { color:var(--muted); }
         .compress-summary strong { color:var(--success); }
 
+        /* PREVIEW PANEL */
+        .preview-panel {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:16px; padding:1.25rem;
+            margin-bottom:1rem; display:none;
+        }
+        .preview-panel-title {
+            font-size:.78rem; font-weight:700; color:var(--muted);
+            text-transform:uppercase; letter-spacing:1px;
+            margin-bottom:1rem; display:flex; align-items:center; gap:8px;
+        }
+        .preview-panel-title i { color:var(--light); }
+        .preview-file-row {
+            display:flex; align-items:center; gap:10px;
+            padding:8px 10px; background:var(--dark);
+            border-radius:8px; border:1px solid var(--border);
+            margin-bottom:8px;
+        }
+        .preview-file-row i { font-size:1rem; color:var(--muted); flex-shrink:0; }
+        .preview-file-name {
+            flex:1; font-size:.82rem; color:var(--text);
+            overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+        }
+        .preview-file-orig { font-size:.78rem; color:var(--muted); white-space:nowrap; }
+        .preview-arrow { color:var(--muted); font-size:.8rem; }
+        .preview-file-comp { font-size:.82rem; font-weight:700; color:var(--success); white-space:nowrap; }
+        .preview-file-pct {
+            font-size:.72rem; font-weight:700; color:var(--success);
+            background:rgba(16,185,129,.15); padding:2px 7px;
+            border-radius:10px; white-space:nowrap;
+        }
+        .preview-stats {
+            display:grid; grid-template-columns:repeat(3,1fr);
+            gap:10px; margin:12px 0;
+        }
+        .preview-stat {
+            background:var(--dark); border:1px solid var(--border);
+            border-radius:8px; padding:10px; text-align:center;
+        }
+        .preview-stat.highlight {
+            background:rgba(16,185,129,.1);
+            border-color:rgba(16,185,129,.3);
+        }
+        .preview-stat-label { font-size:.7rem; color:var(--muted); margin-bottom:4px; }
+        .preview-stat-val { font-size:1.1rem; font-weight:700; color:var(--text); }
+        .preview-stat.highlight .preview-stat-val { color:var(--success); }
+        .supabase-bar-wrap {
+            background:var(--dark); border:1px solid var(--border);
+            border-radius:8px; padding:10px 12px;
+            display:flex; align-items:center; gap:10px;
+            margin-bottom:12px; font-size:.78rem;
+        }
+        .supabase-bar-wrap i { color:var(--muted); }
+        .supabase-bar-label { flex:1; color:var(--muted); }
+        .supabase-bar-label span { color:var(--text); font-weight:600; }
+        .supabase-bar-track {
+            width:100px; height:5px; background:var(--border);
+            border-radius:10px; overflow:hidden; flex-shrink:0;
+        }
+        .supabase-bar-fill { height:100%; background:var(--light); border-radius:10px; transition:width .5s; }
+        .supabase-bar-pct { color:var(--muted); white-space:nowrap; }
+
+        .btn-upload-preview {
+            width:100%; padding:12px;
+            background:var(--blue); color:white; border:none;
+            border-radius:12px; font-size:.95rem; font-weight:700;
+            font-family:'Inter',sans-serif; cursor:pointer;
+            transition:all .3s; display:flex;
+            align-items:center; justify-content:center; gap:10px;
+        }
+        .btn-upload-preview:hover { background:#0063bf; transform:translateY(-2px); }
+        .btn-upload-preview:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; transform:none; }
+
         /* Upload bar */
         .upload-bar-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--light)); border-radius:4px; width:0; transition:width .3s; }
 
@@ -263,7 +336,11 @@
             <label>Semana</label>
             <div class="week-controls">
                 <button class="week-arrow" onclick="changeWeek(-1)"><i class="fas fa-minus"></i></button>
-                <div id="week-num">86</div>
+                <input type="number" id="week-num" min="1" max="999" value="86"
+                    onchange="goToWeek(this.value)"
+                    style="font-size:1.8rem; font-weight:900; color:var(--light); min-width:72px;
+                           background:none; border:none; outline:none; text-align:center;
+                           font-family:'Inter',sans-serif; -moz-appearance:textfield; width:80px;">
                 <button class="week-arrow" onclick="changeWeek(1)"><i class="fas fa-plus"></i></button>
                 <span class="week-pill" id="week-pill">Semana 86</span>
             </div>
@@ -353,15 +430,58 @@
                 <p style="margin-top:4px;">JPG, PNG, WEBP · Máx. 10MB por foto</p>
             </div>
             <input type="file" id="photos-file" multiple accept="image/*"
-                style="display:none;" onchange="uploadPhotos(this.files)">
+                style="display:none;" onchange="prepareUpload(this.files)">
+
+            <!-- Panel de previsualización y resumen -->
+            <div class="preview-panel" id="preview-panel">
+                <div class="preview-panel-title">
+                    <i class="fas fa-list"></i>
+                    <span id="preview-panel-title">Vista previa</span>
+                </div>
+
+                <!-- Lista de archivos -->
+                <div id="preview-file-list"></div>
+
+                <!-- Estadísticas globales -->
+                <div class="preview-stats">
+                    <div class="preview-stat">
+                        <div class="preview-stat-label">Original</div>
+                        <div class="preview-stat-val" id="stat-orig">—</div>
+                    </div>
+                    <div class="preview-stat highlight">
+                        <div class="preview-stat-label">Comprimido</div>
+                        <div class="preview-stat-val" id="stat-comp">—</div>
+                    </div>
+                    <div class="preview-stat highlight">
+                        <div class="preview-stat-label">Ahorro</div>
+                        <div class="preview-stat-val" id="stat-pct">—</div>
+                    </div>
+                </div>
+
+                <!-- Uso de Supabase -->
+                <div class="supabase-bar-wrap">
+                    <i class="fas fa-database"></i>
+                    <div class="supabase-bar-label">
+                        Supabase: <span id="supa-used">calculando...</span>
+                    </div>
+                    <div class="supabase-bar-track">
+                        <div class="supabase-bar-fill" id="supa-bar" style="width:0%"></div>
+                    </div>
+                    <span class="supabase-bar-pct" id="supa-pct"></span>
+                </div>
+
+                <!-- Botón de subida -->
+                <button class="btn-upload-preview" id="btn-upload-final" onclick="doUpload()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="btn-upload-label">Subir fotos</span>
+                </button>
+            </div>
 
             <div class="upload-bar" id="upload-bar">
                 <div class="upload-bar-fill" id="upload-fill"></div>
             </div>
 
-            <div class="photo-grid" id="photo-grid">
-                <!-- Fotos existentes -->
-            </div>
+            <div class="photo-grid" id="photo-grid"></div>
         </div>
     </main>
 </div>
@@ -390,7 +510,7 @@ function login() {
     if (document.getElementById('pwd').value === ADMIN_PASSWORD) {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        loadWeek();
+        loadLatestWeek();
     } else {
         document.getElementById('login-err').style.display = 'block';
         document.getElementById('pwd').value = '';
@@ -407,8 +527,35 @@ function logout() {
 // ============================================
 function changeWeek(d) {
     currentWeek = Math.max(1, currentWeek + d);
-    document.getElementById('week-num').textContent  = currentWeek;
+    document.getElementById('week-num').value    = currentWeek;
     document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+    loadWeek();
+}
+
+function goToWeek(val) {
+    const n = parseInt(val);
+    if (!n || n < 1) return;
+    currentWeek = n;
+    document.getElementById('week-num').value        = currentWeek;
+    document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+    loadWeek();
+}
+
+async function loadLatestWeek() {
+    // Detectar la última semana con contenido en Supabase
+    const { data } = await sb
+        .from('semanas')
+        .select('numero')
+        .order('numero', { ascending: false })
+        .limit(1)
+        .single();
+
+    if (data) {
+        currentWeek = data.numero;
+        document.getElementById('week-num').value        = currentWeek;
+        document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+        setStatus(`<i class="fas fa-circle-check" style="color:var(--success)"></i> Última semana con contenido`);
+    }
     loadWeek();
 }
 
@@ -583,38 +730,126 @@ async function loadPhotos_list() {
     });
 }
 
-async function uploadPhotos(files) {
+// ============================================
+// PREVIEW + UPLOAD CON RESUMEN
+// ============================================
+let pendingFiles    = [];
+let compressedBlobs = [];
+
+async function prepareUpload(files) {
     if (!files || files.length === 0) return;
+    pendingFiles    = Array.from(files);
+    compressedBlobs = [];
+
+    const panel     = document.getElementById('preview-panel');
+    const fileList  = document.getElementById('preview-file-list');
+    const title     = document.getElementById('preview-panel-title');
+    const btnLabel  = document.getElementById('btn-upload-label');
+    const btnFinal  = document.getElementById('btn-upload-final');
+
+    panel.style.display  = 'block';
+    fileList.innerHTML   = '<div style="color:var(--muted); font-size:.82rem; padding:8px 0;"><i class="fas fa-spinner fa-spin"></i> Calculando compresión...</div>';
+    btnFinal.disabled    = true;
+    title.textContent    = `Vista previa · ${pendingFiles.length} foto${pendingFiles.length > 1 ? 's' : ''} seleccionada${pendingFiles.length > 1 ? 's' : ''}`;
+
+    let totalOrig = 0, totalComp = 0;
+    fileList.innerHTML = '';
+
+    for (const file of pendingFiles) {
+        const result = await compressImage(file);
+        compressedBlobs.push(result);
+        totalOrig += result.originalSize;
+        totalComp += result.compressedSize;
+
+        const pct  = Math.round((1 - result.compressedSize / result.originalSize) * 100);
+        const row  = document.createElement('div');
+        row.className = 'preview-file-row';
+        row.innerHTML = `
+            <i class="fas fa-image"></i>
+            <span class="preview-file-name">${file.name}</span>
+            <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
+            <span class="preview-arrow">→</span>
+            <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
+            <span class="preview-file-pct">−${pct}%</span>`;
+        fileList.appendChild(row);
+    }
+
+    // Stats globales
+    const totalPct = Math.round((1 - totalComp / totalOrig) * 100);
+    document.getElementById('stat-orig').textContent = formatBytes(totalOrig);
+    document.getElementById('stat-comp').textContent = formatBytes(totalComp);
+    document.getElementById('stat-pct').textContent  = `−${totalPct}%`;
+
+    // Uso de Supabase
+    await updateStorageBar(totalComp);
+
+    btnLabel.textContent = `Subir ${pendingFiles.length} foto${pendingFiles.length > 1 ? 's' : ''} (${formatBytes(totalComp)})`;
+    btnFinal.disabled    = false;
+    document.getElementById('photos-file').value = '';
+}
+
+async function updateStorageBar(pendingBytes = 0) {
+    const LIMIT_GB   = 1;
+    const LIMIT_B    = LIMIT_GB * 1024 * 1024 * 1024;
+
+    try {
+        const { data } = await sb.storage.from(BUCKET).list('', { limit: 1000 });
+        let used = (data || []).reduce((acc, f) => acc + (f.metadata?.size || 0), 0);
+        const total  = used + pendingBytes;
+        const pct    = Math.min(100, Math.round(total / LIMIT_B * 100));
+        const color  = pct > 80 ? 'var(--error)' : pct > 60 ? 'var(--warning)' : 'var(--light)';
+
+        document.getElementById('supa-used').innerHTML =
+            `${formatBytes(used)} usado + <strong style="color:var(--success);">${formatBytes(pendingBytes)} nuevo</strong> = ${formatBytes(total)} de ${LIMIT_GB} GB`;
+        document.getElementById('supa-bar').style.width = pct + '%';
+        document.getElementById('supa-bar').style.background = color;
+        document.getElementById('supa-pct').textContent = pct + '%';
+    } catch(e) {
+        document.getElementById('supa-used').textContent = 'No se pudo calcular el uso';
+    }
+}
+
+async function doUpload() {
+    if (!compressedBlobs.length) return;
+    const btn  = document.getElementById('btn-upload-final');
     const bar  = document.getElementById('upload-bar');
     const fill = document.getElementById('upload-fill');
+
+    btn.disabled      = true;
     bar.style.display = 'block';
 
     let done = 0;
-    let totalOriginal   = 0;
-    let totalCompressed = 0;
-    const total = files.length;
+    let totalOrig = 0, totalComp = 0;
 
-    for (const file of Array.from(files)) {
-        const { blob, originalSize, compressedSize, name } = await compressImage(file);
-        totalOriginal   += originalSize;
-        totalCompressed += compressedSize;
-
-        const path = `semana-${currentWeek}/${Date.now()}_${name}`;
-        await sb.storage.from(BUCKET).upload(path, blob, {
+    for (const result of compressedBlobs) {
+        totalOrig += result.originalSize;
+        totalComp += result.compressedSize;
+        const path = `semana-${currentWeek}/${Date.now()}_${result.name}`;
+        await sb.storage.from(BUCKET).upload(path, result.blob, {
             upsert: true, contentType: 'image/jpeg'
         });
-
         done++;
-        fill.style.width = (done / total * 100) + '%';
+        fill.style.width = (done / compressedBlobs.length * 100) + '%';
     }
 
     bar.style.display = 'none';
     fill.style.width  = '0';
-    document.getElementById('photos-file').value = '';
 
-    const saving = Math.round((1 - totalCompressed / totalOriginal) * 100);
-    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOriginal)} → ${formatBytes(totalCompressed)} (−${saving}%)`, 'ok');
+    const saving = Math.round((1 - totalComp / totalOrig) * 100);
+    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
+
+    // Limpiar preview
+    document.getElementById('preview-panel').style.display = 'none';
+    pendingFiles    = [];
+    compressedBlobs = [];
+    btn.disabled    = false;
+
     await loadPhotos_list();
+}
+
+async function uploadPhotos(files) {
+    // Alias por compatibilidad con drag & drop
+    await prepareUpload(files);
 }
 
 // ============================================
@@ -701,7 +936,7 @@ dz.addEventListener('dragleave', ()  => dz.classList.remove('drag'));
 dz.addEventListener('drop', e => {
     e.preventDefault();
     dz.classList.remove('drag');
-    uploadPhotos(e.dataTransfer.files);
+    prepareUpload(e.dataTransfer.files);
 });
 
 // ============================================
