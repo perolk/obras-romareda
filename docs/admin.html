@@ -216,7 +216,62 @@
         .compress-summary span { color:var(--muted); }
         .compress-summary strong { color:var(--success); }
 
-        /* PREVIEW PANEL */
+        /* STORAGE STATS */
+        .storage-panel {
+            background:var(--card); border:1px solid var(--border);
+            border-radius:16px; padding:1.25rem;
+            margin-bottom:1.5rem;
+            display:grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap:1rem;
+            align-items:center;
+        }
+        .storage-stat {
+            display:flex; flex-direction:column; gap:2px;
+        }
+        .storage-stat-label {
+            font-size:.7rem; font-weight:700; color:var(--muted);
+            text-transform:uppercase; letter-spacing:1px;
+        }
+        .storage-stat-val {
+            font-size:1.3rem; font-weight:900; color:var(--text);
+            line-height:1;
+        }
+        .storage-stat-sub {
+            font-size:.72rem; color:var(--muted); margin-top:2px;
+        }
+        .storage-stat-val.ok     { color:var(--success); }
+        .storage-stat-val.warn   { color:var(--warning,#f59e0b); }
+        .storage-stat-val.danger { color:var(--error); }
+        .storage-bar-col {
+            display:flex; flex-direction:column; gap:6px; min-width:160px;
+        }
+        .storage-bar-track {
+            height:8px; background:var(--border);
+            border-radius:10px; overflow:hidden;
+        }
+        .storage-bar-fill {
+            height:100%; border-radius:10px;
+            background:var(--success);
+            transition:width .6s ease;
+        }
+        .storage-bar-labels {
+            display:flex; justify-content:space-between;
+            font-size:.7rem; color:var(--muted);
+        }
+        .storage-refresh {
+            width:32px; height:32px; border-radius:8px;
+            border:1px solid var(--border); background:none;
+            color:var(--muted); cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:all .2s; font-size:.85rem;
+        }
+        .storage-refresh:hover { border-color:var(--light); color:var(--light); }
+        .storage-refresh.spinning i { animation:spin .8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @media(max-width:700px) {
+            .storage-panel { grid-template-columns:1fr 1fr; }
+        }
         .preview-panel {
             background:var(--card); border:1px solid var(--border);
             border-radius:16px; padding:1.25rem;
@@ -331,6 +386,37 @@
     </header>
 
     <main>
+        <!-- Panel de almacenamiento -->
+        <div class="storage-panel" id="storage-panel">
+            <div class="storage-stat">
+                <div class="storage-stat-label">Usado</div>
+                <div class="storage-stat-val" id="st-used">—</div>
+                <div class="storage-stat-sub">en bucket fotos</div>
+            </div>
+            <div class="storage-stat">
+                <div class="storage-stat-label">Disponible</div>
+                <div class="storage-stat-val ok" id="st-free">—</div>
+                <div class="storage-stat-sub">plan gratuito (1 GB)</div>
+            </div>
+            <div class="storage-stat">
+                <div class="storage-stat-label">Fotos subidas</div>
+                <div class="storage-stat-val" id="st-count">—</div>
+                <div class="storage-stat-sub" id="st-avg">peso medio —</div>
+            </div>
+            <div class="storage-bar-col">
+                <div class="storage-bar-track">
+                    <div class="storage-bar-fill" id="st-bar" style="width:0%"></div>
+                </div>
+                <div class="storage-bar-labels">
+                    <span id="st-pct">0%</span>
+                    <span>1 GB</span>
+                </div>
+            </div>
+            <button class="storage-refresh" id="st-refresh-btn" onclick="loadStorageStats()" title="Actualizar">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+
         <!-- Selector de semana -->
         <div class="week-bar">
             <label>Semana</label>
@@ -511,6 +597,7 @@ function login() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         loadLatestWeek();
+        loadStorageStats();
     } else {
         document.getElementById('login-err').style.display = 'block';
         document.getElementById('pwd').value = '';
@@ -731,8 +818,64 @@ async function loadPhotos_list() {
 }
 
 // ============================================
-// PREVIEW + UPLOAD CON RESUMEN
+// ESTADÍSTICAS DE ALMACENAMIENTO
 // ============================================
+const STORAGE_LIMIT_GB = 1;         // Plan gratuito Supabase
+const STORAGE_LIMIT_B  = STORAGE_LIMIT_GB * 1024 * 1024 * 1024;
+
+async function loadStorageStats() {
+    const btn = document.getElementById('st-refresh-btn');
+    btn.classList.add('spinning');
+
+    try {
+        // Listar todos los archivos del bucket recursivamente
+        let totalSize  = 0;
+        let totalFiles = 0;
+        let cursor     = null;
+        let folders    = [''];  // empezar desde la raíz
+
+        // Obtener lista de carpetas (semana-N)
+        const { data: rootItems } = await sb.storage.from(BUCKET).list('', { limit:1000 });
+        const weekFolders = (rootItems || []).filter(f => !f.id).map(f => f.name);
+
+        // Para cada carpeta de semana, listar sus archivos
+        for (const folder of weekFolders) {
+            const { data: files } = await sb.storage.from(BUCKET)
+                .list(folder, { limit:1000 });
+            for (const f of (files || [])) {
+                if (f.metadata?.size) {
+                    totalSize  += f.metadata.size;
+                    totalFiles++;
+                }
+            }
+        }
+
+        const freeB  = Math.max(0, STORAGE_LIMIT_B - totalSize);
+        const pct    = Math.min(100, (totalSize / STORAGE_LIMIT_B * 100));
+        const avgB   = totalFiles > 0 ? totalSize / totalFiles : 0;
+        const color  = pct > 80 ? '#ef4444' : pct > 60 ? '#f59e0b' : '#10b981';
+
+        document.getElementById('st-used').textContent  = formatBytes(totalSize);
+        document.getElementById('st-free').textContent  = formatBytes(freeB);
+        document.getElementById('st-count').textContent = totalFiles;
+        document.getElementById('st-avg').textContent   = `peso medio ${formatBytes(avgB)}`;
+        document.getElementById('st-pct').textContent   = pct.toFixed(1) + '%';
+        document.getElementById('st-bar').style.width      = pct + '%';
+        document.getElementById('st-bar').style.background = color;
+
+        // Color del "disponible"
+        const freeEl = document.getElementById('st-free');
+        freeEl.className = 'storage-stat-val ' + (pct > 80 ? 'danger' : pct > 60 ? 'warn' : 'ok');
+
+    } catch(e) {
+        document.getElementById('st-used').textContent = 'Error';
+        console.error('Storage stats error:', e);
+    }
+
+    btn.classList.remove('spinning');
+}
+
+
 let pendingFiles    = [];
 let compressedBlobs = [];
 
@@ -845,6 +988,7 @@ async function doUpload() {
     btn.disabled    = false;
 
     await loadPhotos_list();
+    loadStorageStats(); // Actualizar estadísticas tras subida
 }
 
 async function uploadPhotos(files) {
