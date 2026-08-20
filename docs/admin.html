@@ -457,6 +457,7 @@
                     <span>1 GB</span>
                 </div>
                 <div style="margin-top:8px; font-size:.72rem; color:var(--muted);" id="st-avg"></div>
+                <div style="margin-top:4px; font-size:.78rem; font-weight:700; color:var(--light);" id="st-capacity"></div>
             </div>
 
             <!-- Panel derecho: ranking semanas -->
@@ -925,6 +926,15 @@ async function loadStorageStats() {
         document.getElementById('st-free').textContent  = formatBytes(freeB);
         document.getElementById('st-count').textContent = totalFiles;
         document.getElementById('st-avg').textContent   = `Peso medio por foto: ${formatBytes(avgB)}`;
+
+        // Fotos que caben con el espacio disponible
+        const capacityEl = document.getElementById('st-capacity');
+        if (avgB > 0) {
+            const fotosCaben = Math.floor(freeB / avgB);
+            capacityEl.textContent = `~${fotosCaben.toLocaleString('es-ES')} fotos más con el espacio disponible`;
+        } else {
+            capacityEl.textContent = '';
+        }
         document.getElementById('st-pct').textContent   = pct.toFixed(1) + '%';
         document.getElementById('st-bar').style.width      = pct + '%';
         document.getElementById('st-bar').style.background = color;
