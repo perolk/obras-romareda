@@ -206,6 +206,7 @@
         <div id="hero-badge" class="week-badge">Cargando...</div>
         <h1 id="hero-title" class="week-title">Cargando semana...</h1>
         <div class="week-meta">
+            <span><i class="fas fa-calendar"></i> <span id="hero-date"></span></span>
             <span><i class="fas fa-images"></i> <span id="hero-photos">0 fotos</span></span>
         </div>
     </div>
@@ -304,6 +305,17 @@
         const BUCKET        = 'fotos';
         const sb            = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        const OBRAS_START = new Date('2024-07-08T00:00:00');
+
+        function getWeekDates(weekNum) {
+            const start = new Date(OBRAS_START);
+            start.setDate(start.getDate() + (weekNum - 1) * 7);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            const fmt = (d) => d.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+            return { start: fmt(start), end: fmt(end) };
+        }
+
         // Leer número de semana del parámetro ?n=86
         const params   = new URLSearchParams(window.location.search);
         const WEEK_NUM = parseInt(params.get('n')) || 1;
@@ -345,8 +357,10 @@
         }
 
         function renderHero(meta, photoCount) {
+            const dates = getWeekDates(WEEK_NUM);
             document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
-            document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-title').textContent  = meta.title || `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
         }
 

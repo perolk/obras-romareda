@@ -494,6 +494,7 @@
                            font-family:'Inter',sans-serif; -moz-appearance:textfield; width:80px;">
                 <button class="week-arrow" onclick="changeWeek(1)"><i class="fas fa-plus"></i></button>
                 <span class="week-pill" id="week-pill">Semana 86</span>
+            <span style="font-size:.75rem; color:rgba(255,255,255,.5); margin-left:4px;" id="week-dates"></span>
             </div>
             <div class="week-save-status" id="week-status">
                 <i class="fas fa-circle-question"></i> Cargando...
@@ -772,10 +773,16 @@ function logout() {
 // ============================================
 // SEMANA
 // ============================================
+function updateWeekUI() {
+    document.getElementById('week-num').value        = currentWeek;
+    document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+    const dates = getWeekDates(currentWeek);
+    document.getElementById('week-dates').textContent = `${dates.start} – ${dates.end}`;
+}
+
 function changeWeek(d) {
     currentWeek = Math.max(1, currentWeek + d);
-    document.getElementById('week-num').value    = currentWeek;
-    document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+    updateWeekUI();
     loadWeek();
 }
 
@@ -783,13 +790,11 @@ function goToWeek(val) {
     const n = parseInt(val);
     if (!n || n < 1) return;
     currentWeek = n;
-    document.getElementById('week-num').value        = currentWeek;
-    document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
+    updateWeekUI();
     loadWeek();
 }
 
 async function loadLatestWeek() {
-    // Detectar la última semana con contenido en Supabase
     const { data } = await sb
         .from('semanas')
         .select('numero')
@@ -799,10 +804,9 @@ async function loadLatestWeek() {
 
     if (data) {
         currentWeek = data.numero;
-        document.getElementById('week-num').value        = currentWeek;
-        document.getElementById('week-pill').textContent = `Semana ${currentWeek}`;
         setStatus(`<i class="fas fa-circle-check" style="color:var(--success)"></i> Última semana con contenido`);
     }
+    updateWeekUI();
     loadWeek();
 }
 
@@ -983,80 +987,95 @@ async function loadPhotos_list() {
 const STORAGE_LIMIT_GB = 1;
 const STORAGE_LIMIT_B  = STORAGE_LIMIT_GB * 1024 * 1024 * 1024;
 
+// ============================================
+// FECHAS DE SEMANA (automáticas)
+// ============================================
+const OBRAS_START = new Date('2024-07-08T00:00:00');
+
+function getWeekDates(weekNum) {
+    const start = new Date(OBRAS_START);
+    start.setDate(start.getDate() + (weekNum - 1) * 7);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    const fmt = (d) => d.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+    return { start: fmt(start), end: fmt(end) };
+}
+
 async function loadStorageStats() {
     const btn = document.getElementById('st-refresh-btn');
     btn.classList.add('spinning');
 
     try {
-        // Obtener carpetas (semana-N)
-        const { data: rootItems } = await sb.storage.from(BUCKET).list('', { limit:1000 });
-        const weekFolders = (rootItems || []).filter(f => !f.id).map(f => f.name);
-
         let totalSize  = 0;
         let totalFiles = 0;
-        const weekStats = [];
+        const allItems = []; // para el ranking unificado
 
-        // Para cada semana, listar archivos y sumar tamaños
+        // --- Bucket fotos (carpetas semana-N) ---
+        const { data: rootItems } = await sb.storage.from('fotos').list('', { limit:1000 });
+        const weekFolders = (rootItems || []).filter(f => !f.id).map(f => f.name);
+
         for (const folder of weekFolders) {
-            const { data: files } = await sb.storage.from(BUCKET)
-                .list(folder, { limit:1000 });
-            let weekSize  = 0;
-            let weekFiles = 0;
+            const { data: files } = await sb.storage.from('fotos').list(folder, { limit:1000 });
+            let sz = 0, cnt = 0;
             for (const f of (files || [])) {
-                if (f.metadata?.size) {
-                    weekSize  += f.metadata.size;
-                    weekFiles++;
-                    totalSize  += f.metadata.size;
-                    totalFiles++;
-                }
+                if (f.metadata?.size) { sz += f.metadata.size; cnt++; totalSize += f.metadata.size; totalFiles++; }
             }
-            if (weekFiles > 0) {
-                weekStats.push({ folder, size: weekSize, count: weekFiles });
-            }
+            if (cnt > 0) allItems.push({ label: `Semana ${folder.replace('semana-','')}`, size: sz, count: cnt, bucket: 'fotos', weekNum: parseInt(folder.replace('semana-','')) });
         }
 
-        // Ordenar semanas por tamaño descendente
-        weekStats.sort((a, b) => b.size - a.size);
-        const maxSize = weekStats[0]?.size || 1;
+        // --- Bucket historia (archivos en raíz) ---
+        const { data: histFiles } = await sb.storage.from('historia').list('', { limit:1000 });
+        let histSize = 0, histCount = 0;
+        for (const f of (histFiles || [])) {
+            if (f.metadata?.size && f.name !== '.emptyFolderPlaceholder') {
+                histSize += f.metadata.size; histCount++;
+                totalSize += f.metadata.size; totalFiles++;
+            }
+        }
+        if (histCount > 0) allItems.push({ label: 'La Vieja Romareda', size: histSize, count: histCount, bucket: 'historia' });
+
+        // Actualizar stats del tab historia
+        document.getElementById('hist-count').textContent = histCount;
+        document.getElementById('hist-size').textContent  = formatBytes(histSize);
+
+        // Ordenar por tamaño
+        allItems.sort((a, b) => b.size - a.size);
+        const maxSize = allItems[0]?.size || 1;
 
         // Stats globales
-        const freeB  = Math.max(0, STORAGE_LIMIT_B - totalSize);
-        const pct    = Math.min(100, (totalSize / STORAGE_LIMIT_B * 100));
-        const avgB   = totalFiles > 0 ? totalSize / totalFiles : 0;
-        const color  = pct > 80 ? '#ef4444' : pct > 60 ? '#f59e0b' : '#10b981';
+        const freeB = Math.max(0, STORAGE_LIMIT_B - totalSize);
+        const pct   = Math.min(100, (totalSize / STORAGE_LIMIT_B * 100));
+        const avgB  = totalFiles > 0 ? totalSize / totalFiles : 0;
+        const color = pct > 80 ? '#ef4444' : pct > 60 ? '#f59e0b' : '#10b981';
 
         document.getElementById('st-used').textContent  = formatBytes(totalSize);
         document.getElementById('st-free').textContent  = formatBytes(freeB);
         document.getElementById('st-count').textContent = totalFiles;
         document.getElementById('st-avg').textContent   = `Peso medio por foto: ${formatBytes(avgB)}`;
 
-        // Fotos que caben con el espacio disponible
         const capacityEl = document.getElementById('st-capacity');
         if (avgB > 0) {
-            const fotosCaben = Math.floor(freeB / avgB);
-            capacityEl.textContent = `~${fotosCaben.toLocaleString('es-ES')} fotos más con el espacio disponible`;
-        } else {
-            capacityEl.textContent = '';
+            capacityEl.textContent = `~${Math.floor(freeB / avgB).toLocaleString('es-ES')} fotos más con el espacio disponible`;
         }
-        document.getElementById('st-pct').textContent   = pct.toFixed(1) + '%';
+
+        document.getElementById('st-pct').textContent      = pct.toFixed(1) + '%';
         document.getElementById('st-bar').style.width      = pct + '%';
         document.getElementById('st-bar').style.background = color;
+        document.getElementById('st-free').className = 'storage-stat-val ' + (pct > 80 ? 'danger' : pct > 60 ? 'warn' : '');
 
-        const freeEl = document.getElementById('st-free');
-        freeEl.className = 'storage-stat-val ' + (pct > 80 ? 'danger' : pct > 60 ? 'warn' : '');
-
-        // Ranking semanas
+        // Ranking unificado (fotos + historia)
         const rankEl = document.getElementById('week-ranking');
-        if (weekStats.length === 0) {
+        if (allItems.length === 0) {
             rankEl.innerHTML = '<div style="color:var(--muted); font-size:.82rem; text-align:center; padding:1rem;">Sin datos todavía</div>';
         } else {
-            rankEl.innerHTML = weekStats.slice(0, 7).map((w, i) => {
+            rankEl.innerHTML = allItems.slice(0, 7).map((w, i) => {
                 const barPct  = Math.round(w.size / maxSize * 100);
-                const weekNum = w.folder.replace('semana-', '');
+                const onclick = w.weekNum ? `onclick="goToWeek(${w.weekNum})"` : '';
+                const icon    = w.bucket === 'historia' ? '📸 ' : '';
                 return `
                     <div class="week-rank-row">
                         <span class="week-rank-num">${i + 1}</span>
-                        <span class="week-rank-name" onclick="goToWeek(${weekNum})">Semana ${weekNum}</span>
+                        <span class="week-rank-name" ${onclick}>${icon}${w.label}</span>
                         <div class="week-rank-bar-wrap">
                             <div class="week-rank-bar-track">
                                 <div class="week-rank-bar-fill" style="width:${barPct}%"></div>
