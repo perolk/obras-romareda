@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Vieja Romareda · Obras Romareda</title>
+    <meta name="description" content="Galería de fotos históricas de la Romareda antes de su demolición. Recuerdos de un estadio legendario.">
+    <meta property="og:title" content="La Vieja Romareda · Obras Romareda">
+    <meta property="og:description" content="Galería de fotos históricas de la Romareda antes de su demolición.">
+    <meta property="og:image" content="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --blue: #00529F;
+            --light: #4DA9FF;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+            --bg: #f9fafb;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
+
+        /* TOP BAR */
+        .top-bar {
+            background:var(--blue); padding:14px 5%;
+            display:flex; align-items:center; justify-content:space-between;
+            position:sticky; top:0; z-index:100;
+            box-shadow:0 4px 15px rgba(0,0,0,.2);
+        }
+        .top-bar-logo {
+            font-family:'Calibri','Segoe UI',sans-serif;
+            font-weight:700; font-style:italic;
+            font-size:1.4rem; color:white; text-decoration:none;
+        }
+        .top-bar-logo:hover { color:var(--light); }
+        .back-link {
+            display:flex; align-items:center; gap:8px;
+            color:rgba(255,255,255,.7); font-size:.9rem;
+            text-decoration:none; transition:color .2s;
+        }
+        .back-link:hover { color:white; }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.7)),
+                        url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');
+            background-size:cover; background-position:center;
+            padding:5rem 10%;
+            color:white; text-align:center;
+        }
+        .hero-badge {
+            display:inline-block; background:rgba(255,255,255,.15);
+            border:1px solid rgba(255,255,255,.3);
+            color:white; font-size:.78rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:2px;
+            padding:5px 16px; border-radius:20px; margin-bottom:1.2rem;
+        }
+        .hero h1 {
+            font-size:3rem; font-weight:900; color:white;
+            margin-bottom:1rem; line-height:1.1;
+        }
+        .hero p {
+            font-size:1.1rem; color:rgba(255,255,255,.75);
+            max-width:600px; margin:0 auto 2rem; line-height:1.65;
+        }
+        .hero-stats {
+            display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap;
+        }
+        .hero-stat { text-align:center; }
+        .hero-stat-num {
+            font-size:1.8rem; font-weight:900; color:var(--light); display:block;
+        }
+        .hero-stat-label {
+            font-size:.78rem; color:rgba(255,255,255,.55);
+            text-transform:uppercase; letter-spacing:1px;
+        }
+
+        /* GALERÍA MASONRY */
+        .gallery-section { padding:4rem 5%; max-width:1400px; margin:0 auto; }
+
+        .gallery-filters {
+            display:flex; align-items:center; gap:12px;
+            margin-bottom:2rem; flex-wrap:wrap;
+        }
+        .gallery-count {
+            font-size:.88rem; color:var(--muted);
+            margin-left:auto;
+        }
+
+        /* Masonry con CSS columns */
+        .masonry {
+            columns:4; column-gap:12px;
+        }
+        .masonry-item {
+            break-inside:avoid; margin-bottom:12px;
+            border-radius:10px; overflow:hidden;
+            cursor:pointer; position:relative;
+            background:#e5e7eb;
+        }
+        .masonry-item img {
+            width:100%; display:block;
+            transition:transform .4s ease, filter .3s;
+        }
+        .masonry-item:hover img {
+            transform:scale(1.04); filter:brightness(.85);
+        }
+        .masonry-item .overlay {
+            position:absolute; inset:0;
+            background:linear-gradient(transparent 50%, rgba(0,0,0,.7));
+            opacity:0; transition:opacity .3s;
+            display:flex; align-items:flex-end; padding:12px;
+        }
+        .masonry-item:hover .overlay { opacity:1; }
+        .masonry-item .overlay span {
+            color:white; font-size:.78rem; font-weight:600;
+            line-height:1.3;
+        }
+
+        /* Skeleton masonry */
+        .masonry-skeleton {
+            break-inside:avoid; margin-bottom:12px;
+            border-radius:10px; overflow:hidden;
+            background:linear-gradient(90deg,#e5e7eb 25%,#d1d5db 50%,#e5e7eb 75%);
+            background-size:200% 100%;
+            animation:shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        /* CARGAR MÁS */
+        .load-more-wrap { text-align:center; padding:2rem 0; }
+        .load-more-btn {
+            padding:12px 36px; background:var(--blue); color:white;
+            border:none; border-radius:30px; font-size:.9rem; font-weight:700;
+            font-family:'Inter',sans-serif; cursor:pointer; transition:all .3s;
+        }
+        .load-more-btn:hover { background:#0063bf; transform:translateY(-2px); }
+        .load-more-btn:disabled { background:#e5e7eb; color:var(--muted); transform:none; cursor:not-allowed; }
+
+        /* LIGHTBOX */
+        #lightbox {
+            display:none; position:fixed; inset:0; z-index:2000;
+            background:rgba(0,0,0,.96);
+            align-items:center; justify-content:center; flex-direction:column;
+        }
+        #lightbox img {
+            max-width:90vw; max-height:85vh;
+            object-fit:contain; border-radius:4px;
+        }
+        #lb-close {
+            position:absolute; top:20px; right:28px;
+            color:white; font-size:2.5rem; cursor:pointer;
+            background:none; border:none; line-height:1;
+            transition:color .2s;
+        }
+        #lb-close:hover { color:var(--light); }
+        #lb-prev, #lb-next {
+            position:absolute; top:50%; transform:translateY(-50%);
+            color:white; font-size:2rem; cursor:pointer;
+            background:rgba(255,255,255,.1); border:none;
+            padding:16px 14px; transition:background .2s;
+        }
+        #lb-prev { left:0; border-radius:0 6px 6px 0; }
+        #lb-next { right:0; border-radius:6px 0 0 6px; }
+        #lb-prev:hover, #lb-next:hover { background:rgba(255,255,255,.25); }
+        #lb-caption {
+            color:rgba(255,255,255,.6); font-size:.85rem;
+            margin-top:12px; text-align:center;
+        }
+
+        /* COMPARTIR */
+        .share-fab {
+            position:fixed; bottom:2rem; right:2rem;
+            width:52px; height:52px; border-radius:50%;
+            background:var(--blue); color:white; border:none;
+            font-size:1.2rem; cursor:pointer;
+            box-shadow:0 8px 25px rgba(0,82,159,.4);
+            display:flex; align-items:center; justify-content:center;
+            transition:transform .2s, box-shadow .2s;
+            z-index:500;
+        }
+        .share-fab:hover { transform:scale(1.1); box-shadow:0 12px 30px rgba(0,82,159,.5); }
+
+        /* RESPONSIVE */
+        @media(max-width:1024px) { .masonry { columns:3; } }
+        @media(max-width:680px) {
+            .masonry { columns:2; }
+            .hero h1 { font-size:2rem; }
+            .hero { padding:3rem 5%; }
+        }
+        @media(max-width:400px) { .masonry { columns:1; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="index.html" class="top-bar-logo">@ObrasRomareda</a>
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Inicio
+        </a>
+    </div>
+
+    <div class="hero">
+        <div class="hero-badge">1957 – 2024</div>
+        <h1>La Vieja Romareda</h1>
+        <p>67 años de historia, pasión y recuerdos blanquiazules. Un estadio que fue mucho más que hormigón.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-num">1957</span>
+                <span class="hero-stat-label">Inauguración</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num" id="stat-photos">—</span>
+                <span class="hero-stat-label">Fotos</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">2024</span>
+                <span class="hero-stat-label">Demolición</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="gallery-section">
+        <div class="gallery-filters">
+            <span style="font-size:1rem; font-weight:700; color:var(--blue);">
+                <i class="fas fa-images" style="margin-right:6px;"></i>Archivo fotográfico
+            </span>
+            <span class="gallery-count" id="gallery-count"></span>
+        </div>
+
+        <div class="masonry" id="masonry">
+            <!-- Skeletons -->
+            <div class="masonry-skeleton" style="height:220px;"></div>
+            <div class="masonry-skeleton" style="height:160px;"></div>
+            <div class="masonry-skeleton" style="height:280px;"></div>
+            <div class="masonry-skeleton" style="height:200px;"></div>
+            <div class="masonry-skeleton" style="height:180px;"></div>
+            <div class="masonry-skeleton" style="height:240px;"></div>
+            <div class="masonry-skeleton" style="height:160px;"></div>
+            <div class="masonry-skeleton" style="height:200px;"></div>
+        </div>
+
+        <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
+            <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">
+                <i class="fas fa-chevron-down"></i> Cargar más fotos
+            </button>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <button id="lb-close" onclick="closeLb()">×</button>
+        <button id="lb-prev" onclick="changeLb(-1)">&#10094;</button>
+        <img id="lb-img" src="" alt="">
+        <div id="lb-caption"></div>
+        <button id="lb-next" onclick="changeLb(1)">&#10095;</button>
+    </div>
+
+    <!-- FAB compartir -->
+    <button class="share-fab" onclick="shareHistoria()" title="Compartir">
+        <i class="fas fa-share-alt"></i>
+    </button>
+
+    <script>
+        const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+        const BUCKET       = 'historia';
+        const PAGE_SIZE    = 24;
+
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allFiles    = [];
+        let shown       = 0;
+        let lbIndex     = 0;
+
+        // ============================================
+        // CARGA DE FOTOS
+        // ============================================
+        async function loadPhotos() {
+            const { data, error } = await sb.storage
+                .from(BUCKET)
+                .list('', { limit:1000, sortBy:{ column:'created_at', order:'desc' } });
+
+            if (error || !data) {
+                document.getElementById('masonry').innerHTML =
+                    '<p style="color:var(--muted); text-align:center; padding:2rem;">No hay fotos todavía.</p>';
+                return;
+            }
+
+            allFiles = data.filter(f => f.name !== '.emptyFolderPlaceholder');
+
+            // Stats
+            document.getElementById('stat-photos').textContent = allFiles.length;
+            document.getElementById('gallery-count').textContent =
+                `${allFiles.length} foto${allFiles.length !== 1 ? 's' : ''}`;
+
+            // Render primera página
+            document.getElementById('masonry').innerHTML = '';
+            shown = 0;
+            renderBatch();
+        }
+
+        function getUrl(name) {
+            const { data } = sb.storage.from(BUCKET).getPublicUrl(name);
+            return data.publicUrl;
+        }
+
+        function renderBatch() {
+            const masonry = document.getElementById('masonry');
+            const batch   = allFiles.slice(shown, shown + PAGE_SIZE);
+
+            batch.forEach((f, i) => {
+                const url  = getUrl(f.name);
+                const idx  = shown + i;
+                const item = document.createElement('div');
+                item.className = 'masonry-item';
+                item.onclick   = () => openLb(idx);
+                item.innerHTML = `
+                    <img src="${url}" alt="La Vieja Romareda" loading="lazy">
+                    <div class="overlay">
+                        <span>${f.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '')}</span>
+                    </div>`;
+                masonry.appendChild(item);
+            });
+
+            shown += batch.length;
+
+            // Botón cargar más
+            const wrap = document.getElementById('load-more-wrap');
+            const btn  = document.getElementById('load-more-btn');
+            if (shown < allFiles.length) {
+                wrap.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-chevron-down"></i> Cargar más fotos (${allFiles.length - shown} restantes)`;
+            } else {
+                wrap.style.display = 'none';
+            }
+        }
+
+        function loadMore() {
+            document.getElementById('load-more-btn').disabled = true;
+            renderBatch();
+        }
+
+        // ============================================
+        // LIGHTBOX
+        // ============================================
+        function openLb(idx) {
+            lbIndex = idx;
+            showLb();
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+        function showLb() {
+            const f   = allFiles[lbIndex];
+            const url = getUrl(f.name);
+            document.getElementById('lb-img').src = url;
+            document.getElementById('lb-caption').textContent =
+                `${lbIndex + 1} / ${allFiles.length}`;
+        }
+        function changeLb(dir) {
+            lbIndex = (lbIndex + dir + allFiles.length) % allFiles.length;
+            showLb();
+        }
+        function closeLb() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.getElementById('lb-img').src = '';
+        }
+
+        document.addEventListener('keydown', e => {
+            const lb = document.getElementById('lightbox');
+            if (lb.style.display !== 'flex') return;
+            if (e.key === 'ArrowLeft')  changeLb(-1);
+            if (e.key === 'ArrowRight') changeLb(1);
+            if (e.key === 'Escape')     closeLb();
+        });
+        document.getElementById('lightbox').addEventListener('click', e => {
+            if (e.target === document.getElementById('lightbox')) closeLb();
+        });
+
+        // ============================================
+        // COMPARTIR
+        // ============================================
+        async function shareHistoria() {
+            const url  = window.location.href;
+            const text = '📸 La Vieja Romareda — Archivo fotográfico de un estadio legendario';
+            if (navigator.share) {
+                try { await navigator.share({ title: 'La Vieja Romareda', text, url }); }
+                catch(e) {}
+            } else {
+                await navigator.clipboard.writeText(url);
+                alert('Enlace copiado al portapapeles');
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', loadPhotos);
+    </script>
+</body>
+</html>

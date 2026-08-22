@@ -420,6 +420,14 @@
 <div id="app">
     <header>
         <span class="header-logo">ObrasRomareda · Admin</span>
+        <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" id="tab-btn-semanas" onclick="switchTab('semanas')" style="font-size:.8rem; padding:6px 14px;">
+                <i class="fas fa-calendar-week"></i> Semanas
+            </button>
+            <button class="btn btn-outline" id="tab-btn-historia" onclick="switchTab('historia')" style="font-size:.8rem; padding:6px 14px;">
+                <i class="fas fa-landmark"></i> Vieja Romareda
+            </button>
+        </div>
         <button class="btn btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </header>
 
@@ -626,6 +634,101 @@
 
             <div class="photo-grid" id="photo-grid"></div>
         </div>
+    <!-- TAB: VIEJA ROMAREDA -->
+    <div id="tab-historia" style="display:none; padding:2rem; max-width:1000px; margin:0 auto;">
+
+        <!-- Stats bucket historia -->
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.25rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+            <div>
+                <div style="font-size:.7rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Fotos históricas subidas</div>
+                <div style="font-size:1.8rem; font-weight:900; color:var(--light);" id="hist-count">—</div>
+            </div>
+            <div>
+                <div style="font-size:.7rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Espacio usado</div>
+                <div style="font-size:1.8rem; font-weight:900; color:var(--text);" id="hist-size">—</div>
+            </div>
+            <a href="historia.html" target="_blank"
+               style="margin-left:auto; display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(77,169,255,.1); border:1px solid rgba(77,169,255,.3); color:var(--light); border-radius:10px; font-size:.82rem; font-weight:600; text-decoration:none;">
+                <i class="fas fa-external-link-alt"></i> Ver página pública
+            </a>
+        </div>
+
+        <!-- Compresor (reutiliza los mismos sliders) -->
+        <div class="compress-card">
+            <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+            <div class="compress-tabs">
+                <button class="compress-tab active" id="htab-calidad" onclick="setHistCompressMode('calidad')">Por calidad (%)</button>
+                <button class="compress-tab inactive" id="htab-res" onclick="setHistCompressMode('resolucion')">Por resolución (px)</button>
+            </div>
+            <div id="hpanel-calidad">
+                <div class="compress-slider-row">
+                    <label>Calidad</label>
+                    <input type="range" min="10" max="100" value="75" step="1" id="hslider-calidad" oninput="updateHSlider()">
+                    <span class="compress-val" id="hval-calidad">75%</span>
+                </div>
+                <p class="compress-hint">70–80% es un buen equilibrio entre calidad visual y peso.</p>
+            </div>
+            <div id="hpanel-resolucion" style="display:none;">
+                <div class="compress-slider-row">
+                    <label>Ancho máx.</label>
+                    <input type="range" min="400" max="4000" value="1920" step="100" id="hslider-res" oninput="updateHSlider()">
+                    <span class="compress-val" id="hval-res">1920px</span>
+                </div>
+                <p class="compress-hint">Las imágenes más anchas se redimensionan manteniendo la proporción.</p>
+            </div>
+        </div>
+
+        <!-- Dropzone historia -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-images"></i> Galería histórica
+                <span id="hist-photo-count" style="margin-left:auto; font-size:.8rem; color:var(--muted);"></span>
+            </div>
+
+            <div class="dropzone" id="hdropzone" onclick="document.getElementById('hist-file').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Arrastra las fotos históricas aquí o <span>haz clic para seleccionarlas</span></p>
+                <p style="margin-top:4px;">JPG, PNG, WEBP · Máx. 10MB por foto</p>
+            </div>
+            <input type="file" id="hist-file" multiple accept="image/*"
+                style="display:none;" onchange="prepareHistUpload(this.files)">
+
+            <!-- Preview panel historia -->
+            <div class="preview-panel" id="hist-preview-panel">
+                <div class="preview-panel-title">
+                    <i class="fas fa-list"></i>
+                    <span id="hist-preview-title">Vista previa</span>
+                </div>
+                <div id="hist-preview-list"></div>
+                <div class="preview-stats">
+                    <div class="preview-stat">
+                        <div class="preview-stat-label">Original</div>
+                        <div class="preview-stat-val" id="hstat-orig">—</div>
+                    </div>
+                    <div class="preview-stat highlight">
+                        <div class="preview-stat-label">Comprimido</div>
+                        <div class="preview-stat-val" id="hstat-comp">—</div>
+                    </div>
+                    <div class="preview-stat highlight">
+                        <div class="preview-stat-label">Ahorro</div>
+                        <div class="preview-stat-val" id="hstat-pct">—</div>
+                    </div>
+                </div>
+                <button class="btn-upload-preview" id="hist-upload-btn" onclick="doHistUpload()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="hist-upload-label">Subir fotos</span>
+                </button>
+            </div>
+
+            <div class="upload-bar" id="hist-upload-bar">
+                <div class="upload-bar-fill" id="hist-upload-fill"></div>
+            </div>
+
+            <!-- Grid fotos existentes -->
+            <div class="photo-grid" id="hist-photo-grid"></div>
+        </div>
+    </div>
+
     </main>
 </div>
 
@@ -1170,8 +1273,195 @@ async function setAsPortada(url) {
 }
 
 // ============================================
-// DRAG & DROP
+// TABS
 // ============================================
+function switchTab(tab) {
+    const isSemanas = tab === 'semanas';
+    document.querySelector('main > *:not(#tab-historia)') // handled by display
+    document.getElementById('tab-historia').style.display = isSemanas ? 'none' : 'block';
+
+    // Ocultar/mostrar contenido de semanas (todo excepto tab-historia)
+    Array.from(document.querySelector('main').children).forEach(el => {
+        if (el.id === 'tab-historia') return;
+        el.style.display = isSemanas ? '' : 'none';
+    });
+
+    document.getElementById('tab-btn-semanas').className = isSemanas ? 'btn btn-primary' : 'btn btn-outline';
+    document.getElementById('tab-btn-historia').className = isSemanas ? 'btn btn-outline' : 'btn btn-primary';
+
+    if (!isSemanas) loadHistStats();
+}
+
+// ============================================
+// HISTORIA — STATS
+// ============================================
+async function loadHistStats() {
+    const { data } = await sb.storage.from('historia').list('', { limit:1000 });
+    const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
+    const totalSize = files.reduce((acc, f) => acc + (f.metadata?.size || 0), 0);
+    document.getElementById('hist-count').textContent = files.length;
+    document.getElementById('hist-size').textContent  = formatBytes(totalSize);
+    loadHistGrid(files);
+}
+
+function loadHistGrid(files) {
+    const grid = document.getElementById('hist-photo-grid');
+    document.getElementById('hist-photo-count').textContent = `${files.length} fotos`;
+    grid.innerHTML = '';
+    files.forEach(f => {
+        const { data } = sb.storage.from('historia').getPublicUrl(f.name);
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        item.innerHTML = `
+            <img src="${data.publicUrl}" alt="${f.name}" loading="lazy">
+            <div class="photo-overlay">
+                <button class="photo-btn photo-btn-del" title="Eliminar"
+                    onclick="deleteHistPhoto('${f.name}', this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>`;
+        grid.appendChild(item);
+    });
+}
+
+async function deleteHistPhoto(name, btn) {
+    if (!confirm('¿Eliminar esta foto histórica?')) return;
+    const { error } = await sb.storage.from('historia').remove([name]);
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    btn.closest('.photo-item').remove();
+    toast('Foto eliminada', 'ok');
+    loadHistStats();
+}
+
+// ============================================
+// HISTORIA — COMPRESOR
+// ============================================
+let histCompressMode = 'calidad';
+let histPendingBlobs = [];
+
+function setHistCompressMode(mode) {
+    histCompressMode = mode;
+    document.getElementById('htab-calidad').className = mode === 'calidad' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('htab-res').className     = mode === 'resolucion' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('hpanel-calidad').style.display    = mode === 'calidad' ? 'block' : 'none';
+    document.getElementById('hpanel-resolucion').style.display = mode === 'resolucion' ? 'block' : 'none';
+}
+
+function updateHSlider() {
+    document.getElementById('hval-calidad').textContent = document.getElementById('hslider-calidad').value + '%';
+    document.getElementById('hval-res').textContent     = document.getElementById('hslider-res').value + 'px';
+}
+
+async function compressHistImage(file) {
+    return new Promise((resolve) => {
+        const quality  = parseInt(document.getElementById('hslider-calidad').value) / 100;
+        const maxWidth = parseInt(document.getElementById('hslider-res').value);
+        const reader   = new FileReader();
+        reader.onload  = (e) => {
+            const img  = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (histCompressMode === 'resolucion' && w > maxWidth) {
+                    h = Math.round(h * maxWidth / w); w = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const q = histCompressMode === 'calidad' ? quality : 0.85;
+                canvas.toBlob((blob) => resolve({
+                    blob, originalSize: file.size, compressedSize: blob.size,
+                    name: file.name.replace(/\.[^.]+$/, '.jpg')
+                }), 'image/jpeg', q);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function prepareHistUpload(files) {
+    if (!files || files.length === 0) return;
+    histPendingBlobs = [];
+    const panel  = document.getElementById('hist-preview-panel');
+    const list   = document.getElementById('hist-preview-list');
+    const title  = document.getElementById('hist-preview-title');
+    const btn    = document.getElementById('hist-upload-btn');
+
+    panel.style.display = 'block';
+    list.innerHTML = '<div style="color:var(--muted); font-size:.82rem; padding:8px 0;"><i class="fas fa-spinner fa-spin"></i> Calculando compresión...</div>';
+    btn.disabled   = true;
+    title.textContent = `Vista previa · ${files.length} foto${files.length > 1 ? 's' : ''}`;
+
+    let totalOrig = 0, totalComp = 0;
+    list.innerHTML = '';
+
+    for (const file of Array.from(files)) {
+        const result = await compressHistImage(file);
+        histPendingBlobs.push(result);
+        totalOrig += result.originalSize;
+        totalComp += result.compressedSize;
+        const pct  = Math.round((1 - result.compressedSize / result.originalSize) * 100);
+        const row  = document.createElement('div');
+        row.className = 'preview-file-row';
+        row.innerHTML = `
+            <i class="fas fa-image"></i>
+            <span class="preview-file-name">${file.name}</span>
+            <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
+            <span class="preview-arrow">→</span>
+            <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
+            <span class="preview-file-pct">−${pct}%</span>`;
+        list.appendChild(row);
+    }
+
+    const pct = Math.round((1 - totalComp / totalOrig) * 100);
+    document.getElementById('hstat-orig').textContent = formatBytes(totalOrig);
+    document.getElementById('hstat-comp').textContent = formatBytes(totalComp);
+    document.getElementById('hstat-pct').textContent  = `−${pct}%`;
+    document.getElementById('hist-upload-label').textContent =
+        `Subir ${files.length} foto${files.length > 1 ? 's' : ''} (${formatBytes(totalComp)})`;
+    btn.disabled = false;
+    document.getElementById('hist-file').value = '';
+}
+
+async function doHistUpload() {
+    if (!histPendingBlobs.length) return;
+    const btn  = document.getElementById('hist-upload-btn');
+    const bar  = document.getElementById('hist-upload-bar');
+    const fill = document.getElementById('hist-upload-fill');
+    btn.disabled = true; bar.style.display = 'block';
+
+    let done = 0, totalOrig = 0, totalComp = 0;
+    for (const result of histPendingBlobs) {
+        totalOrig += result.originalSize; totalComp += result.compressedSize;
+        const path = `${Date.now()}_${result.name}`;
+        await sb.storage.from('historia').upload(path, result.blob, {
+            upsert: true, contentType: 'image/jpeg'
+        });
+        done++;
+        fill.style.width = (done / histPendingBlobs.length * 100) + '%';
+    }
+
+    bar.style.display = 'none'; fill.style.width = '0';
+    const saving = Math.round((1 - totalComp / totalOrig) * 100);
+    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
+
+    document.getElementById('hist-preview-panel').style.display = 'none';
+    histPendingBlobs = []; btn.disabled = false;
+    loadHistStats();
+}
+
+// Drag & drop historia
+const hdz = document.getElementById('hdropzone');
+if (hdz) {
+    hdz.addEventListener('dragover',  e => { e.preventDefault(); hdz.classList.add('drag'); });
+    hdz.addEventListener('dragleave', ()  => hdz.classList.remove('drag'));
+    hdz.addEventListener('drop', e => {
+        e.preventDefault(); hdz.classList.remove('drag');
+        prepareHistUpload(e.dataTransfer.files);
+    });
+}
+
+
 const dz = document.getElementById('dropzone');
 dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
 dz.addEventListener('dragleave', ()  => dz.classList.remove('drag'));
