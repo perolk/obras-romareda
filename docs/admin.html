@@ -1296,10 +1296,8 @@ async function setAsPortada(url) {
 // ============================================
 function switchTab(tab) {
     const isSemanas = tab === 'semanas';
-    document.querySelector('main > *:not(#tab-historia)') // handled by display
     document.getElementById('tab-historia').style.display = isSemanas ? 'none' : 'block';
 
-    // Ocultar/mostrar contenido de semanas (todo excepto tab-historia)
     Array.from(document.querySelector('main').children).forEach(el => {
         if (el.id === 'tab-historia') return;
         el.style.display = isSemanas ? '' : 'none';
@@ -1308,7 +1306,9 @@ function switchTab(tab) {
     document.getElementById('tab-btn-semanas').className = isSemanas ? 'btn btn-primary' : 'btn btn-outline';
     document.getElementById('tab-btn-historia').className = isSemanas ? 'btn btn-outline' : 'btn btn-primary';
 
-    if (!isSemanas) loadHistStats();
+    // Estadísticas siempre unificadas — se refrescan en ambos tabs
+    loadStorageStats();
+    if (!isSemanas) loadHistGrid([]);  // limpiar grid hasta que cargue
 }
 
 // ============================================
@@ -1317,9 +1317,6 @@ function switchTab(tab) {
 async function loadHistStats() {
     const { data } = await sb.storage.from('historia').list('', { limit:1000 });
     const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
-    const totalSize = files.reduce((acc, f) => acc + (f.metadata?.size || 0), 0);
-    document.getElementById('hist-count').textContent = files.length;
-    document.getElementById('hist-size').textContent  = formatBytes(totalSize);
     loadHistGrid(files);
 }
 

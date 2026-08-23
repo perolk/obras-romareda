@@ -195,12 +195,48 @@
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="index.html" class="top-bar-logo">@ObrasRomareda</a>
-        <a href="index.html" class="back-link">
-            <i class="fas fa-arrow-left"></i> Inicio
-        </a>
-    </div>
+    <header style="background:#00529F; padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.2);">
+        <a href="index.html" style="font-family:'Calibri','Segoe UI',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none;">@ObrasRomareda</a>
+
+        <button id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false"
+            style="display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100;"
+            onclick="toggleMenu()">
+            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
+            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
+            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
+        </button>
+
+        <nav id="mainNav" style="position:relative;">
+            <ul style="display:flex; gap:2.5rem; list-style:none;">
+                <li><a href="index.html#videos" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">Actualidad</a></li>
+                <li><a href="index.html#proyecto" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">El Proyecto</a></li>
+                <li><a href="historia.html" style="color:#4DA9FF; text-decoration:none; font-weight:700; font-size:1rem;">La Vieja Romareda</a></li>
+                <li><a href="index.html#historia" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">Historia</a></li>
+            </ul>
+        </nav>
+
+        <div style="display:flex; gap:1.5rem;">
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-x-twitter"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-instagram"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-youtube"></i></a>
+        </div>
+    </header>
+
+    <style>
+        @media(max-width:1024px) {
+            #hamburgerBtn { display:flex !important; }
+            #mainNav nav, nav ul { flex-direction:column !important; }
+            #mainNav {
+                position:absolute; top:100%; left:0; width:100%;
+                background:#00529F; max-height:0; overflow:hidden;
+                transition:max-height .4s ease; box-shadow:0 8px 20px rgba(0,0,0,.3);
+            }
+            #mainNav.open { max-height:300px; padding:1rem 0 1.5rem; }
+            #mainNav ul { flex-direction:column !important; align-items:center; gap:0; }
+            #mainNav ul li { width:100%; text-align:center; }
+            #mainNav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
+        }
+    </style>
 
     <div class="hero">
         <div class="hero-badge">1957 – 2024</div>
