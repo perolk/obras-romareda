@@ -141,7 +141,7 @@
 
         /* LIGHTBOX */
         #lightbox {
-            display:none; position:fixed; inset:0; z-index:2000;
+            display:none; position:fixed; inset:0; z-index:9999;
             background:rgba(0,0,0,.96);
             align-items:center; justify-content:center; flex-direction:column;
         }
@@ -409,6 +409,7 @@
             lbIndex = idx;
             showLb();
             document.getElementById('lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
         function showLb() {
             const f   = allFiles[lbIndex];
@@ -424,6 +425,7 @@
         function closeLb() {
             document.getElementById('lightbox').style.display = 'none';
             document.getElementById('lb-img').src = '';
+            document.body.style.overflow = '';
         }
 
         document.addEventListener('keydown', e => {
