@@ -13,24 +13,7 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
 
-        .top-bar {
-            background:var(--blue); padding:14px 5%;
-            display:flex; align-items:center; justify-content:space-between;
-            position:sticky; top:0; z-index:100;
-            box-shadow:0 4px 15px rgba(0,0,0,.2);
-        }
-        .top-bar-logo {
-            font-family:'Calibri','Segoe UI',sans-serif;
-            font-weight:700; font-style:italic;
-            font-size:1.4rem; color:white; text-decoration:none;
-        }
-        .top-bar-logo:hover { color:var(--light); }
-        .back-link {
-            display:flex; align-items:center; gap:8px;
-            color:rgba(255,255,255,.7); font-size:.9rem;
-            text-decoration:none; transition:color .2s;
-        }
-        .back-link:hover { color:white; }
+
 
         .week-hero { background:var(--blue); padding:3rem 10% 2.5rem; color:white; }
         .week-badge {
@@ -192,15 +175,82 @@
 </head>
 <body>
 
-    <div class="top-bar">
-        <a href="index.html" class="top-bar-logo">@ObrasRomareda</a>
-        <a href="index.html" class="back-link">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-        <button class="share-btn" onclick="openShare()">
-            <i class="fas fa-share-alt"></i> Compartir
+    <style>
+        :root { --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
+        header { background:var(--zaragoza-blue); padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.2); }
+        .logo { font-family:"Calibri","Segoe UI",sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; transition:.3s; }
+        .logo:hover { color:var(--zaragoza-light); }
+        nav ul { display:flex; gap:2.5rem; list-style:none; }
+        nav a { color:white; text-decoration:none; font-weight:500; font-size:1rem; transition:color .3s; }
+        nav a:hover { color:var(--zaragoza-light); }
+        .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
+        .social-header a:hover { transform:translateY(-3px); color:var(--zaragoza-light); }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
+        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s ease; }
+        .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity:0; }
+        .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+        .share-header-btn { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; padding:7px 14px; border-radius:30px; font-size:.82rem; font-weight:600; cursor:pointer; font-family:"Inter",sans-serif; transition:all .2s; }
+        .share-header-btn:hover { background:rgba(255,255,255,.25); }
+        @media(max-width:1024px) {
+            .hamburger { display:flex; }
+            nav { position:absolute; top:100%; left:0; width:100%; background:var(--zaragoza-blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
+            nav.open { max-height:340px; padding:1rem 0 1.5rem; }
+            nav ul { flex-direction:column; align-items:center; gap:0; }
+            nav ul li { width:100%; text-align:center; }
+            nav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
+            nav ul li:last-child a { border-bottom:none; }
+            .social-header { display:none; }
+            .mobile-social { display:flex !important; justify-content:center; gap:2rem; padding:15px 0 5px; }
+            .mobile-social a { color:white; font-size:1.4rem; }
+        }
+        @media(min-width:1025px) { .mobile-social { display:none !important; } }
+    </style>
+
+    <header>
+        <a href="index.html" class="logo">@ObrasRomareda</a>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
         </button>
-    </div>
+        <nav id="mainNav">
+            <ul>
+                <li><a href="index.html#videos">Actualidad</a></li>
+                <li><a href="index.html#proyecto">El Proyecto</a></li>
+                <li><a href="historia.html">La Vieja Romareda</a></li>
+                <li><a href="index.html#historia">Historia</a></li>
+            </ul>
+            <div class="mobile-social" style="display:none;">
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </nav>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <button class="share-header-btn" onclick="openShare()">
+                <i class="fas fa-share-alt"></i> Compartir
+            </button>
+            <div class="social-header">
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        const hBtn = document.getElementById('hamburgerBtn');
+        const hNav = document.getElementById('mainNav');
+        hBtn.addEventListener('click', () => {
+            const open = hNav.classList.toggle('open');
+            hBtn.classList.toggle('open', open);
+            hBtn.setAttribute('aria-expanded', open);
+        });
+        hNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+            hNav.classList.remove('open');
+            hBtn.classList.remove('open');
+            hBtn.setAttribute('aria-expanded', false);
+        }));
+    </script>
 
     <div class="week-hero">
         <div id="hero-badge" class="week-badge">Cargando...</div>

@@ -195,50 +195,72 @@
 </head>
 <body>
 
-    <header style="background:#00529F; padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.2);">
-        <a href="index.html" style="font-family:'Calibri','Segoe UI',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none;">@ObrasRomareda</a>
+    <style>
+        :root { --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
+        header { background:var(--zaragoza-blue); padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.2); }
+        .logo { font-family:"Calibri","Segoe UI",sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; transition:.3s; }
+        .logo:hover { color:var(--zaragoza-light); }
+        header nav ul { display:flex; gap:2.5rem; list-style:none; }
+        header nav a { color:white; text-decoration:none; font-weight:500; font-size:1rem; transition:color .3s; }
+        header nav a:hover, header nav a.active { color:var(--zaragoza-light); font-weight:700; }
+        .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
+        .social-header a:hover { transform:translateY(-3px); color:var(--zaragoza-light); }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
+        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s ease; }
+        .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity:0; }
+        .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+        @media(max-width:1024px) {
+            .hamburger { display:flex; }
+            header nav { position:absolute; top:100%; left:0; width:100%; background:var(--zaragoza-blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
+            header nav.open { max-height:340px; padding:1rem 0 1.5rem; }
+            header nav ul { flex-direction:column; align-items:center; gap:0; }
+            header nav ul li { width:100%; text-align:center; }
+            header nav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
+            header nav ul li:last-child a { border-bottom:none; }
+            .social-header { display:none; }
+            .mobile-social { display:flex !important; justify-content:center; gap:2rem; padding:15px 0 5px; }
+            .mobile-social a { color:white; font-size:1.4rem; }
+        }
+        @media(min-width:1025px) { .mobile-social { display:none !important; } }
+    </style>
 
-        <button id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false"
-            style="display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100;"
-            onclick="toggleMenu()">
-            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
-            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
-            <span style="display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s;"></span>
+    <header>
+        <a href="index.html" class="logo">@ObrasRomareda</a>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
         </button>
-
-        <nav id="mainNav" style="position:relative;">
-            <ul style="display:flex; gap:2.5rem; list-style:none;">
-                <li><a href="index.html#videos" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">Actualidad</a></li>
-                <li><a href="index.html#proyecto" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">El Proyecto</a></li>
-                <li><a href="historia.html" style="color:#4DA9FF; text-decoration:none; font-weight:700; font-size:1rem;">La Vieja Romareda</a></li>
-                <li><a href="index.html#historia" style="color:white; text-decoration:none; font-weight:500; font-size:1rem;">Historia</a></li>
+        <nav id="mainNav">
+            <ul>
+                <li><a href="index.html#videos">Actualidad</a></li>
+                <li><a href="index.html#proyecto">El Proyecto</a></li>
+                <li><a href="historia.html" class="active">La Vieja Romareda</a></li>
+                <li><a href="index.html#historia">Historia</a></li>
             </ul>
+            <div class="mobile-social" style="display:none;">
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            </div>
         </nav>
-
-        <div style="display:flex; gap:1.5rem;">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-x-twitter"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-instagram"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" style="color:white; font-size:1.3rem;"><i class="fab fa-youtube"></i></a>
+        <div class="social-header">
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
         </div>
     </header>
 
-    <style>
-        @media(max-width:1024px) {
-            #hamburgerBtn { display:flex !important; }
-            #mainNav nav, nav ul { flex-direction:column !important; }
-            #mainNav {
-                position:absolute; top:100%; left:0; width:100%;
-                background:#00529F; max-height:0; overflow:hidden;
-                transition:max-height .4s ease; box-shadow:0 8px 20px rgba(0,0,0,.3);
-            }
-            #mainNav.open { max-height:300px; padding:1rem 0 1.5rem; }
-            #mainNav ul { flex-direction:column !important; align-items:center; gap:0; }
-            #mainNav ul li { width:100%; text-align:center; }
-            #mainNav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
-        }
-    </style>
+    <script>
+        const hBtn = document.getElementById('hamburgerBtn');
+        const hNav = document.getElementById('mainNav');
+        hBtn.addEventListener('click', () => {
+            const open = hNav.classList.toggle('open');
+            hBtn.classList.toggle('open', open);
+            hBtn.setAttribute('aria-expanded', open);
+        });
+    </script>
 
-    <div class="hero">
+<div class="hero">
         <div class="hero-badge">1957 – 2024</div>
         <h1>La Vieja Romareda</h1>
         <p>67 años de historia, pasión y recuerdos blanquiazules. Un estadio que fue mucho más que hormigón.</p>
