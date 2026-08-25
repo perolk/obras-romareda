@@ -62,26 +62,7 @@
         .week-nav-label { font-size:.75rem; color:var(--muted); display:block; }
         .week-nav-name  { font-size:.9rem; font-weight:700; color:var(--blue); display:block; }
 
-        /* LIGHTBOX */
-        #lightbox {
-            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,.95); z-index:9999;
-            align-items:center; justify-content:center; flex-direction:column;
-        }
-        #lightbox img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; }
-        #lightbox-close {
-            position:absolute; top:20px; right:28px;
-            color:white; font-size:2.5rem; cursor:pointer; background:none; border:none; line-height:1;
-        }
-        #lightbox-prev, #lightbox-next {
-            position:absolute; top:50%; transform:translateY(-50%);
-            color:white; font-size:2rem; cursor:pointer;
-            background:rgba(0,0,0,.4); border:none; padding:16px 14px; transition:background .2s;
-        }
-        #lightbox-prev { left:0; border-radius:0 4px 4px 0; }
-        #lightbox-next { right:0; border-radius:4px 0 0 4px; }
-        #lightbox-prev:hover, #lightbox-next:hover { background:rgba(0,0,0,.8); }
-        #lightbox-caption { color:rgba(255,255,255,.6); font-size:.85rem; margin-top:12px; }
+        
 
         /* COMPARTIR */
         .share-btn {
@@ -205,6 +186,44 @@
             .mobile-social a { color:white; font-size:1.4rem; }
         }
         @media(min-width:1025px) { .mobile-social { display:none !important; } }
+
+        /* LIGHTBOX */
+        #lb-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.96);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #lb-overlay.active { display: flex; }
+        #lb-img {
+            max-width: 90vw; max-height: 85vh;
+            object-fit: contain; border-radius: 4px;
+            user-select: none;
+        }
+        #lb-caption {
+            color: rgba(255,255,255,0.5); font-size: 0.85rem;
+            margin-top: 12px; font-family: 'Inter', sans-serif;
+        }
+        #lb-close {
+            position: fixed; top: 20px; right: 28px;
+            color: white; font-size: 2.5rem; cursor: pointer;
+            background: none; border: none; line-height: 1; z-index: 100000;
+        }
+        #lb-close:hover { color: #4DA9FF; }
+        #lb-prev, #lb-next {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            color: white; font-size: 2rem; cursor: pointer;
+            background: rgba(255,255,255,0.1); border: none;
+            padding: 16px 14px; transition: background 0.2s; z-index: 100000;
+        }
+        #lb-prev { left: 0; border-radius: 0 6px 6px 0; }
+        #lb-next { right: 0; border-radius: 6px 0 0 6px; }
+        #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.25); }
+
     </style>
 
     <header>
@@ -341,11 +360,6 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX -->
-        <button id="lightbox-close" onclick="closeLightbox()">×</button>
-        <button id="lightbox-prev" onclick="changeLightbox(-1)">&#10094;</button>
-        <img id="lightbox-img" src="" alt="">
-        <div id="lightbox-caption"></div>
         <button id="lightbox-next" onclick="changeLightbox(1)">&#10095;</button>
     </div>
 
@@ -435,7 +449,7 @@
             grid.innerHTML = files.map((f, idx) => {
                 const url = getPublicUrl(f.name);
                 return `
-                    <div class="photo-item" onclick="openLightbox(${idx})">
+                    <div class="photo-item" onclick="lbOpen(lightboxPhotos.map(f=>getPublicUrl(f.name)), ${idx})">
                         <img src="${url}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="lazy">
                     </div>`;
             }).join('');
@@ -464,35 +478,11 @@
             }
         }
 
-        function openLightbox(idx) {
-            lightboxIndex = idx;
-            showLightboxPhoto();
-            document.getElementById('lightbox').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+
+        function lbClickOut(e) {
+            if (e.target === document.getElementById('lb-overlay')) closeLightbox();
         }
-        function showLightboxPhoto() {
-            const url = getPublicUrl(lightboxPhotos[lightboxIndex].name);
-            document.getElementById('lightbox-img').src = url;
-            document.getElementById('lightbox-caption').textContent =
-                `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
-        }
-        function changeLightbox(dir) {
-            lightboxIndex = (lightboxIndex + dir + lightboxPhotos.length) % lightboxPhotos.length;
-            showLightboxPhoto();
-        }
-        function closeLightbox() {
-            document.getElementById('lightbox').style.display = 'none';
-            document.getElementById('lightbox-img').src = '';
-            document.body.style.overflow = '';
-        }
-        document.addEventListener('keydown', e => {
-            const lb = document.getElementById('lightbox');
-            if (lb.style.display !== 'flex') return;
-            if (e.key === 'ArrowLeft')  changeLightbox(-1);
-            if (e.key === 'ArrowRight') changeLightbox(1);
-            if (e.key === 'Escape')     closeLightbox();
-        });
-        // ============================================
+// ============================================
         // COMPARTIR
         // ============================================
         function getShareData() {
@@ -560,9 +550,15 @@
             if (e.key === 'Escape') closeShare();
         });
 
-        document.getElementById('lightbox').addEventListener('click', e => {
-            if (e.target === document.getElementById('lightbox')) closeLightbox();
-        });
-    </script>
+</script>
+    <!-- LIGHTBOX -->
+    <div id="lb-overlay" onclick="lbClickOutside(event)">
+        <button id="lb-close" onclick="lbClose()">&#x2715;</button>
+        <button id="lb-prev" onclick="lbChange(-1)">&#10094;</button>
+        <img id="lb-img" src="" alt="">
+        <div id="lb-caption"></div>
+        <button id="lb-next" onclick="lbChange(1)">&#10095;</button>
+    </div>
+
 </body>
 </html>
