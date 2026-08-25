@@ -460,8 +460,10 @@
             const next = document.getElementById('nav-next');
 
             // Comprobar si existen semanas adyacentes en BD
-            const { data: prevData } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM - 1).single();
-            const { data: nextData } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM + 1).single();
+            const { data: prevRows } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM - 1).limit(1);
+            const { data: nextRows } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM + 1).limit(1);
+            const prevData = prevRows && prevRows.length > 0 ? prevRows[0] : null;
+            const nextData = nextRows && nextRows.length > 0 ? nextRows[0] : null;
 
             if (prevData) {
                 prev.href = `semana.html?n=${WEEK_NUM - 1}`;
@@ -480,8 +482,39 @@
 
 
         function lbClickOut(e) {
-            if (e.target === document.getElementById('lb-overlay')) closeLightbox();
+            if (e.target === document.getElementById('lb-overlay')) lbClose();
         }
+
+        // LIGHTBOX FUNCTIONS
+        let lbPhotos = [], lbIdx = 0;
+        function lbOpen(photos, idx) {
+            lbPhotos = photos; lbIdx = idx; lbShow();
+            document.getElementById('lb-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function lbShow() {
+            document.getElementById('lb-img').src = lbPhotos[lbIdx];
+            document.getElementById('lb-caption').textContent =
+                lbPhotos.length > 1 ? (lbIdx + 1) + ' / ' + lbPhotos.length : '';
+        }
+        function lbChange(dir) {
+            lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
+            lbShow();
+        }
+        function lbClose() {
+            document.getElementById('lb-overlay').classList.remove('active');
+            document.getElementById('lb-img').src = '';
+            document.body.style.overflow = '';
+        }
+        function lbClickOutside(e) {
+            if (e.target === document.getElementById('lb-overlay')) lbClose();
+        }
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('lb-overlay').classList.contains('active')) return;
+            if (e.key === 'ArrowLeft')  lbChange(-1);
+            if (e.key === 'ArrowRight') lbChange(1);
+            if (e.key === 'Escape')     lbClose();
+        });
 // ============================================
         // COMPARTIR
         // ============================================
