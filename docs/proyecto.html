@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Proyecto · Obras Romareda</title>
+    <meta name="description" content="Renders, plantas y detalles técnicos del proyecto de la nueva Romareda diseñado por IDOM.">
+    <meta property="og:title" content="El Proyecto · Nueva Romareda">
+    <meta property="og:description" content="Renders, plantas y detalles técnicos del proyecto de la nueva Romareda.">
+    <meta property="og:image" content="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue:#00529F; --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
+
+        /* HEADER */
+        header { background:var(--blue); padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.2); }
+        .logo { font-family:'Calibri','Segoe UI',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; transition:.3s; }
+        .logo:hover { color:var(--light); }
+        nav ul { display:flex; gap:2.5rem; list-style:none; }
+        nav a { color:white; text-decoration:none; font-weight:500; font-size:1rem; transition:color .3s; }
+        nav a:hover, nav a.active { color:var(--light); font-weight:700; }
+        .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
+        .social-header a:hover { transform:translateY(-3px); color:var(--light); }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
+        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s ease; }
+        .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity:0; }
+        .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
+        @media(max-width:1024px) {
+            .hamburger { display:flex; }
+            nav { position:absolute; top:100%; left:0; width:100%; background:var(--blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
+            nav.open { max-height:340px; padding:1rem 0 1.5rem; }
+            nav ul { flex-direction:column; align-items:center; gap:0; }
+            nav ul li { width:100%; text-align:center; }
+            nav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
+            nav ul li:last-child a { border-bottom:none; }
+            .social-header { display:none; }
+            .mobile-social { display:flex !important; justify-content:center; gap:2rem; padding:15px 0 5px; }
+            .mobile-social a { color:white; font-size:1.4rem; }
+        }
+        @media(min-width:1025px) { .mobile-social { display:none !important; } }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(rgba(0,82,159,.8), rgba(0,0,0,.7)),
+                        url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
+            background-size:cover; background-position:center;
+            padding:5rem 10%; color:white; text-align:center;
+        }
+        .hero-badge { display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1.2rem; }
+        .hero h1 { font-size:3rem; font-weight:900; color:white; margin-bottom:1rem; line-height:1.1; }
+        .hero p { font-size:1.1rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto; line-height:1.65; }
+
+        /* DATOS TÉCNICOS */
+        .datos-section { background:white; padding:4rem 10%; }
+        .datos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:20px; max-width:900px; margin:2rem auto 0; }
+        .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:1px solid #e5e7eb; }
+        .dato-num { font-size:2rem; font-weight:900; color:var(--blue); display:block; margin-bottom:4px; }
+        .dato-label { font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+
+        /* SECTION TITLE */
+        .section-title { font-size:2.2rem; font-weight:900; text-align:center; color:var(--blue); margin-bottom:1rem; }
+        .section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1rem; }
+
+        /* TABS */
+        .tab-section { padding:4rem 10%; background:var(--bg); }
+        .tab-buttons { display:flex; justify-content:center; gap:12px; margin-bottom:2rem; flex-wrap:wrap; }
+        .tab-btn { background:transparent; border:2px solid var(--blue); color:var(--blue); font-size:.95rem; font-weight:700; padding:10px 28px; border-radius:50px; cursor:pointer; transition:all .3s; font-family:'Inter',sans-serif; }
+        .tab-btn:hover { background:rgba(0,82,159,.08); }
+        .tab-btn.active { background:var(--blue); color:white; }
+        .tab-content { display:none; }
+        .tab-content.active { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; justify-items:center; }
+
+        /* PROJECT ITEMS */
+        .project-item { background:white; padding:16px; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); width:100%; max-width:380px; }
+        .project-item img { width:100%; height:220px; object-fit:cover; border-radius:10px; display:block; }
+        .caption { margin-top:10px; color:var(--blue); font-weight:700; font-size:.9rem; text-align:center; }
+
+        /* COMPARADOR */
+        .comparador-section { padding:4rem 10%; background:white; }
+        .comparison-wrapper { position:relative; width:100%; max-width:900px; margin:0 auto; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.2); }
+        .img-comp-container { position:relative; height:500px; overflow:hidden; }
+        .img-comp-img { position:absolute; width:auto; height:100%; overflow:hidden; }
+        .img-comp-img img { display:block; height:100%; width:auto; }
+        .img-comp-slider { position:absolute; z-index:9; cursor:ew-resize; width:40px; height:40px; background:var(--light); border:3px solid white; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(0,0,0,.5); }
+        .img-comp-slider::before { content:'\f337'; font-family:"Font Awesome 6 Free"; font-weight:900; color:white; }
+        .img-comp-overlay-label { position:absolute; bottom:20px; background:rgba(0,0,0,.5); color:white; padding:5px 15px; border-radius:20px; font-size:.9rem; pointer-events:none; }
+        @media(max-width:768px) {
+            .hero h1 { font-size:2rem; }
+            .hero { padding:3rem 5%; }
+            .img-comp-container { height:260px; }
+            .tab-section, .datos-section, .comparador-section { padding:3rem 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">@ObrasRomareda</a>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <nav id="mainNav">
+            <ul>
+                <li><a href="index.html#videos">Actualidad</a></li>
+                <li><a href="proyecto.html" class="active">El Proyecto</a></li>
+                <li><a href="historia.html">La Vieja Romareda</a></li>
+                <li><a href="index.html#historia">Historia</a></li>
+            </ul>
+            <div class="mobile-social" style="display:none;">
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </nav>
+        <div class="social-header">
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge">IDOM · 2024</div>
+        <h1>El Proyecto</h1>
+        <p>Renders, plantas y detalles técnicos de la futura casa del Real Zaragoza, diseñada por IDOM.</p>
+    </div>
+
+    <!-- DATOS TÉCNICOS -->
+    <div class="datos-section">
+        <h2 class="section-title">Datos técnicos</h2>
+        <p class="section-subtitle">Las cifras de un estadio de nueva generación</p>
+        <div class="datos-grid">
+            <div class="dato-card">
+                <span class="dato-num">35.000</span>
+                <span class="dato-label">Espectadores</span>
+            </div>
+            <div class="dato-card">
+                <span class="dato-num">67.000 m²</span>
+                <span class="dato-label">Superficie total</span>
+            </div>
+            <div class="dato-card">
+                <span class="dato-num">2027</span>
+                <span class="dato-label">Apertura prevista</span>
+            </div>
+            <div class="dato-card">
+                <span class="dato-num">IDOM</span>
+                <span class="dato-label">Arquitecto</span>
+            </div>
+            <div class="dato-card">
+                <span class="dato-num">4</span>
+                <span class="dato-label">Niveles de grada</span>
+            </div>
+            <div class="dato-card">
+                <span class="dato-num">100%</span>
+                <span class="dato-label">Cubierta</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RENDERS / PLANTAS / SECCIONES -->
+    <div class="tab-section">
+        <h2 class="section-title">Documentación gráfica</h2>
+        <p class="section-subtitle">Planos, renders y detalles técnicos del proyecto</p>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="openTab(event,'renders')">Renders</button>
+            <button class="tab-btn" onclick="openTab(event,'plantas')">Plantas y Alzados</button>
+            <button class="tab-btn" onclick="openTab(event,'secciones')">Secciones</button>
+        </div>
+
+        <div id="renders" class="tab-content active">
+            <div class="project-item">
+                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg" alt="Render: Plaza Eduardo Ibarra" loading="lazy">
+                <div class="caption">Plaza Eduardo Ibarra</div>
+            </div>
+            <div class="project-item">
+                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" alt="Render: Vista Interior Noche" loading="lazy">
+                <div class="caption">Vista Interior Noche</div>
+            </div>
+            <div class="project-item">
+                <img src="https://pbs.twimg.com/media/GLIp4cAWkAAjB8S?format=jpg&name=large" alt="Render: Vista Aérea General" loading="lazy">
+                <div class="caption">Vista Aérea General</div>
+            </div>
+        </div>
+
+        <div id="plantas" class="tab-content">
+            <div class="project-item">
+                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Planta+General" alt="Planta General" loading="lazy">
+                <div class="caption">Planta General</div>
+            </div>
+            <div class="project-item">
+                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Distribucion" alt="Distribución de Accesos" loading="lazy">
+                <div class="caption">Distribución de Accesos</div>
+            </div>
+        </div>
+
+        <div id="secciones" class="tab-content">
+            <div class="project-item">
+                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Seccion+Grada" alt="Sección Constructiva de Grada" loading="lazy">
+                <div class="caption">Sección Constructiva de Grada</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPARADOR ANTES/DESPUÉS -->
+    <div class="comparador-section">
+        <h2 class="section-title">Antes y después</h2>
+        <p class="section-subtitle">Arrastra el divisor para comparar el estadio antiguo con el render del nuevo</p>
+        <div class="comparison-wrapper">
+            <div class="img-comp-container">
+                <div class="img-comp-img">
+                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render artístico de la nueva Romareda">
+                    <div class="img-comp-overlay-label" style="right:20px;">FUTURO (Render)</div>
+                </div>
+                <div class="img-comp-img img-comp-overlay">
+                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes de la demolición">
+                    <div class="img-comp-overlay-label" style="left:20px;">ANTES</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background:var(--blue); color:white; padding:3rem 10%; text-align:center; border-top:6px solid var(--light);">
+        <a href="index.html" class="logo" style="display:inline-block; margin-bottom:1rem;">@ObrasRomareda</a>
+        <p style="color:rgba(255,255,255,.6); font-size:.85rem;">Web no oficial · Renders e imágenes técnicas: IDOM</p>
+    </footer>
+
+    <script>
+        // Hamburger
+        const hBtn = document.getElementById('hamburgerBtn');
+        const hNav = document.getElementById('mainNav');
+        hBtn.addEventListener('click', () => {
+            const open = hNav.classList.toggle('open');
+            hBtn.classList.toggle('open', open);
+            hBtn.setAttribute('aria-expanded', open);
+        });
+
+        // Tabs
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // Comparador
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlays = document.getElementsByClassName('img-comp-overlay');
+            Array.from(overlays).forEach(img => compareImages(img));
+        });
+
+        function compareImages(img) {
+            let clicked = 0;
+            const w = img.offsetWidth;
+            const h = img.offsetHeight;
+            img.style.width = (w / 2) + 'px';
+            const slider = document.createElement('div');
+            slider.setAttribute('class', 'img-comp-slider');
+            img.parentElement.insertBefore(slider, img);
+            slider.style.top  = (h / 2) - (slider.offsetHeight / 2) + 'px';
+            slider.style.left = (w / 2) - (slider.offsetWidth  / 2) + 'px';
+            slider.addEventListener('mousedown',  slideReady);
+            slider.addEventListener('touchstart', slideReady);
+            window.addEventListener('mouseup',  slideFinish);
+            window.addEventListener('touchend', slideFinish);
+            function slideReady(e) { e.preventDefault(); clicked = 1; window.addEventListener('mousemove', slideMove); window.addEventListener('touchmove', slideMove); }
+            function slideFinish() { clicked = 0; }
+            function slideMove(e) {
+                if (!clicked) return;
+                let pos = getCursorPos(e);
+                pos = Math.max(0, Math.min(pos, w));
+                slide(pos);
+            }
+            function getCursorPos(e) {
+                e = e.changedTouches ? e.changedTouches[0] : e;
+                const a = img.getBoundingClientRect();
+                return e.pageX - a.left - window.pageXOffset;
+            }
+            function slide(x) {
+                img.style.width = x + 'px';
+                slider.style.left = img.offsetWidth - slider.offsetWidth / 2 + 'px';
+            }
+        }
+    </script>
+</body>
+</html>
