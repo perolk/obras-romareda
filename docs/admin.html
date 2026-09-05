@@ -427,6 +427,9 @@
             <button class="btn btn-outline" id="tab-btn-historia" onclick="switchTab('historia')" style="font-size:.8rem; padding:6px 14px;">
                 <i class="fas fa-landmark"></i> Vieja Romareda
             </button>
+            <button class="btn btn-outline" id="tab-btn-banners" onclick="switchTab('banners')" style="font-size:.8rem; padding:6px 14px;">
+                <i class="fas fa-image"></i> Banners
+            </button>
         </div>
         <button class="btn btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </header>
@@ -727,6 +730,56 @@
 
             <!-- Grid fotos existentes -->
             <div class="photo-grid" id="hist-photo-grid"></div>
+        </div>
+    </div>
+
+    <!-- TAB: BANNERS -->
+    <div id="tab-banners" style="display:none; padding:2rem; max-width:900px; margin:0 auto;">
+        <div style="font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:1.5rem;">
+            <i class="fas fa-image" style="color:var(--light);"></i> Configurar banners de páginas
+        </div>
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+            <div class="card" id="banner-card-historia">
+                <div class="card-title"><i class="fas fa-landmark"></i> La Vieja Romareda</div>
+                <div class="grid-2">
+                    <div>
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">TÍTULO</label>
+                        <input class="input" type="text" id="b-historia-titulo" placeholder="La Vieja Romareda" style="margin-bottom:.75rem;">
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">SUBTEXTO</label>
+                        <textarea class="input" id="b-historia-subtexto" rows="3" style="resize:vertical;" placeholder="67 años de historia..."></textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">FOTO DE FONDO</label>
+                        <div id="b-historia-preview" class="portada-placeholder" onclick="document.getElementById('b-historia-file').click()" style="height:120px;margin-bottom:.75rem;"><i class="fas fa-camera"></i></div>
+                        <img id="b-historia-img" style="display:none;width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:.75rem;" alt="">
+                        <input type="file" id="b-historia-file" accept="image/*" style="display:none;" onchange="uploadBannerPhoto('historia',this.files[0])">
+                        <button class="btn btn-outline" style="width:100%;font-size:.82rem;" onclick="document.getElementById('b-historia-file').click()"><i class="fas fa-upload"></i> Subir foto</button>
+                    </div>
+                </div>
+                <button class="btn btn-success" style="width:100%;margin-top:1rem;" onclick="saveBanner('historia')"><i class="fas fa-save"></i> Guardar banner</button>
+            </div>
+
+            <div class="card" id="banner-card-proyecto">
+                <div class="card-title"><i class="fas fa-drafting-compass"></i> El Proyecto</div>
+                <div class="grid-2">
+                    <div>
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">TÍTULO</label>
+                        <input class="input" type="text" id="b-proyecto-titulo" placeholder="El Proyecto" style="margin-bottom:.75rem;">
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">SUBTEXTO</label>
+                        <textarea class="input" id="b-proyecto-subtexto" rows="3" style="resize:vertical;" placeholder="Renders, plantas y detalles técnicos..."></textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">FOTO DE FONDO</label>
+                        <div id="b-proyecto-preview" class="portada-placeholder" onclick="document.getElementById('b-proyecto-file').click()" style="height:120px;margin-bottom:.75rem;"><i class="fas fa-camera"></i></div>
+                        <img id="b-proyecto-img" style="display:none;width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:.75rem;" alt="">
+                        <input type="file" id="b-proyecto-file" accept="image/*" style="display:none;" onchange="uploadBannerPhoto('proyecto',this.files[0])">
+                        <button class="btn btn-outline" style="width:100%;font-size:.82rem;" onclick="document.getElementById('b-proyecto-file').click()"><i class="fas fa-upload"></i> Subir foto</button>
+                    </div>
+                </div>
+                <button class="btn btn-success" style="width:100%;margin-top:1rem;" onclick="saveBanner('proyecto')"><i class="fas fa-save"></i> Guardar banner</button>
+            </div>
+
         </div>
     </div>
 
@@ -1295,20 +1348,59 @@ async function setAsPortada(url) {
 // TABS
 // ============================================
 function switchTab(tab) {
-    const isSemanas = tab === 'semanas';
-    document.getElementById('tab-historia').style.display = isSemanas ? 'none' : 'block';
-
-    Array.from(document.querySelector('main').children).forEach(el => {
-        if (el.id === 'tab-historia') return;
-        el.style.display = isSemanas ? '' : 'none';
+    ['semanas','historia','banners'].forEach(t => {
+        const panel = document.getElementById(`tab-${t}`);
+        const btn   = document.getElementById(`tab-btn-${t}`);
+        if (panel) panel.style.display = t === tab ? 'block' : 'none';
+        if (btn)   btn.className = t === tab ? 'btn btn-primary' : 'btn btn-outline';
     });
-
-    document.getElementById('tab-btn-semanas').className = isSemanas ? 'btn btn-primary' : 'btn btn-outline';
-    document.getElementById('tab-btn-historia').className = isSemanas ? 'btn btn-outline' : 'btn btn-primary';
-
-    // Estadísticas siempre unificadas — se refrescan en ambos tabs
+    Array.from(document.querySelector('main').children).forEach(el => {
+        if (['tab-historia','tab-banners'].includes(el.id)) return;
+        el.style.display = tab === 'semanas' ? '' : 'none';
+    });
     loadStorageStats();
-    if (!isSemanas) loadHistGrid([]);  // limpiar grid hasta que cargue
+    if (tab === 'historia') loadHistStats();
+    if (tab === 'banners')  loadAllBanners();
+}
+
+// ============================================
+// BANNERS
+// ============================================
+async function loadAllBanners() {
+    for (const pagina of ['historia','proyecto']) {
+        const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
+        const row = data && data.length > 0 ? data[0] : null;
+        if (!row) continue;
+        if (document.getElementById(`b-${pagina}-titulo`))    document.getElementById(`b-${pagina}-titulo`).value    = row.titulo   || '';
+        if (document.getElementById(`b-${pagina}-subtexto`))  document.getElementById(`b-${pagina}-subtexto`).value  = row.subtexto || '';
+        if (row.foto_url) showBannerImg(pagina, row.foto_url);
+    }
+}
+function showBannerImg(pagina, url) {
+    const img = document.getElementById(`b-${pagina}-img`);
+    const ph  = document.getElementById(`b-${pagina}-preview`);
+    if (img) { img.src = url; img.style.display = 'block'; }
+    if (ph)  ph.style.display = 'none';
+}
+async function uploadBannerPhoto(pagina, file) {
+    if (!file) return;
+    toast('Subiendo foto...', 'ok');
+    const path = `${pagina}_${Date.now()}.${file.name.split('.').pop()}`;
+    const { error } = await sb.storage.from('banners').upload(path, file, { upsert:true });
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    const { data } = sb.storage.from('banners').getPublicUrl(path);
+    showBannerImg(pagina, data.publicUrl);
+    document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
+    toast('✅ Foto subida. Recuerda guardar.', 'ok');
+}
+async function saveBanner(pagina) {
+    const titulo   = document.getElementById(`b-${pagina}-titulo`).value.trim();
+    const subtexto = document.getElementById(`b-${pagina}-subtexto`).value.trim();
+    const fotoUrl  = document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl
+                  || (document.getElementById(`b-${pagina}-img`).src.startsWith('http') ? document.getElementById(`b-${pagina}-img`).src : null);
+    const { error } = await sb.from('banners').upsert({ pagina, titulo, subtexto, foto_url: fotoUrl||null, updated_at: new Date().toISOString() }, { onConflict:'pagina' });
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    toast(`✅ Banner "${pagina}" guardado`, 'ok');
 }
 
 // ============================================
