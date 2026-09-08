@@ -274,7 +274,7 @@
     </script>
 
 <div id="page-banner" style="position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden;">
-        <div id="banner-bg" style="position:absolute; inset:0; background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg'); background-size:cover; background-position:center; transition:opacity .5s;"></div>
+        <div id="banner-bg" style="position:absolute; inset:0; background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg'); background-size:cover; background-position:center; opacity:1; transition:opacity .5s;"></div>
         <div style="position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.72));"></div>
         <div style="position:relative; z-index:2; color:white; padding:3rem 10%;">
             <div style="display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem;">1957 – 2024</div>
@@ -474,7 +474,7 @@
                 const bg  = document.getElementById('banner-bg');
                 const h1  = document.getElementById('banner-title');
                 const sub = document.getElementById('banner-subtitle');
-                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
+                if (bg  && row.foto_url) { bg.style.backgroundImage = `url('${row.foto_url}')`; bg.style.opacity = '1'; }
                 if (h1  && row.titulo)   h1.textContent  = row.titulo;
                 if (sub && row.subtexto) sub.textContent = row.subtexto;
             } catch(e) { console.warn('Banner error:', e); }
