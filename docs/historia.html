@@ -273,22 +273,17 @@
         });
     </script>
 
-<div class="hero">
-        <div class="hero-badge">1957 – 2024</div>
-        <h1>La Vieja Romareda</h1>
-        <p>67 años de historia, pasión y recuerdos blanquiazules. Un estadio que fue mucho más que hormigón.</p>
-        <div class="hero-stats">
-            <div class="hero-stat">
-                <span class="hero-stat-num">1957</span>
-                <span class="hero-stat-label">Inauguración</span>
-            </div>
-            <div class="hero-stat">
-                <span class="hero-stat-num" id="stat-photos">—</span>
-                <span class="hero-stat-label">Fotos</span>
-            </div>
-            <div class="hero-stat">
-                <span class="hero-stat-num">2024</span>
-                <span class="hero-stat-label">Demolición</span>
+<div id="page-banner" style="position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden;">
+        <div id="banner-bg" style="position:absolute; inset:0; background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg'); background-size:cover; background-position:center; transition:opacity .5s;"></div>
+        <div style="position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.72));"></div>
+        <div style="position:relative; z-index:2; color:white; padding:3rem 10%;">
+            <div style="display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem;">1957 – 2024</div>
+            <h1 id="banner-title" style="font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem;">La Vieja Romareda</h1>
+            <p id="banner-subtitle" style="font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto 1.5rem; line-height:1.6;">67 años de historia, pasión y recuerdos blanquiazules.</p>
+            <div style="display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap;">
+                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;">1957</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Inauguración</span></div>
+                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;" id="stat-photos">—</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Fotos</span></div>
+                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;">2024</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Demolición</span></div>
             </div>
         </div>
     </div>
@@ -463,7 +458,27 @@
         // ============================================
         // INIT
         // ============================================
-        document.addEventListener('DOMContentLoaded', loadPhotos);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBannerDynamic('historia', 'La Vieja Romareda', '67 años de historia, pasión y recuerdos blanquiazules.');
+            loadPhotos();
+        });
+
+        async function loadBannerDynamic(pagina, defaultTitle, defaultSubtitle) {
+            const SURL = 'https://vakpbedvlvxzybxqival.supabase.co';
+            const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+            const client = supabase.createClient(SURL, SKEY);
+            try {
+                const { data } = await client.from('banners').select('*').eq('pagina', pagina).limit(1);
+                const row = data && data.length > 0 ? data[0] : null;
+                if (!row) return;
+                const bg  = document.getElementById('banner-bg');
+                const h1  = document.getElementById('banner-title');
+                const sub = document.getElementById('banner-subtitle');
+                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
+                if (h1  && row.titulo)   h1.textContent  = row.titulo;
+                if (sub && row.subtexto) sub.textContent = row.subtexto;
+            } catch(e) { console.warn('Banner error:', e); }
+        }
     </script>
     <!-- LIGHTBOX -->
     <div id="lb-overlay" onclick="lbClickOutside(event)">
