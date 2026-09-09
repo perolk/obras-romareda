@@ -236,6 +236,68 @@
             .mobile-social a { color:white; font-size:1.4rem; }
         }
         @media(min-width:1025px) { .mobile-social { display:none !important; } }
+
+        /* BANNER UNIFORME */
+        #page-banner {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        #banner-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+            transition: opacity .5s;
+        }
+        #banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.72));
+        }
+        #banner-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 0 10%;
+        }
+        .banner-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: white;
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 5px 16px;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+        #banner-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: .75rem;
+            line-height: 1.1;
+        }
+        #banner-subtitle {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,.75);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        @media(max-width:768px) {
+            #page-banner { height: 300px; }
+            #banner-title { font-size: 2rem; }
+        }
+
     </style>
 
     <header>
@@ -273,18 +335,13 @@
         });
     </script>
 
-<div id="page-banner" style="position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden;">
-        <div id="banner-bg" style="position:absolute; inset:0; background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg'); background-size:cover; background-position:center; opacity:1; transition:opacity .5s;"></div>
-        <div style="position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.72));"></div>
-        <div style="position:relative; z-index:2; color:white; padding:3rem 10%;">
-            <div style="display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem;">1957 – 2024</div>
-            <h1 id="banner-title" style="font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem;">La Vieja Romareda</h1>
-            <p id="banner-subtitle" style="font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto 1.5rem; line-height:1.6;">67 años de historia, pasión y recuerdos blanquiazules.</p>
-            <div style="display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap;">
-                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;">1957</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Inauguración</span></div>
-                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;" id="stat-photos">—</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Fotos</span></div>
-                <div style="text-align:center;"><span style="font-size:1.8rem; font-weight:900; color:#4DA9FF; display:block;">2024</span><span style="font-size:.75rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:1px;">Demolición</span></div>
-            </div>
+    <div id="page-banner">
+        <div id="banner-bg" style="background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');"></div>
+        <div id="banner-overlay"></div>
+        <div id="banner-content">
+            <div class="banner-badge">1957 – 2024</div>
+            <h1 id="banner-title">La Vieja Romareda</h1>
+            <p id="banner-subtitle">67 años de historia, pasión y recuerdos blanquiazules.</p>
         </div>
     </div>
 
@@ -458,27 +515,30 @@
         // ============================================
         // INIT
         // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            loadBannerDynamic('historia', 'La Vieja Romareda', '67 años de historia, pasión y recuerdos blanquiazules.');
-            loadPhotos();
-        });
 
-        async function loadBannerDynamic(pagina, defaultTitle, defaultSubtitle) {
-            const SURL = 'https://vakpbedvlvxzybxqival.supabase.co';
-            const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
-            const client = supabase.createClient(SURL, SKEY);
+        async function loadBannerDynamic(pagina, defaultBg) {
+            const bg  = document.getElementById('banner-bg');
+            const h1  = document.getElementById('banner-title');
+            const sub = document.getElementById('banner-subtitle');
+            // Set default background
+            if (bg && defaultBg) bg.style.backgroundImage = `url('${defaultBg}')`;
             try {
+                const client = supabase.createClient('https://vakpbedvlvxzybxqival.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0');
                 const { data } = await client.from('banners').select('*').eq('pagina', pagina).limit(1);
                 const row = data && data.length > 0 ? data[0] : null;
                 if (!row) return;
-                const bg  = document.getElementById('banner-bg');
-                const h1  = document.getElementById('banner-title');
-                const sub = document.getElementById('banner-subtitle');
-                if (bg  && row.foto_url) { bg.style.backgroundImage = `url('${row.foto_url}')`; bg.style.opacity = '1'; }
+                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
                 if (h1  && row.titulo)   h1.textContent  = row.titulo;
                 if (sub && row.subtexto) sub.textContent = row.subtexto;
-            } catch(e) { console.warn('Banner error:', e); }
+            } catch(e) { console.warn('Banner load error:', e); }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBannerDynamic('historia', 'https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');
+            loadPhotos();
+        });
+
+
     </script>
     <!-- LIGHTBOX -->
     <div id="lb-overlay" onclick="lbClickOutside(event)">

@@ -50,15 +50,10 @@
                         url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
             background-size:cover; background-position:center;
         }
-        .banner-bg {
-            position:absolute; inset:0;
-            background-image: url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
-            background-size:cover; background-position:center;
-            opacity:1; transition:opacity .6s;
-        }
+        
         .banner-overlay { position:absolute; inset:0; background:linear-gradient(rgba(0,82,159,.75),rgba(0,0,0,.7)); }
-        .banner-content { position:relative; z-index:2; color:white; padding:0 5%; }
-        .banner-badge { display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem; }
+        
+        
         .banner-content h1 { font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem; }
         .banner-content p { font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto; line-height:1.6; }
 
@@ -134,6 +129,16 @@
         <div class="banner-bg" id="banner-bg"></div>
         <div class="banner-overlay"></div>
         <div class="banner-content">
+            <div class="banner-badge">IDOM · 2024</div>
+            <h1 id="banner-title">El Proyecto</h1>
+            <p id="banner-subtitle">Renders, plantas y detalles técnicos de la futura casa del Real Zaragoza, diseñada por IDOM.</p>
+        </div>
+    </div>
+
+    <div id="page-banner">
+        <div id="banner-bg" style="background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');"></div>
+        <div id="banner-overlay"></div>
+        <div id="banner-content">
             <div class="banner-badge">IDOM · 2024</div>
             <h1 id="banner-title">El Proyecto</h1>
             <p id="banner-subtitle">Renders, plantas y detalles técnicos de la futura casa del Real Zaragoza, diseñada por IDOM.</p>
@@ -220,20 +225,7 @@
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // BANNER DINÁMICO
-        async function loadBanner() {
-            try {
-                const { data } = await sb.from('banners').select('*').eq('pagina','proyecto').limit(1);
-                const row = data && data.length > 0 ? data[0] : null;
-                if (!row) return;
-                if (row.foto_url) {
-                    const bg = document.getElementById('banner-bg');
-                    bg.style.backgroundImage = `url('${row.foto_url}')`;
-                    bg.style.opacity = '1';
-                }
-                if (row.titulo)   document.getElementById('banner-title').textContent   = row.titulo;
-                if (row.subtexto) document.getElementById('banner-subtitle').textContent = row.subtexto;
-            } catch(e) {}
-        }
+
 
         // HAMBURGER
         const hBtn = document.getElementById('hamburgerBtn');
@@ -277,6 +269,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            loadBannerDynamic('proyecto', 'https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
             loadBanner();
             Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(img => compareImages(img));
         });
