@@ -1467,6 +1467,8 @@ async function confirmCrop() {
         btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir';
     }, 'image/jpeg', 0.9);
 }
+
+async function loadAllBanners() {
     for (const pagina of ['historia','proyecto']) {
         const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
         const row = data && data.length > 0 ? data[0] : null;
