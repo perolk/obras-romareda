@@ -1385,109 +1385,6 @@ function switchTab(tab) {
 // ============================================
 // BANNERS
 // ============================================
-// ============================================
-// CROPPER DE BANNERS
-// ============================================
-let cropperInstance = null;
-let cropperPagina   = null;
-
-function openCropper(pagina, file) {
-    if (!file) return;
-    cropperPagina = pagina;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const modal = document.getElementById('cropper-modal');
-        const img   = document.getElementById('cropper-img');
-
-        // Destruir instancia anterior
-        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-
-        img.src = e.target.result;
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-
-        // Inicializar Cropper con ratio 16:5 (banner)
-        img.onload = () => {
-            cropperInstance = new Cropper(img, {
-                aspectRatio: 16 / 5,
-                viewMode: 1,
-                dragMode: 'move',
-                autoCropArea: 1,
-                restore: false,
-                guides: true,
-                center: true,
-                highlight: true,
-                cropBoxMovable: true,
-                cropBoxResizable: true,
-                toggleDragModeOnDblclick: false,
-            });
-        };
-    };
-    reader.readAsDataURL(file);
-    // Reset file input
-    document.getElementById(`b-${pagina}-file`).value = '';
-}
-
-function closeCropper() {
-    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-    document.getElementById('cropper-modal').style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-async function confirmCrop() {
-    if (!cropperInstance || !cropperPagina) return;
-
-    const btn = document.querySelector('#cropper-modal .btn-success');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
-
-    // Obtener canvas recortado a resolución óptima para banner
-    const canvas = cropperInstance.getCroppedCanvas({ width: 1920, height: 600, imageSmoothingQuality: 'high' });
-
-    canvas.toBlob(async (blob) => {
-        const pagina = cropperPagina;
-        closeCropper();
-
-        // Preview inmediato
-        const previewUrl = URL.createObjectURL(blob);
-        showBannerImg(pagina, previewUrl);
-        toast('Subiendo banner...', 'ok');
-
-        const path = `${pagina}_${Date.now()}.jpg`;
-        const { error } = await sb.storage.from('banners').upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
-        if (error) { toast(`Error: ${error.message}`, 'err'); return; }
-
-        const { data } = sb.storage.from('banners').getPublicUrl(path);
-        showBannerImg(pagina, data.publicUrl);
-        document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
-        toast('✅ Banner recortado y subido. Haz clic en Guardar.', 'ok');
-
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir';
-    }, 'image/jpeg', 0.9);
-}
-
-async function loadAllBanners() {
-    for (const pagina of ['historia','proyecto']) {
-        const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
-        const row = data && data.length > 0 ? data[0] : null;
-        if (!row) continue;
-        const tEl = document.getElementById(`b-${pagina}-titulo`);
-        const sEl = document.getElementById(`b-${pagina}-subtexto`);
-        if (tEl) tEl.value = row.titulo   || '';
-        if (sEl) sEl.value = row.subtexto || '';
-        if (row.foto_url) showBannerImg(pagina, row.foto_url);
-    }
-}
-
-function showBannerImg(pagina, url) {
-    const img = document.getElementById(`b-${pagina}-img`);
-    const ph  = document.getElementById(`b-${pagina}-preview`);
-    if (img) { img.src = url; img.style.display = 'block'; img.style.width = '100%'; img.style.height = '140px'; img.style.objectFit = 'cover'; img.style.borderRadius = '10px'; }
-    if (ph)  ph.style.display = 'none';
-}
-
 // Convierte cualquier imagen (incluso HEIC) a JPEG via canvas
 async function toJpeg(file, quality = 0.85) {
     return new Promise((resolve) => {
@@ -1532,19 +1429,6 @@ async function uploadBannerPhoto(pagina, file) {
     // Guardar URL para cuando se haga clic en Guardar
     document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
     toast('✅ Foto subida. Haz clic en Guardar.', 'ok');
-}
-
-async function saveBanner(pagina) {
-    const titulo   = document.getElementById(`b-${pagina}-titulo`).value.trim();
-    const subtexto = document.getElementById(`b-${pagina}-subtexto`).value.trim();
-    const imgEl    = document.getElementById(`b-${pagina}-img`);
-    const fotoUrl  = document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl
-                  || (imgEl && imgEl.src && imgEl.src.startsWith('https://vakp') ? imgEl.src : null);
-
-    const payload = { pagina, titulo, subtexto, foto_url: fotoUrl || null, updated_at: new Date().toISOString() };
-    const { error } = await sb.from('banners').upsert(payload, { onConflict:'pagina' });
-    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
-    toast(`✅ Banner guardado correctamente`, 'ok');
 }
 
 // ============================================
