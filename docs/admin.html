@@ -1104,11 +1104,22 @@ async function loadStorageStats() {
                 totalSize += f.metadata.size; totalFiles++;
             }
         }
-        if (histCount > 0) allItems.push({ label: 'La Vieja Romareda', size: histSize, count: histCount, bucket: 'historia' });
+        if (histCount > 0) allItems.push({ label: '📸 La Vieja Romareda', size: histSize, count: histCount, bucket: 'historia' });
 
         // Actualizar stats del tab historia
         document.getElementById('hist-count').textContent = histCount;
         document.getElementById('hist-size').textContent  = formatBytes(histSize);
+
+        // --- Bucket banners ---
+        const { data: bannerFiles } = await sb.storage.from('banners').list('', { limit:1000 });
+        let bannerSize = 0, bannerCount = 0;
+        for (const f of (bannerFiles || [])) {
+            if (f.metadata?.size && f.name !== '.emptyFolderPlaceholder') {
+                bannerSize += f.metadata.size; bannerCount++;
+                totalSize  += f.metadata.size; totalFiles++;
+            }
+        }
+        if (bannerCount > 0) allItems.push({ label: '🖼️ Banners', size: bannerSize, count: bannerCount, bucket: 'banners' });
 
         // Ordenar por tamaño
         allItems.sort((a, b) => b.size - a.size);
