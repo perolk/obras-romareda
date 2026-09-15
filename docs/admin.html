@@ -801,7 +801,7 @@
         </div>
         <div style="display:flex; gap:10px; margin-top:1rem;">
             <button onclick="closeCropper()" class="btn btn-outline" style="flex:1;">Cancelar</button>
-            <button onclick="confirmCrop()" class="btn btn-success" style="flex:2;">
+            <button id="cropper-confirm-btn" onclick="confirmCrop()" class="btn btn-success" style="flex:2;">
                 <i class="fas fa-check"></i> Confirmar recorte y subir
             </button>
         </div>
@@ -1447,108 +1447,171 @@ async function uploadBannerPhoto(pagina, file) {
     toast('✅ Foto subida. Haz clic en Guardar.', 'ok');
 }
 
+// ============================================
+// SISTEMA DE BANNERS — REESCRITURA LIMPIA
+// ============================================
+const bannerUrls = {}; // Almacena la URL de foto por página
+
 function showBannerImg(pagina, url) {
     const img = document.getElementById(`b-${pagina}-img`);
     const ph  = document.getElementById(`b-${pagina}-preview`);
-    if (img) { img.src = url; img.style.display = 'block'; }
+    if (img) { img.src = url; img.style.display = 'block'; img.style.width = '100%'; img.style.height = '120px'; img.style.objectFit = 'cover'; img.style.borderRadius = '10px'; }
     if (ph)  ph.style.display = 'none';
+    bannerUrls[pagina] = url; // guardar para saveBanner
 }
 
 async function loadAllBanners() {
     for (const pagina of ['historia', 'proyecto']) {
-        const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
-        const row = data && data.length > 0 ? data[0] : null;
-        if (!row) continue;
-        const tEl = document.getElementById(`b-${pagina}-titulo`);
-        const sEl = document.getElementById(`b-${pagina}-subtexto`);
-        if (tEl) tEl.value = row.titulo   || '';
-        if (sEl) sEl.value = row.subtexto || '';
-        if (row.foto_url) showBannerImg(pagina, row.foto_url);
+        try {
+            const { data, error } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
+            if (error) { console.error('loadAllBanners error:', error); continue; }
+            const row = data && data.length > 0 ? data[0] : null;
+            if (!row) continue;
+            const tEl = document.getElementById(`b-${pagina}-titulo`);
+            const sEl = document.getElementById(`b-${pagina}-subtexto`);
+            if (tEl) tEl.value = row.titulo   || '';
+            if (sEl) sEl.value = row.subtexto || '';
+            if (row.foto_url) showBannerImg(pagina, row.foto_url);
+        } catch(e) { console.error('loadAllBanners exception:', e); }
     }
 }
 
 async function saveBanner(pagina) {
-    const titulo   = document.getElementById(`b-${pagina}-titulo`).value.trim();
-    const subtexto = document.getElementById(`b-${pagina}-subtexto`).value.trim();
-    const imgEl    = document.getElementById(`b-${pagina}-img`);
-    const fotoUrl  = document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl
-                  || (imgEl && imgEl.src && imgEl.src.startsWith('https://') ? imgEl.src : null);
-    const payload  = { pagina, titulo, subtexto, foto_url: fotoUrl || null, updated_at: new Date().toISOString() };
-    const { error } = await sb.from('banners').upsert(payload, { onConflict: 'pagina' });
-    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
-    toast(`✅ Banner de ${pagina} guardado`, 'ok');
+    const titulo   = (document.getElementById(`b-${pagina}-titulo`)?.value   || '').trim();
+    const subtexto = (document.getElementById(`b-${pagina}-subtexto`)?.value || '').trim();
+    const fotoUrl  = bannerUrls[pagina] && bannerUrls[pagina].startsWith('https://') ? bannerUrls[pagina] : null;
+
+    console.log('saveBanner:', pagina, { titulo, subtexto, fotoUrl });
+
+    const payload = { pagina, titulo, subtexto, foto_url: fotoUrl, updated_at: new Date().toISOString() };
+    const { data, error } = await sb.from('banners').upsert(payload, { onConflict: 'pagina' });
+    if (error) {
+        console.error('saveBanner error:', error);
+        toast(`Error al guardar: ${error.message}`, 'err');
+        return;
+    }
+    console.log('saveBanner success:', data);
+    toast(`✅ Banner de "${pagina}" guardado correctamente`, 'ok');
 }
 
-// Cropper
+// --- CROPPER ---
 let cropperInstance = null;
 let cropperPagina   = null;
 
 async function openCropper(pagina, file) {
     if (!file) return;
     cropperPagina = pagina;
-    document.getElementById(`b-${pagina}-file`).value = '';
-    // Convertir HEIC/HEIF primero
-    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
-                   file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+
+    // Reset file input
+    const fileInput = document.getElementById(`b-${pagina}-file`);
+    if (fileInput) fileInput.value = '';
+
+    toast('Preparando imagen...', 'ok');
+
+    // Convertir HEIC/HEIF si es necesario
+    let blob = file;
+    const isHeic = /\.(heic|heif)$/i.test(file.name) || file.type === 'image/heic' || file.type === 'image/heif';
     if (isHeic && typeof heic2any !== 'undefined') {
         try {
-            toast('Convirtiendo HEIF...', 'ok');
-            const converted = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
-            file = Array.isArray(converted) ? converted[0] : converted;
-        } catch(e) { console.warn('heic2any error:', e); }
+            const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            blob = Array.isArray(result) ? result[0] : result;
+        } catch(e) { console.warn('heic2any failed:', e); }
     }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const modal = document.getElementById('cropper-modal');
-        const img   = document.getElementById('cropper-img');
-        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-        img.src = e.target.result;
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        img.onload = () => {
-            cropperInstance = new Cropper(img, {
+
+    // Leer como DataURL
+    const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = e => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+
+    // Preparar modal
+    const modal   = document.getElementById('cropper-modal');
+    const cropImg = document.getElementById('cropper-img');
+
+    // Destruir instancia anterior
+    if (cropperInstance) { try { cropperInstance.destroy(); } catch(e){} cropperInstance = null; }
+    cropImg.src = '';
+    cropImg.onload = null;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Iniciar cropper cuando la imagen cargue
+    cropImg.onload = function() {
+        try {
+            cropperInstance = new Cropper(cropImg, {
                 aspectRatio: 16 / 5,
                 viewMode: 1,
                 dragMode: 'move',
-                autoCropArea: 1,
+                autoCropArea: 0.9,
                 guides: true,
                 center: true,
                 cropBoxMovable: true,
                 cropBoxResizable: true,
                 toggleDragModeOnDblclick: false,
+                ready() { console.log('Cropper ready'); }
             });
-        };
+        } catch(e) { console.error('Cropper init error:', e); toast('Error al iniciar el recortador', 'err'); }
     };
-    reader.readAsDataURL(file);
+    cropImg.src = dataUrl;
 }
 
 function closeCropper() {
-    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
-    document.getElementById('cropper-modal').style.display = 'none';
+    const modal = document.getElementById('cropper-modal');
+    if (cropperInstance) {
+        try { cropperInstance.destroy(); } catch(e){}
+        cropperInstance = null;
+    }
+    if (modal) modal.style.display = 'none';
     document.body.style.overflow = '';
+    cropperPagina = null;
 }
 
 async function confirmCrop() {
-    if (!cropperInstance || !cropperPagina) return;
-    const btn = document.querySelector('#cropper-modal .btn-success');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
-    const canvas = cropperInstance.getCroppedCanvas({ width: 1920, height: 600, imageSmoothingQuality: 'high' });
-    canvas.toBlob(async (blob) => {
-        const pagina = cropperPagina;
+    if (!cropperInstance || !cropperPagina) {
+        toast('Error: no hay imagen seleccionada', 'err');
+        return;
+    }
+
+    const btn    = document.getElementById('cropper-confirm-btn');
+    const pagina = cropperPagina;
+
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...'; }
+
+    try {
+        const canvas = cropperInstance.getCroppedCanvas({ width: 1920, height: 600, imageSmoothingQuality: 'high' });
+        if (!canvas) throw new Error('No se pudo obtener el canvas');
+
+        const blob = await new Promise((resolve, reject) => {
+            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.9);
+        });
+
+        // Cerrar modal antes de subir
         closeCropper();
+
+        // Preview inmediato
         showBannerImg(pagina, URL.createObjectURL(blob));
-        toast('Subiendo banner...', 'ok');
+        toast('Subiendo imagen...', 'ok');
+
         const path = `${pagina}_${Date.now()}.jpg`;
-        const { error } = await sb.storage.from('banners').upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
-        if (error) { toast(`Error: ${error.message}`, 'err'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir'; return; }
-        const { data } = sb.storage.from('banners').getPublicUrl(path);
-        showBannerImg(pagina, data.publicUrl);
-        document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
-        toast('✅ Foto lista. Haz clic en Guardar banner.', 'ok');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir';
-    }, 'image/jpeg', 0.9);
+        const { error: uploadError } = await sb.storage.from('banners').upload(path, blob, {
+            upsert: true,
+            contentType: 'image/jpeg'
+        });
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = sb.storage.from('banners').getPublicUrl(path);
+        showBannerImg(pagina, urlData.publicUrl);
+        toast('✅ Imagen lista. Haz clic en "Guardar banner".', 'ok');
+
+    } catch(e) {
+        console.error('confirmCrop error:', e);
+        toast(`Error: ${e.message}`, 'err');
+    }
+
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir'; }
 }
 
 // ============================================
