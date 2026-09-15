@@ -524,8 +524,7 @@
             // Set default background
             if (bg && defaultBg) bg.style.backgroundImage = `url('${defaultBg}')`;
             try {
-                const client = supabase.createClient('https://vakpbedvlvxzybxqival.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0');
-                const { data } = await client.from('banners').select('*').eq('pagina', pagina).limit(1);
+                const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
                 const row = data && data.length > 0 ? data[0] : null;
                 if (!row) return;
                 if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
