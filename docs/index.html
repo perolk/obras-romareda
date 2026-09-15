@@ -24,6 +24,8 @@
     <style>
         /* --- VARIABLES Y COLORES --- */
         :root {
+        --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
             --zaragoza-blue: #00529F;
             --zaragoza-light: #4DA9FF;
             --text-dark: #1a1a1a;
@@ -53,7 +55,9 @@
 
         /* --- HEADER --- */
         header {
-            background: var(--zaragoza-blue);
+            background: rgba(0,40,100,.82);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             padding: 1rem 5%;
             position: fixed;
             width: 100%;
@@ -61,7 +65,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-bottom: 0.5px solid rgba(255,255,255,.12);
         }
 
         .logo {
@@ -71,7 +75,7 @@
             font-size: 1.8rem;
             color: white;
             text-decoration: none;
-            transition: 0.3s;
+            transition: color 160ms var(--ease-out);
         }
         .logo:hover { color: var(--zaragoza-light); }
 
@@ -111,7 +115,7 @@
             height: 3px;
             background: white;
             border-radius: 3px;
-            transition: all 0.3s ease;
+            transition: color 160ms var(--ease-out);
         }
         /* Animación del hamburguesa → X */
         .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
@@ -121,7 +125,7 @@
         /* --- HERO SECTION --- */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(0, 82, 159, 0.75), rgba(0, 0, 0, 0.7)), url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');
+            background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%), url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: scroll;
@@ -135,24 +139,25 @@
         }
 
         .hero h1 {
-            font-size: 4.5rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
             margin-bottom: 1rem;
             text-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            letter-spacing: -1px;
+            letter-spacing: -0.03em;
             color: white;
         }
 
         .construction-counter {
-            background: rgba(0, 82, 159, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             padding: 8px 25px;
-            border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 100px;
+            border: 0.5px solid rgba(255,255,255,.25);
             color: white;
             font-size: 1.1rem;
             margin-bottom: 0;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-bottom: 0.5px solid rgba(255,255,255,.12);
         }
         .construction-counter span {
             font-weight: 900;
@@ -176,12 +181,14 @@
             color: var(--zaragoza-blue);
             text-decoration: none;
             font-weight: 700;
-            border-radius: 50px;
+            border-radius: 100px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease-in-out;
+            transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
             font-size: 1.1rem;
         }
-        .cta-btn:hover { transform: translateY(-5px) scale(1.02); }
+        .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
+        .cta-btn:active { transform: scale(0.97); box-shadow: none; transition-duration: 80ms; }
+        @media (hover: hover) and (pointer: fine) { .cta-btn:hover { transform: translateY(-4px); } }
 
         /* --- SECTIONS GENERAL --- */
         section { padding: 6rem 10%; }
@@ -191,7 +198,7 @@
         #videos .section-title::after { background: var(--zaragoza-light); }
 
         .section-title {
-            font-size: 3rem;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
             margin-bottom: 4rem;
             color: white;
             font-weight: 900;
@@ -224,10 +231,10 @@
 
         .featured-video-card {
             background: var(--card-glass);
-            border-radius: 20px;
+            border-radius: 100px;
             overflow: hidden;
             box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 0.5px solid rgba(255,255,255,.14);
             max-width: 100%;
             margin: 0;
         }
@@ -287,7 +294,9 @@
             margin-left: 4px; /* centra visualmente el triángulo */
         }
         .mini-thumb:hover .play-btn {
-            background: var(--zaragoza-blue);
+            background: rgba(0,40,100,.82);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             transform: translate(-50%, -50%) scale(1.1);
         }
         .mini-thumb iframe {
@@ -317,7 +326,7 @@
             cursor: pointer;
             transition: transform 0.3s;
             position: relative;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 0.5px solid rgba(255,255,255,.14);
             display: block;
         }
         .album-card:hover { transform: translateY(-5px); }
@@ -344,7 +353,7 @@
             color: var(--text-muted);
             background: #f0f0f0;
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 100px;
         }
 
         .load-more-btn {
@@ -371,7 +380,7 @@
             display: flex; flex-direction: column; align-items: center; text-align: center; width: 150px; position: relative; z-index: 2;
         }
         .phase-circle {
-            width: 50px; height: 50px; border-radius: 50%; background: #e0e0e0; color: #666; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;
+            width: 50px; height: 50px; border-radius: 50%; background: #e0e0e0; color: #666; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: color 160ms var(--ease-out);
         }
         .phase-content h4 { color: var(--text-dark); margin-bottom: 5px; font-size: 1rem; }
         .phase-content span { font-size: 0.8rem; color: var(--text-muted); display: block; }
@@ -462,7 +471,7 @@
             margin: auto; display: block; width: 80%; max-width: 700px; text-align: center; color: #ccc; padding: 10px 0; height: auto; font-size: 1.2rem; font-weight: 500;
         }
         .close {
-            position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; z-index: 3001;
+            position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: color 160ms var(--ease-out); cursor: pointer; z-index: 3001;
         }
         .close:hover { color: var(--zaragoza-light); }
 
@@ -486,15 +495,17 @@
         /* Tarjeta destacada */
         .actualidad-card {
             background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 16px;
+            border: 0.5px solid rgba(255,255,255,.14);
+            border-radius: 14px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s, border-color 0.3s;
+            transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
             text-decoration: none;
             display: block;
         }
-        .actualidad-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.4); }
+        @media (hover: hover) and (pointer: fine) {
+            .actualidad-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.3); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+        }
         .actualidad-cover-wrap {
             position: relative;
             height: 220px;
@@ -504,9 +515,9 @@
         .actualidad-cover {
             width: 100%; height: 100%;
             object-fit: cover; display: block;
-            transition: transform 0.4s;
+            transition: transform 300ms var(--ease-out);
         }
-        .actualidad-card:hover .actualidad-cover { transform: scale(1.04); }
+        @media (hover: hover) and (pointer: fine) { .actualidad-card:hover .actualidad-cover { transform: scale(1.04); } }
         .actualidad-cover-placeholder {
             width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
@@ -535,9 +546,10 @@
             background: white; color: var(--zaragoza-blue);
             padding: 9px 20px; border-radius: 30px;
             font-weight: 700; font-size: 0.85rem;
-            text-decoration: none; transition: transform 0.2s;
+            text-decoration: none; transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
         }
-        .actualidad-btn:hover { transform: translateY(-2px); }
+        @media (hover: hover) and (pointer: fine) { .actualidad-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); } }
+        .actualidad-btn:active { transform: scale(0.97); transition-duration: 80ms; }
 
         /* Sidebar semanas anteriores */
         .actualidad-sidebar { display: flex; flex-direction: column; }
@@ -549,12 +561,12 @@
         }
         .actualidad-prev-item {
             background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.12);
+            border: 0.5px solid rgba(255,255,255,.1);
             border-radius: 10px;
             display: flex; align-items: center;
             overflow: hidden; margin-bottom: 10px;
             cursor: pointer; text-decoration: none;
-            transition: background 0.2s, border-color 0.2s;
+            transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out);
         }
         .actualidad-prev-item:hover {
             background: rgba(255,255,255,0.13);
@@ -588,7 +600,7 @@
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
-            border-radius: 16px;
+            border-radius: 14px;
         }
         .actualidad-prev-skeleton {
             height: 56px; border-radius: 10px; margin-bottom: 10px;
@@ -602,7 +614,7 @@
             border: 1px solid rgba(255,255,255,0.18);
             color: rgba(255,255,255,0.65); border-radius: 30px;
             font-weight: 600; cursor: pointer; font-size: 0.82rem;
-            font-family: 'Inter', sans-serif; transition: all 0.2s;
+            font-family: 'Inter', sans-serif; transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .ver-todas-btn:hover { background: rgba(255,255,255,0.13); color: white; }
@@ -632,7 +644,7 @@
                 position: absolute; top: 100%; left: 0;
                 width: 100%; background: var(--zaragoza-blue);
                 padding: 0; max-height: 0; overflow: hidden;
-                transition: max-height 0.4s ease, padding 0.3s;
+                transition: max-height 300ms var(--ease-out), padding 200ms var(--ease-out);
                 box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             }
             nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
@@ -701,12 +713,15 @@
         /* 3. ANIMACIONES DE ENTRADA AL HACER SCROLL */
         .fade-in {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
+            transform: translateY(12px);
+            transition: opacity 380ms var(--ease-out), transform 380ms var(--ease-out);
         }
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in { transition: none; opacity: 1; transform: none; }
         }
         .fade-in-delay-1 { transition-delay: 0.1s; }
         .fade-in-delay-2 { transition-delay: 0.2s; }
@@ -955,7 +970,7 @@
 
             // Las siguientes van al sidebar
             prev.innerHTML = '';
-            data.slice(1).forEach(w => prev.appendChild(renderPrevItem(w)));
+            data.slice(1).forEach((w, idx) => prev.appendChild(renderPrevItem(w, idx)));
         }
 
         function renderFeatured(w) {
@@ -981,10 +996,10 @@
                 </a>`;
         }
 
-        function renderPrevItem(w) {
+        function renderPrevItem(w, idx = 0) {
             const a = document.createElement('a');
             a.href = `semana.html?n=${w.numero}`;
-            a.className = 'actualidad-prev-item';
+            a.className = 'actualidad-prev-item'; a.style.animation = `fadeUpItem 280ms cubic-bezier(0.23,1,0.32,1) ${idx * 50}ms both`;
             const thumbHtml = w.portada_url
                 ? `<img src="${w.portada_url}" class="actualidad-prev-thumb" alt="Semana ${w.numero}" loading="lazy">`
                 : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);"></i></div>`;
