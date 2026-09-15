@@ -398,6 +398,7 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 </head>
 <body>
 
@@ -1324,6 +1325,15 @@ function formatBytes(bytes) {
 }
 
 async function compressImage(file) {
+    // Convert HEIC/HEIF first
+    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
+                   file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+    if (isHeic && typeof heic2any !== 'undefined') {
+        try {
+            const converted = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            file = Array.isArray(converted) ? converted[0] : converted;
+        } catch(e) { console.warn('heic2any failed', e); }
+    }
     return new Promise((resolve) => {
         const quality  = parseInt(document.getElementById('slider-calidad').value) / 100;
         const maxWidth = parseInt(document.getElementById('slider-res').value);
@@ -1386,6 +1396,8 @@ function switchTab(tab) {
     });
     Array.from(document.querySelector('main').children).forEach(el => {
         if (['tab-historia','tab-banners'].includes(el.id)) return;
+        // Keep storage-grid always visible
+        if (el.classList && el.classList.contains('storage-grid')) return;
         el.style.display = tab === 'semanas' ? '' : 'none';
     });
     loadStorageStats();
