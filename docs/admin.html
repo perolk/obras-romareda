@@ -1814,10 +1814,18 @@ dz.addEventListener('drop', e => {
 // TOAST
 // ============================================
 function toast(msg, type = 'ok') {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className   = type;
-    el.style.display = 'flex';
+    let el = document.getElementById('toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.style.cssText = 'position:fixed;bottom:2rem;right:2rem;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:600;display:none;align-items:center;gap:10px;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,.4);font-family:Inter,sans-serif;';
+        document.body.appendChild(el);
+    }
+    el.textContent    = msg;
+    el.className      = type;
+    el.style.display  = 'flex';
+    el.style.background = type === 'ok' ? '#10b981' : '#ef4444';
+    el.style.color    = 'white';
     clearTimeout(window._toastTimer);
     window._toastTimer = setTimeout(() => el.style.display = 'none', 3500);
 }
