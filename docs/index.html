@@ -736,7 +736,6 @@
 
                 <li><a href="proyecto.html">El Proyecto</a></li>
                 <li><a href="historia.html">La Vieja Romareda</a></li>
-                <li><a href="#historia">Historia</a></li>
             </ul>
             <!-- Redes sociales duplicadas en el menú móvil -->
             <div class="mobile-social" style="display:none;">
@@ -784,96 +783,6 @@
                 <button class="ver-todas-btn" onclick="openGallerySection()">
                     Ver todas las semanas <i class="fas fa-chevron-down" aria-hidden="true"></i>
                 </button>
-            </div>
-        </div>
-    </section>
-
-    <section id="historia" class="fade-in">
-        <h2 class="section-title">Memoria Histórica</h2>
-
-        <!-- Tarjeta de entrada a La Vieja Romareda -->
-        <a href="historia.html" style="
-            display:block; max-width:900px; margin:0 auto 3rem;
-            border-radius:20px; overflow:hidden; text-decoration:none;
-            box-shadow:0 15px 40px rgba(0,0,0,0.15);
-            position:relative; cursor:pointer;
-            transition:transform .3s, box-shadow .3s;"
-            onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(0,0,0,0.2)'"
-            onmouseout="this.style.transform='';this.style.boxShadow='0 15px 40px rgba(0,0,0,0.15)'">
-            <div style="
-                background:linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.75)),
-                url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');
-                background-size:cover; background-position:center;
-                padding:3.5rem 3rem;
-                display:flex; align-items:center; justify-content:space-between;
-                gap:2rem; flex-wrap:wrap;">
-                <div>
-                    <div style="
-                        display:inline-block; background:rgba(255,255,255,.15);
-                        border:1px solid rgba(255,255,255,.3); color:white;
-                        font-size:.72rem; font-weight:700; text-transform:uppercase;
-                        letter-spacing:2px; padding:4px 14px; border-radius:20px;
-                        margin-bottom:1rem;">1957 – 2024</div>
-                    <h3 style="font-size:2rem; font-weight:900; color:white; margin-bottom:.6rem; line-height:1.1;">
-                        La Vieja Romareda
-                    </h3>
-                    <p style="font-size:1rem; color:rgba(255,255,255,.75); max-width:480px; line-height:1.6; margin:0;">
-                        67 años de historia, pasión y recuerdos blanquiazules. Explora el archivo fotográfico de un estadio legendario.
-                    </p>
-                </div>
-                <div style="
-                    display:inline-flex; align-items:center; gap:10px;
-                    background:white; color:var(--zaragoza-blue);
-                    padding:13px 26px; border-radius:30px;
-                    font-weight:700; font-size:.95rem; white-space:nowrap;
-                    flex-shrink:0;">
-                    Ver archivo fotográfico <i class="fas fa-arrow-right"></i>
-                </div>
-            </div>
-        </a>
-        <div class="history-timeline">
-            <div class="history-item">
-                <h3>Un Estadio de Leyenda (1957 - 2024)</h3>
-                <p style="margin-bottom: 30px;">Más que hormigón, el corazón de Zaragoza. Haz clic en las imágenes para recordar.</p>
-                
-                <div class="history-grid">
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://statics-maker.llt-services.com/zar/images/2023/03/22/xlarge/89db9591-f362-4ba0-a080-0f445a8ef4a2.jpg" 
-                             alt="Inauguración: 8 de Septiembre de 1957" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">1957: La Inauguración</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://as01.epimg.net/futbol/imagenes/2022/06/17/reportajes/1655460674_524206_1655460833_noticia_normal.jpg" 
-                             alt="Sede del Mundial España '82" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">1982: Sede Mundialista</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://www.heraldo.es/uploads/imagenes/2015/05/08/_C7F9301_3a720520.jpg" 
-                             alt="La Recopa en casa ante una Romareda llena" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">1995: La Recopa en Casa</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" 
-                             alt="Concierto Michael Jackson History Tour 1996" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">1996: Michael Jackson</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://phantom-marca.unidadeditorial.es/f520297447740d32295799ce6cc50392/resize/828/f/jpg/assets/multimedia/imagenes/2023/02/08/16758536782412.jpg" 
-                             alt="Noche mágica de Copa: 6-1 al Real Madrid" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">2006: Noche Mágica de Copa</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px;">
-                        <img loading="lazy" src="https://estaticos-cdn.prensaiberica.es/clip/bdc97986-08c6-4004-824b-0e60370f533d_16-9-aspect-ratio_default_0.jpg" 
-                             alt="El último partido antes de la demolición" 
-                             onclick="openModal(this.src, this.alt)">
-                        <p class="caption" style="margin-top:8px; color:#6b7280;">2024: El Último Partido</p>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
