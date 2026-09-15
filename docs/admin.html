@@ -1502,17 +1502,21 @@ async function saveBanner(pagina) {
     const subtexto = (document.getElementById(`b-${pagina}-subtexto`)?.value || '').trim();
     const fotoUrl  = bannerUrls[pagina] && bannerUrls[pagina].startsWith('https://') ? bannerUrls[pagina] : null;
 
-    console.log('saveBanner:', pagina, { titulo, subtexto, fotoUrl });
-
-    const payload = { pagina, titulo, subtexto, foto_url: fotoUrl, updated_at: new Date().toISOString() };
-    const { data, error } = await sb.from('banners').upsert(payload, { onConflict: 'pagina' });
-    if (error) {
-        console.error('saveBanner error:', error);
-        toast(`Error al guardar: ${error.message}`, 'err');
-        return;
+    // Check if row exists first
+    const { data: existing } = await sb.from('banners').select('id').eq('pagina', pagina).limit(1);
+    let error;
+    if (existing && existing.length > 0) {
+        const res = await sb.from('banners')
+            .update({ titulo, subtexto, foto_url: fotoUrl, updated_at: new Date().toISOString() })
+            .eq('pagina', pagina);
+        error = res.error;
+    } else {
+        const res = await sb.from('banners')
+            .insert({ pagina, titulo, subtexto, foto_url: fotoUrl, updated_at: new Date().toISOString() });
+        error = res.error;
     }
-    console.log('saveBanner success:', data);
-    toast(`✅ Banner de "${pagina}" guardado correctamente`, 'ok');
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    toast(`✅ Banner de "${pagina}" guardado`, 'ok');
 }
 
 // --- CROPPER ---

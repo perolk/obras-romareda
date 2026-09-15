@@ -268,9 +268,23 @@
             }
         }
 
+        async function loadBannerDynamic(pagina, defaultBg) {
+            const bg  = document.getElementById('banner-bg');
+            const h1  = document.getElementById('banner-title');
+            const sub = document.getElementById('banner-subtitle');
+            if (bg && defaultBg) bg.style.backgroundImage = `url('${defaultBg}')`;
+            try {
+                const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
+                const row = data && data.length > 0 ? data[0] : null;
+                if (!row) return;
+                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
+                if (h1  && row.titulo)   h1.textContent  = row.titulo;
+                if (sub && row.subtexto) sub.textContent = row.subtexto;
+            } catch(e) { console.warn('Banner error:', e); }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             loadBannerDynamic('proyecto', 'https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
-            loadBanner();
             Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(img => compareImages(img));
         });
     </script>
