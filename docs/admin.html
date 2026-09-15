@@ -1433,25 +1433,122 @@ async function toJpeg(file, quality = 0.85) {
 async function uploadBannerPhoto(pagina, file) {
     if (!file) return;
     toast('Procesando imagen...', 'ok');
-
-    // Convertir a JPEG (resuelve el problema de HEIC y otros formatos)
     const blob = await toJpeg(file);
     if (!blob) { toast('Error al procesar la imagen', 'err'); return; }
-
-    // Mostrar preview inmediatamente
     const previewUrl = URL.createObjectURL(blob);
     showBannerImg(pagina, previewUrl);
-
     toast('Subiendo foto...', 'ok');
     const path = `${pagina}_${Date.now()}.jpg`;
     const { error } = await sb.storage.from('banners').upload(path, blob, { upsert:true, contentType:'image/jpeg' });
     if (error) { toast(`Error: ${error.message}`, 'err'); return; }
-
     const { data } = sb.storage.from('banners').getPublicUrl(path);
     showBannerImg(pagina, data.publicUrl);
-    // Guardar URL para cuando se haga clic en Guardar
     document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
     toast('✅ Foto subida. Haz clic en Guardar.', 'ok');
+}
+
+function showBannerImg(pagina, url) {
+    const img = document.getElementById(`b-${pagina}-img`);
+    const ph  = document.getElementById(`b-${pagina}-preview`);
+    if (img) { img.src = url; img.style.display = 'block'; }
+    if (ph)  ph.style.display = 'none';
+}
+
+async function loadAllBanners() {
+    for (const pagina of ['historia', 'proyecto']) {
+        const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
+        const row = data && data.length > 0 ? data[0] : null;
+        if (!row) continue;
+        const tEl = document.getElementById(`b-${pagina}-titulo`);
+        const sEl = document.getElementById(`b-${pagina}-subtexto`);
+        if (tEl) tEl.value = row.titulo   || '';
+        if (sEl) sEl.value = row.subtexto || '';
+        if (row.foto_url) showBannerImg(pagina, row.foto_url);
+    }
+}
+
+async function saveBanner(pagina) {
+    const titulo   = document.getElementById(`b-${pagina}-titulo`).value.trim();
+    const subtexto = document.getElementById(`b-${pagina}-subtexto`).value.trim();
+    const imgEl    = document.getElementById(`b-${pagina}-img`);
+    const fotoUrl  = document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl
+                  || (imgEl && imgEl.src && imgEl.src.startsWith('https://') ? imgEl.src : null);
+    const payload  = { pagina, titulo, subtexto, foto_url: fotoUrl || null, updated_at: new Date().toISOString() };
+    const { error } = await sb.from('banners').upsert(payload, { onConflict: 'pagina' });
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    toast(`✅ Banner de ${pagina} guardado`, 'ok');
+}
+
+// Cropper
+let cropperInstance = null;
+let cropperPagina   = null;
+
+async function openCropper(pagina, file) {
+    if (!file) return;
+    cropperPagina = pagina;
+    document.getElementById(`b-${pagina}-file`).value = '';
+    // Convertir HEIC/HEIF primero
+    const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
+                   file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+    if (isHeic && typeof heic2any !== 'undefined') {
+        try {
+            toast('Convirtiendo HEIF...', 'ok');
+            const converted = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            file = Array.isArray(converted) ? converted[0] : converted;
+        } catch(e) { console.warn('heic2any error:', e); }
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const modal = document.getElementById('cropper-modal');
+        const img   = document.getElementById('cropper-img');
+        if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+        img.src = e.target.result;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        img.onload = () => {
+            cropperInstance = new Cropper(img, {
+                aspectRatio: 16 / 5,
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                guides: true,
+                center: true,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: false,
+            });
+        };
+    };
+    reader.readAsDataURL(file);
+}
+
+function closeCropper() {
+    if (cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+    document.getElementById('cropper-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+async function confirmCrop() {
+    if (!cropperInstance || !cropperPagina) return;
+    const btn = document.querySelector('#cropper-modal .btn-success');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+    const canvas = cropperInstance.getCroppedCanvas({ width: 1920, height: 600, imageSmoothingQuality: 'high' });
+    canvas.toBlob(async (blob) => {
+        const pagina = cropperPagina;
+        closeCropper();
+        showBannerImg(pagina, URL.createObjectURL(blob));
+        toast('Subiendo banner...', 'ok');
+        const path = `${pagina}_${Date.now()}.jpg`;
+        const { error } = await sb.storage.from('banners').upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+        if (error) { toast(`Error: ${error.message}`, 'err'); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir'; return; }
+        const { data } = sb.storage.from('banners').getPublicUrl(path);
+        showBannerImg(pagina, data.publicUrl);
+        document.getElementById(`b-${pagina}-titulo`).dataset.fotoUrl = data.publicUrl;
+        toast('✅ Foto lista. Haz clic en Guardar banner.', 'ok');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Confirmar recorte y subir';
+    }, 'image/jpeg', 0.9);
 }
 
 // ============================================
