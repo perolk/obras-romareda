@@ -410,6 +410,10 @@
         <p>Acceso restringido</p>
         <input class="input" type="password" id="pwd" placeholder="Contraseña"
             style="letter-spacing:4px;" onkeydown="if(event.key==='Enter')login()">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; text-align:left;">
+            <input type="checkbox" id="keep-session" style="width:16px; height:16px; cursor:pointer; accent-color:var(--light);">
+            <label for="keep-session" style="font-size:.85rem; color:var(--muted); cursor:pointer;">Mantener sesión iniciada</label>
+        </div>
         <div id="login-err" style="color:var(--error);font-size:.82rem;margin-bottom:.75rem;display:none;">
             <i class="fas fa-exclamation-circle"></i> Contraseña incorrecta
         </div>
@@ -828,20 +832,36 @@ let portadaUrl   = null;
 // ============================================
 function login() {
     if (document.getElementById('pwd').value === ADMIN_PASSWORD) {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        loadLatestWeek();
-        loadStorageStats();
+        if (document.getElementById('keep-session').checked) {
+            localStorage.setItem('admin_session', 'active');
+        }
+        startApp();
     } else {
         document.getElementById('login-err').style.display = 'block';
         document.getElementById('pwd').value = '';
     }
 }
+
+function startApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadLatestWeek();
+    loadStorageStats();
+}
+
 function logout() {
+    localStorage.removeItem('admin_session');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     document.getElementById('pwd').value = '';
 }
+
+// Comprobar sesión guardada al cargar
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('admin_session') === 'active') {
+        startApp();
+    }
+});
 
 // ============================================
 // SEMANA
