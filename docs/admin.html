@@ -1477,7 +1477,8 @@ function showBannerImg(pagina, url) {
     const ph  = document.getElementById(`b-${pagina}-preview`);
     if (img) { img.src = url; img.style.display = 'block'; img.style.width = '100%'; img.style.height = '120px'; img.style.objectFit = 'cover'; img.style.borderRadius = '10px'; }
     if (ph)  ph.style.display = 'none';
-    bannerUrls[pagina] = url; // guardar para saveBanner
+    // Solo guardar URLs permanentes (no blob://)
+    if (url.startsWith('https://')) bannerUrls[pagina] = url;
 }
 
 async function loadAllBanners() {

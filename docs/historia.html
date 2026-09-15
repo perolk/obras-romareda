@@ -409,9 +409,10 @@
             allFiles = data.filter(f => f.name !== '.emptyFolderPlaceholder');
 
             // Stats
-            document.getElementById('stat-photos').textContent = allFiles.length;
-            document.getElementById('gallery-count').textContent =
-                `${allFiles.length} foto${allFiles.length !== 1 ? 's' : ''}`;
+            const statEl = document.getElementById('stat-photos');
+            if (statEl) statEl.textContent = allFiles.length;
+            const countEl = document.getElementById('gallery-count');
+            if (countEl) countEl.textContent = `${allFiles.length} foto${allFiles.length !== 1 ? 's' : ''}`;
 
             // Render primera página
             document.getElementById('masonry').innerHTML = '';
