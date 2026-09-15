@@ -42,20 +42,26 @@
         @media(min-width:1025px) { .mobile-social { display:none !important; } }
 
         /* BANNER */
-        .banner {
+        #page-banner {
             position:relative; height:400px;
             display:flex; align-items:center; justify-content:center; text-align:center;
             overflow:hidden;
-            background: linear-gradient(rgba(0,82,159,.8), rgba(0,0,0,.7)),
-                        url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
-            background-size:cover; background-position:center;
         }
-        
-        .banner-overlay { position:absolute; inset:0; background:linear-gradient(rgba(0,82,159,.75),rgba(0,0,0,.7)); }
-        
-        
-        .banner-content h1 { font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem; }
-        .banner-content p { font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto; line-height:1.6; }
+        #banner-bg {
+            position:absolute; inset:0;
+            background-size:cover; background-position:center;
+            opacity:1;
+        }
+        #banner-overlay { position:absolute; inset:0; background:linear-gradient(rgba(0,82,159,.7),rgba(0,0,0,.7)); }
+        #banner-content { position:relative; z-index:2; color:white; padding:0 10%; }
+        #banner-content h1 { font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem; }
+        #banner-content p { font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto; line-height:1.6; }
+        .banner-badge { display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem; }
+
+        @media(max-width:768px) {
+            #page-banner { height:300px; }
+            #banner-content h1 { font-size:2rem; }
+        }
 
         /* DATOS */
         .datos-section { background:white; padding:4rem 10%; }
@@ -90,8 +96,6 @@
         footer { background:var(--blue); color:white; padding:3rem 10%; text-align:center; border-top:6px solid var(--light); }
 
         @media(max-width:768px) {
-            .banner-content h1 { font-size:2rem; }
-            .banner { height:300px; }
             .img-comp-container { height:240px; }
             .tab-section, .datos-section, .comparador-section { padding:3rem 5%; }
         }
@@ -123,17 +127,6 @@
             <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
         </div>
     </header>
-
-    <!-- BANNER -->
-    <div class="banner">
-        <div class="banner-bg" id="banner-bg"></div>
-        <div class="banner-overlay"></div>
-        <div class="banner-content">
-            <div class="banner-badge">IDOM · 2024</div>
-            <h1 id="banner-title">El Proyecto</h1>
-            <p id="banner-subtitle">Renders, plantas y detalles técnicos de la futura casa del Real Zaragoza, diseñada por IDOM.</p>
-        </div>
-    </div>
 
     <div id="page-banner">
         <div id="banner-bg" style="background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');"></div>
