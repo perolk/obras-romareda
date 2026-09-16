@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Vieja Romareda · Obras Romareda</title>
     <meta name="description" content="Galería de fotos históricas de la Romareda antes de su demolición. Recuerdos de un estadio legendario.">
@@ -10,6 +11,10 @@
     <meta property="og:image" content="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -81,6 +86,7 @@
 
         /* LIGHTBOX */
         #lb-overlay {
+            overscroll-behavior: contain;
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -172,7 +178,7 @@
         .load-more-btn {
             padding:12px 36px; background:var(--blue); color:white;
             border:none; border-radius:30px; font-size:.9rem; font-weight:700;
-            font-family:'Inter',sans-serif; cursor:pointer; transition:all .3s;
+            font-family:'Inter',sans-serif; cursor:pointer; transition: color .3s, background .3s, transform .3s, opacity .3s, border-color .3s;
         }
         .load-more-btn:hover { background:#0063bf; transform:translateY(-2px); }
         .load-more-btn:disabled { background:#e5e7eb; color:var(--muted); transform:none; cursor:not-allowed; }
@@ -204,6 +210,21 @@
             .hero { padding:3rem 5%; }
         }
         @media(max-width:400px) { .masonry { columns:1; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        button, a, [role="button"] {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
+            text-wrap: balance;
+        }
     </style>
 </head>
 <body>
@@ -219,7 +240,7 @@
         .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
         .social-header a:hover { transform:translateY(-3px); color:var(--zaragoza-light); }
         .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
-        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s ease; }
+        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition: color .3s ease, background .3s ease, transform .3s ease, opacity .3s ease, border-color .3s ease; }
         .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity:0; }
         .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
@@ -312,15 +333,15 @@
                 <li><a href="historia.html" class="active">La Vieja Romareda</a></li>
             </ul>
             <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
             </div>
         </nav>
         <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
         </div>
     </header>
 
@@ -347,7 +368,7 @@
     <div class="gallery-section">
         <div class="gallery-filters">
             <span style="font-size:1rem; font-weight:700; color:var(--blue);">
-                <i class="fas fa-images" style="margin-right:6px;"></i>Archivo fotográfico
+                <i class="fas fa-images" style="margin-right:6px;" aria-hidden="true"></i>Archivo fotográfico
             </span>
             <span class="gallery-count" id="gallery-count"></span>
         </div>
@@ -366,7 +387,7 @@
 
         <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
             <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">
-                <i class="fas fa-chevron-down"></i> Cargar más fotos
+                <i class="fas fa-chevron-down" aria-hidden="true"></i> Cargar más fotos
             </button>
         </div>
     </div>
@@ -376,7 +397,7 @@
 
     <!-- FAB compartir -->
     <button class="share-fab" onclick="shareHistoria()" title="Compartir">
-        <i class="fas fa-share-alt"></i>
+        <i class="fas fa-share-alt" aria-hidden="true"></i>
     </button>
 
     <script>
@@ -450,7 +471,7 @@
             if (shown < allFiles.length) {
                 wrap.style.display = 'block';
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-chevron-down"></i> Cargar más fotos (${allFiles.length - shown} restantes)`;
+                btn.innerHTML = `<i class="fas fa-chevron-down" aria-hidden="true"></i> Cargar más fotos (${allFiles.length - shown} restantes)`;
             } else {
                 wrap.style.display = 'none';
             }

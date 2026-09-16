@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obras Romareda | Seguimiento Oficial</title>
 
@@ -19,6 +20,10 @@
     <meta name="twitter:image" content="https://nuevaromareda.es/wp-content/uploads/2024/10/home-nueva-romareda-01-3.png">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -75,20 +80,22 @@
             font-size: 1.8rem;
             color: white;
             text-decoration: none;
+            letter-spacing: -0.01em;
             transition: color 160ms var(--ease-out);
         }
         .logo:hover { color: var(--zaragoza-light); }
 
         nav ul { display: flex; gap: 2.5rem; list-style: none; }
         nav a {
-            color: white;
+            color: rgba(255,255,255,.7);
             text-decoration: none;
             font-weight: 500;
-            font-size: 1rem;
+            font-size: .9rem;
+            letter-spacing: .01em;
             position: relative;
-            transition: color 0.3s;
+            transition: color 140ms var(--ease-out);
         }
-        nav a:hover { color: var(--zaragoza-light); }
+        nav a:hover { color: white; }
 
         .social-header a {
             margin-left: 1.5rem;
@@ -365,7 +372,7 @@
             border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: color 0.3s, background 0.3s, transform 0.3s, opacity 0.3s, border-color 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 10px;
@@ -428,7 +435,7 @@
 
         .tab-button {
             background: transparent; border: 2px solid var(--zaragoza-blue); color: var(--zaragoza-blue);
-            font-size: 1rem; font-weight: 700; padding: 10px 30px; border-radius: 50px; cursor: pointer; transition: all 0.3s;
+            font-size: 1rem; font-weight: 700; padding: 10px 30px; border-radius: 50px; cursor: pointer; transition: color 0.3s, background 0.3s, transform 0.3s, opacity 0.3s, border-color 0.3s;
         }
         .tab-button:hover { background: rgba(0, 82, 159, 0.1); }
         .tab-button.active { background: var(--zaragoza-blue); color: white; }
@@ -726,6 +733,14 @@
         .fade-in-delay-1 { transition-delay: 0.1s; }
         .fade-in-delay-2 { transition-delay: 0.2s; }
         .fade-in-delay-3 { transition-delay: 0.3s; }
+
+        button, a, [role="button"] {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
+            text-wrap: balance;
+        }
     </style>
 
     <!-- Supabase -->
@@ -755,17 +770,17 @@
             <!-- Redes sociales duplicadas en el menú móvil -->
             <div class="mobile-social" style="display:none;">
                 <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" añadido -->
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
             </div>
         </nav>
 
         <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" añadido -->
         <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
         </div>
     </header>
 
@@ -834,9 +849,9 @@
         <div class="logo" style="margin-bottom: 20px; color:white;">@ObrasRomareda</div>
         <div class="footer-links">
             <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" en todos los enlaces externos -->
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
         </div>
         <p>Web no oficial · Renders e imágenes técnicas: IDOM</p>
     </footer>
@@ -958,7 +973,7 @@
             if (error || !data || data.length === 0) {
                 featured.innerHTML = `
                     <div class="actualidad-card" style="padding:2rem; text-align:center; color:rgba(255,255,255,0.5);">
-                        <i class="fas fa-camera" style="font-size:2rem; display:block; margin-bottom:1rem;"></i>
+                        <i class="fas fa-camera" style="font-size:2rem; display:block; margin-bottom:1rem;" aria-hidden="true"></i>
                         <p>Las actualizaciones aparecerán aquí cuando se publiquen.</p>
                     </div>`;
                 prev.innerHTML = '';
@@ -977,7 +992,7 @@
             const el = document.getElementById('actualidad-featured');
             const thumbHtml = w.portada_url
                 ? `<img src="${w.portada_url}" class="actualidad-cover" alt="Semana ${w.numero}" loading="eager">`
-                : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:2.5rem; color:rgba(255,255,255,0.15);"></i></div>`;
+                : `<div class="actualidad-cover-placeholder"><i class="fas fa-camera" style="font-size:2.5rem; color:rgba(255,255,255,0.15);" aria-hidden="true"></i></div>`;
 
             el.innerHTML = `
                 <a href="semana.html?n=${w.numero}" class="actualidad-card">
@@ -1002,7 +1017,7 @@
             a.className = 'actualidad-prev-item'; a.style.animation = `fadeUpItem 280ms cubic-bezier(0.23,1,0.32,1) ${idx * 50}ms both`;
             const thumbHtml = w.portada_url
                 ? `<img src="${w.portada_url}" class="actualidad-prev-thumb" alt="Semana ${w.numero}" loading="lazy">`
-                : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);"></i></div>`;
+                : `<div class="actualidad-prev-thumb-ph"><i class="fas fa-camera" style="font-size:1.1rem; color:rgba(255,255,255,0.2);" aria-hidden="true"></i></div>`;
             a.innerHTML = `
                 ${thumbHtml}
                 <div class="actualidad-prev-body">
@@ -1090,7 +1105,7 @@
                         </div>
                         <div id="all-weeks-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px;">
                             <div style="color:rgba(255,255,255,.5); text-align:center; padding:2rem; grid-column:1/-1;">
-                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                                <i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Cargando…
                             </div>
                         </div>
                     </div>`;
@@ -1115,11 +1130,11 @@
 
             grid.innerHTML = data.map(w => {
                 const thumb = w.portada_url
-                    ? `<img src="${w.portada_url}" style="width:100%; height:100px; object-fit:cover; display:block;">`
-                    : `<div style="width:100%; height:100px; background:rgba(255,255,255,.05); display:flex; align-items:center; justify-content:center;"><i class="fas fa-camera" style="color:rgba(255,255,255,.2); font-size:1.5rem;"></i></div>`;
+                    ? `<img alt="" src="${w.portada_url}" style="width:100%; height:100px; object-fit:cover; display:block;">`
+                    : `<div style="width:100%; height:100px; background:rgba(255,255,255,.05); display:flex; align-items:center; justify-content:center;"><i class="fas fa-camera" style="color:rgba(255,255,255,.2); font-size:1.5rem;" aria-hidden="true"></i></div>`;
                 return `
                     <a href="semana.html?n=${w.numero}"
-                       style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:10px; overflow:hidden; text-decoration:none; display:block; transition:all .2s;"
+                       style="background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:10px; overflow:hidden; text-decoration:none; display:block; transition: color .2s, background .2s, transform .2s, opacity .2s, border-color .2s;"
                        onmouseover="this.style.background='rgba(255,255,255,.14)'"
                        onmouseout="this.style.background='rgba(255,255,255,.07)'">
                         ${thumb}

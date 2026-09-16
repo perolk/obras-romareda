@@ -2,10 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semana · Obras Romareda</title>
     <meta name="description" content="Crónica semanal de las obras de la nueva Romareda">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -17,16 +22,58 @@
 
 
 
-        .week-hero { background:var(--blue); padding:3rem 10% 2.5rem; color:white; }
-        .week-badge {
-            display:inline-block; background:rgba(255,255,255,.15);
-            border:1px solid rgba(255,255,255,.3); color:white;
-            font-size:.8rem; font-weight:700; text-transform:uppercase;
-            letter-spacing:1.5px; padding:5px 14px; border-radius:20px; margin-bottom:16px;
+        /* PAGE BANNER — igual que historia y proyecto */
+        #page-banner {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
         }
-        .week-title { font-size:clamp(1.6rem, 4vw, 2.5rem); font-weight:900; color:white; line-height:1.05; letter-spacing:-0.02em; margin-bottom:12px; }
-        .week-meta { font-size:.9rem; color:rgba(255,255,255,.6); display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-        .week-meta span { display:flex; align-items:center; gap:6px; }
+        #banner-bg {
+            position: absolute;
+            inset: 0;
+            background: var(--blue);
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+            transition: opacity .5s cubic-bezier(0.23,1,0.32,1);
+        }
+        #banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%);
+        }
+        #banner-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 0 10%;
+        }
+        .week-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.15);
+            border: 0.5px solid rgba(255,255,255,.3);
+            color: white; font-size: .78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .1em;
+            padding: 5px 16px; border-radius: 100px; margin-bottom: 1rem;
+        }
+        .week-title {
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            font-weight: 900; color: white;
+            line-height: 1.05; letter-spacing: -0.02em;
+            margin-bottom: .75rem;
+            text-wrap: balance;
+        }
+        .week-meta {
+            font-size: .88rem; color: rgba(255,255,255,.65);
+            display: flex; align-items: center; justify-content: center;
+            gap: 16px; flex-wrap: wrap;
+        }
+        .week-meta span { display: flex; align-items: center; gap: 6px; }
+        @media(max-width:768px) { #page-banner { height: 300px; } }
 
         .week-content { max-width:900px; margin:0 auto; padding:3rem 5%; }
 
@@ -81,12 +128,14 @@
         .share-btn:active { transform: scale(0.97); transition-duration: 80ms; }
 
         .share-menu {
+            overscroll-behavior: contain;
             position:fixed; inset:0; z-index:3000;
             display:none; align-items:flex-end; justify-content:center;
             background:rgba(0,0,0,.6); backdrop-filter:blur(4px);
         }
         .share-menu.open { display:flex; }
         .share-sheet {
+            overscroll-behavior: contain;
             background:rgba(20,20,40,.88); backdrop-filter:blur(40px) saturate(200%); -webkit-backdrop-filter:blur(40px) saturate(200%); border:0.5px solid rgba(255,255,255,.12); border-radius:24px 24px 0 0;
             padding:1.5rem 2rem 2rem; width:100%; max-width:480px;
             animation:slideUp .3s ease;
@@ -95,7 +144,8 @@
             from { transform:translateY(100%); opacity:0; }
             to   { transform:translateY(0);    opacity:1; }
         }
-        .share-sheet { animation-timing-function: var(--ease-out) !important; animation-duration: 280ms !important; }
+        .share-sheet {
+            overscroll-behavior: contain; animation-timing-function: var(--ease-out) !important; animation-duration: 280ms !important; }
         .share-sheet h3 {
             font-size:1rem; font-weight:700; color:white;
             margin-bottom:.5rem; text-align:center;
@@ -165,6 +215,14 @@
             .photo-item img, .share-btn, .week-nav-btn { transition: none; }
             @keyframes lbZoom { from { opacity:0; } to { opacity:1; } }
         }
+
+        button, a, [role="button"] {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
+            text-wrap: balance;
+        }
     </style>
 </head>
 <body>
@@ -180,7 +238,7 @@
         .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
         .social-header a:hover { transform:translateY(-3px); color:var(--zaragoza-light); }
         .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
-        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition:all .3s ease; }
+        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition: color .3s ease, background .3s ease, transform .3s ease, opacity .3s ease, border-color .3s ease; }
         .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity:0; }
         .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
@@ -202,6 +260,7 @@
 
         /* LIGHTBOX */
         #lb-overlay {
+            overscroll-behavior: contain;
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -255,19 +314,19 @@
                 <li><a href="historia.html">La Vieja Romareda</a></li>
             </ul>
             <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
             </div>
         </nav>
         <div style="display:flex; align-items:center; gap:1rem;">
             <button class="share-header-btn" onclick="openShare()">
-                <i class="fas fa-share-alt"></i> Compartir
+                <i class="fas fa-share-alt" aria-hidden="true"></i> Compartir
             </button>
             <div class="social-header">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
             </div>
         </div>
     </header>
@@ -287,25 +346,29 @@
         }));
     </script>
 
-    <div class="week-hero">
-        <div id="hero-badge" class="week-badge">Cargando...</div>
-        <h1 id="hero-title" class="week-title">Cargando semana...</h1>
-        <div class="week-meta">
-            <span><i class="fas fa-calendar"></i> <span id="hero-date"></span></span>
-            <span><i class="fas fa-images"></i> <span id="hero-photos">0 fotos</span></span>
+    <div id="page-banner">
+        <div id="banner-bg"></div>
+        <div id="banner-overlay"></div>
+        <div id="banner-content">
+            <div id="hero-badge" class="week-badge">Cargando…</div>
+            <h1 id="hero-title" class="week-title">Cargando semana…</h1>
+            <div class="week-meta">
+                <span><i class="fas fa-calendar" aria-hidden="true"></i> <span id="hero-date"></span></span>
+                <span><i class="fas fa-images" aria-hidden="true"></i> <span id="hero-photos">0 fotos</span></span>
+            </div>
         </div>
     </div>
 
     <div class="week-content">
         <div class="week-video-section" id="week-video-section" style="display:none;">
-            <h2><i class="fas fa-play-circle" style="color:var(--light);"></i> Vídeo de la semana</h2>
+            <h2><i class="fas fa-play-circle" style="color:var(--light);" aria-hidden="true"></i> Vídeo de la semana</h2>
             <div class="video-wrapper">
                 <iframe id="week-video-iframe" src="" title="Vídeo semanal" allowfullscreen loading="lazy"></iframe>
             </div>
         </div>
 
         <div class="week-photos-section">
-            <h2><i class="fas fa-camera" style="color:var(--light);"></i> Fotos <span id="photos-count"></span></h2>
+            <h2><i class="fas fa-camera" style="color:var(--light);" aria-hidden="true"></i> Fotos <span id="photos-count"></span></h2>
             <div class="photos-grid" id="photos-grid">
                 <div class="skeleton" style="aspect-ratio:4/3;"></div>
                 <div class="skeleton" style="aspect-ratio:4/3;"></div>
@@ -316,7 +379,7 @@
 
         <div class="week-nav">
             <a id="nav-prev" class="week-nav-btn prev" href="#">
-                <i class="fas fa-chevron-left" style="color:var(--muted);"></i>
+                <i class="fas fa-chevron-left" style="color:var(--muted);" aria-hidden="true"></i>
                 <div>
                     <span class="week-nav-label">Semana anterior</span>
                     <span class="week-nav-name" id="nav-prev-label">—</span>
@@ -327,7 +390,7 @@
                     <span class="week-nav-label">Semana siguiente</span>
                     <span class="week-nav-name" id="nav-next-label">—</span>
                 </div>
-                <i class="fas fa-chevron-right" style="color:var(--muted);"></i>
+                <i class="fas fa-chevron-right" style="color:var(--muted);" aria-hidden="true"></i>
             </a>
         </div>
     </div>
@@ -342,25 +405,25 @@
             <div class="share-options">
                 <div class="share-option" onclick="shareWhatsApp()">
                     <div class="share-option-icon" style="background:#25D366;">
-                        <i class="fab fa-whatsapp" style="color:white;"></i>
+                        <i class="fab fa-whatsapp" style="color:white;" aria-hidden="true"></i>
                     </div>
                     <span>WhatsApp</span>
                 </div>
                 <div class="share-option" onclick="shareTwitter()">
                     <div class="share-option-icon" style="background:#000;">
-                        <i class="fab fa-x-twitter" style="color:white;"></i>
+                        <i class="fab fa-x-twitter" style="color:white;" aria-hidden="true"></i>
                     </div>
                     <span>X / Twitter</span>
                 </div>
                 <div class="share-option" onclick="shareTelegram()">
                     <div class="share-option-icon" style="background:#229ED9;">
-                        <i class="fab fa-telegram" style="color:white;"></i>
+                        <i class="fab fa-telegram" style="color:white;" aria-hidden="true"></i>
                     </div>
                     <span>Telegram</span>
                 </div>
                 <div class="share-option" onclick="shareNative()">
                     <div class="share-option-icon" style="background:#374151;">
-                        <i class="fas fa-ellipsis" style="color:white;"></i>
+                        <i class="fas fa-ellipsis" style="color:white;" aria-hidden="true"></i>
                     </div>
                     <span>Más</span>
                 </div>
@@ -369,7 +432,7 @@
             <div class="share-copy-row">
                 <div class="share-url" id="share-url-display"></div>
                 <button class="share-copy-btn" id="share-copy-btn" onclick="copyUrl()">
-                    <i class="fas fa-copy"></i> Copiar
+                    <i class="fas fa-copy" aria-hidden="true"></i> Copiar
                 </button>
             </div>
 
@@ -439,6 +502,13 @@
 
         function renderHero(meta, photoCount) {
             const dates = getWeekDates(WEEK_NUM);
+            const bg    = document.getElementById('banner-bg');
+
+            // Fondo: portada de la semana si existe
+            if (meta.portada_url) {
+                bg.style.backgroundImage = `url('${meta.portada_url}')`;
+            }
+
             document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-title').textContent  = meta.title || `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
@@ -466,7 +536,7 @@
             grid.innerHTML = files.map((f, idx) => {
                 const url = getPublicUrl(f.name);
                 return `
-                    <div class="photo-item" onclick="lbOpen(lightboxPhotos.map(f=>getPublicUrl(f.name)), ${idx})">
+                    <div class="photo-item" role="button" tabindex="0" onclick="lbOpen(lightboxPhotos.map(f=>getPublicUrl(f.name)), ${idx})">
                         <img src="${url}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="lazy">
                     </div>`;
             }).join('');
@@ -585,10 +655,10 @@
             const btn = document.getElementById('share-copy-btn');
             try {
                 await navigator.clipboard.writeText(url);
-                btn.innerHTML = '<i class="fas fa-check"></i> Copiado';
+                btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copiado';
                 btn.style.background = '#10b981';
                 setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+                    btn.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i> Copiar';
                     btn.style.background = '';
                 }, 2000);
             } catch(e) {
