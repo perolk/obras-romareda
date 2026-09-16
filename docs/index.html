@@ -1054,24 +1054,7 @@
             }
         });
 
-        // ✅ MEJORA ALTA: Lógica del menú hamburguesa
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mainNav = document.getElementById('mainNav');
-
-        hamburgerBtn.addEventListener('click', function() {
-            const isOpen = mainNav.classList.toggle('open');
-            hamburgerBtn.classList.toggle('open', isOpen);
-            hamburgerBtn.setAttribute('aria-expanded', isOpen);
-        });
-
-        // Cerrar el menú al hacer clic en un enlace
-        mainNav.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', function() {
-                mainNav.classList.remove('open');
-                hamburgerBtn.classList.remove('open');
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-            });
-        });
+        // Smooth scroll para enlaces internos
 
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', function() {
