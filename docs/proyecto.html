@@ -14,109 +14,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
-    <style>        header {
-            background: rgba(0,40,100,.82);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.5px solid rgba(255,255,255,.12);
-        }
-        .logo {
-            font-family: 'Calibri', 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-style: italic;
-            font-size: 1.8rem;
-            color: white;
-            text-decoration: none;
-            letter-spacing: -0.01em;
-            transition: color 160ms cubic-bezier(0.23,1,0.32,1);
-        }
-        .logo:hover { color: #4DA9FF; }
-        nav ul { display: flex; gap: 2.5rem; list-style: none; }
-        nav a {
-            color: rgba(255,255,255,.7);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: .9rem;
-            letter-spacing: .01em;
-            transition: color 140ms cubic-bezier(0.23,1,0.32,1);
-        }
-        nav a:hover, nav a.active { color: white; }
-        .social-header a {
-            margin-left: 1.5rem;
-            color: white;
-            font-size: 1.3rem;
-            transition: color .3s, transform .3s;
-        }
-        .social-header a:hover { transform: translateY(-3px); color: #4DA9FF; }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 5px;
-            background: none;
-            border: none;
-            z-index: 1100;
-        }
-        .hamburger span {
-            display: block;
-            height: 2px;
-            background: white;
-            border-radius: 2px;
-            transition: all 220ms cubic-bezier(0.23,1,0.32,1);
-        }
-        .hamburger span:nth-child(1) { width: 22px; }
-        .hamburger span:nth-child(2) { width: 16px; }
-        .hamburger span:nth-child(3) { width: 20px; }
-        .hamburger:hover span { width: 22px; }
-        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 22px; }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 22px; }
-        @media(max-width: 1024px) {
-            .hamburger { display: flex; }
-            nav {
-                position: absolute; top: 100%; left: 0;
-                width: 100%;
-                background: rgba(0,40,100,.95);
-                padding: 0; max-height: 0; overflow: hidden;
-                transition: max-height 300ms cubic-bezier(0.23,1,0.32,1), padding 200ms cubic-bezier(0.23,1,0.32,1);
-                box-shadow: 0 8px 20px rgba(0,0,0,.3);
-            }
-            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
-            nav ul { flex-direction: column; align-items: center; gap: 0; }
-            nav ul li { width: 100%; text-align: center; }
-            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 0.5px solid rgba(255,255,255,.1); }
-            nav ul li:last-child a { border-bottom: none; }
-            .social-header { display: none; }
-            .mobile-social { display: flex !important; justify-content: center; gap: 2rem; padding: 15px 0 5px; }
-            .mobile-social a { color: white; font-size: 1.4rem; transition: color .3s, transform .3s; }
-        }
-        @media(min-width: 1025px) { .mobile-social { display: none !important; } }
-
+    <style>
         :root { --blue:#00529F; --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; --ease-out:cubic-bezier(0.23,1,0.32,1); }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
 
-        /* HEADER */
-.logo { font-family:'Calibri','Segoe UI',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; letter-spacing:-0.01em; transition:color .3s; }
-nav ul { display:flex; gap:2.5rem; list-style:none; }
-nav a:hover, nav a.active { color:white; }
-.social-header a:hover { transform:translateY(-3px); color:var(--light); }
-.hamburger span { display:block; height:2px; background:white; border-radius:2px; transition:all 220ms var(--ease-out); }
-.hamburger span:nth-child(2) { width:16px; }
-.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); width:22px; }
-.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); width:22px; }
-
         /* BANNER */
         #page-banner { position:relative; height:400px; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
-        #banner-bg { position:absolute; inset:0; background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg'); background-size:cover; background-position:center; opacity:1; }
+        #banner-bg { position:absolute; inset:0; background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg'); background-size:cover; background-position:center; }
         #banner-overlay { position:absolute; inset:0; background:linear-gradient(160deg,rgba(0,30,80,.55) 0%,rgba(0,0,0,.75) 100%); }
         #banner-content { position:relative; z-index:2; color:white; padding:0 10%; }
         #banner-content h1 { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:white; margin-bottom:.75rem; letter-spacing:-0.03em; line-height:1.05; text-wrap:balance; }
@@ -125,14 +30,14 @@ nav a:hover, nav a.active { color:white; }
 
         /* DATOS TÉCNICOS */
         .datos-section { background:white; padding:4rem 10%; }
+        .section-title { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; text-align:center; color:var(--blue); margin-bottom:.75rem; letter-spacing:-0.02em; text-wrap:balance; }
+        .section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1rem; }
         .datos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px; max-width:900px; margin:2rem auto 0; }
         .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:0.5px solid #e5e7eb; }
         .dato-num { font-size:1.8rem; font-weight:900; color:var(--blue); display:block; margin-bottom:4px; letter-spacing:-0.02em; }
         .dato-label { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
 
-        /* SECCIONES */
-        .section-title { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; text-align:center; color:var(--blue); margin-bottom:.75rem; letter-spacing:-0.02em; text-wrap:balance; }
-        .section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1rem; }
+        /* SECCIONES DINÁMICAS */
         .secciones-section { padding:4rem 10%; background:var(--bg); }
         .seccion-block { margin-bottom:3rem; }
         .seccion-block h3 { font-size:1.1rem; font-weight:700; color:var(--blue); margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
@@ -141,7 +46,6 @@ nav a:hover, nav a.active { color:white; }
         @media (hover:hover) and (pointer:fine) { .render-item:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.1); } }
         .render-item:active { transform:scale(0.98); }
         .render-item img { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
-        .render-item .caption { margin-top:8px; color:var(--blue); font-weight:700; font-size:.85rem; text-align:center; }
 
         /* COMPARADOR */
         .comparador-section { padding:4rem 10%; background:white; }
@@ -153,104 +57,224 @@ nav a:hover, nav a.active { color:white; }
         .img-comp-overlay-label { position:absolute; bottom:20px; background:rgba(0,0,0,.5); color:white; padding:5px 15px; border-radius:20px; font-size:.9rem; pointer-events:none; }
 
         /* LIGHTBOX */
-        #lb-overlay { display:none !important; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
-        #lb-overlay.active { display:flex !important; }
+        #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
+        #lb-overlay.active { display:flex; }
         #lb-img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; }
         #lb-caption { color:rgba(255,255,255,.5); font-size:.85rem; margin-top:12px; }
+        .lb-btn { position:fixed; top:50%; transform:translateY(-50%); color:white; font-size:2rem; background:rgba(255,255,255,.1); border:none; padding:16px 14px; cursor:pointer; }
+        .lb-btn-prev { left:0; border-radius:0 6px 6px 0; }
+        .lb-btn-next { right:0; border-radius:6px 0 0 6px; }
+        .lb-close { position:fixed; top:20px; right:28px; color:white; font-size:2.5rem; background:none; border:none; cursor:pointer; line-height:1; }
+
+        /* FOOTER */
+        footer { background:var(--blue); color:white; padding:3rem 10%; text-align:center; border-top:6px solid var(--light); }
 
         button, a, [role="button"] { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
-        h1,h2,h3,h4,.section-title,#banner-content h1 { text-wrap:balance; }
-
+        h1,h2,h3,h4 { text-wrap:balance; }
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
-nav.open { max-height:340px; padding:1rem 0 1.5rem; }
-    nav ul li { width:100%; text-align:center; }
-    nav ul li:last-child a { border-bottom:none; }
-    #page-banner { height:300px; }
+        @media(max-width:1024px) {
+            #page-banner { height:300px; }
             .img-comp-container { height:260px; }
             .secciones-section, .datos-section, .comparador-section { padding:3rem 5%; }
         }
-        header {
-            background: rgba(0,40,100,.82);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.5px solid rgba(255,255,255,.12);
-        }
-        .logo { font-family: 'Calibri', 'Segoe UI', sans-serif; font-weight: 700; font-style: italic; font-size: 1.8rem; color: white; text-decoration: none; letter-spacing: -0.01em; transition: color 160ms cubic-bezier(0.23,1,0.32,1); }
-        .logo:hover { color: #4DA9FF; }
-        nav ul { display: flex; gap: 2.5rem; list-style: none; }
-        nav a { color: rgba(255,255,255,.7); text-decoration: none; font-weight: 500; font-size: .9rem; letter-spacing: .01em; transition: color 140ms cubic-bezier(0.23,1,0.32,1); }
-        nav a:hover, nav a.active { color: white; }
-        .social-header a { margin-left: 1.5rem; color: white; font-size: 1.3rem; transition: color 0.3s, transform 0.3s; }
-        .social-header a:hover { transform: translateY(-3px); color: #4DA9FF; }
-        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; background: none; border: none; z-index: 1100; }
-        .hamburger span { display: block; width: 25px; height: 3px; background: white; border-radius: 3px; transition: all 220ms cubic-bezier(0.23,1,0.32,1); }
-        .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-        @media (max-width: 1024px) {
-            header { flex-direction: row; flex-wrap: nowrap; align-items: center; padding: 1rem 5%; }
-            .hamburger { display: flex; }
-            nav { position: absolute; top: 100%; left: 0; width: 100%; background: #00529F; padding: 0; max-height: 0; overflow: hidden; transition: max-height 300ms cubic-bezier(0.23,1,0.32,1), padding 200ms cubic-bezier(0.23,1,0.32,1); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
-            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
-            nav ul { flex-direction: column; align-items: center; gap: 0; }
-            nav ul li { width: 100%; text-align: center; }
-            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            nav ul li:last-child a { border-bottom: none; }
-            .social-header { display: none; }
-            .mobile-social { display: flex !important; justify-content: center; gap: 2rem; padding: 15px 0 5px; }
-            .mobile-social a { color: white; font-size: 1.4rem; }
-        }
-        @media (min-width: 1025px) { .mobile-social { display: none !important; } }
     </style>
 </head>
 <body>
-    <header>
-        <a href="index.html" class="logo">@ObrasRomareda</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú de navegación" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <nav id="mainNav" aria-label="Navegación principal">
-            <ul>
-                <li><a href="index.html#videos">Actualidad</a></li>
-                <li><a href="proyecto.html" class="active">El Proyecto</a></li>
-                <li><a href="historia.html">La Vieja Romareda</a></li>
-            </ul>
-            <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-            </div>
-        </nav>
-        <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+
+    <!-- BANNER -->
+    <div id="page-banner">
+        <div id="banner-bg"></div>
+        <div id="banner-overlay"></div>
+        <div id="banner-content">
+            <div class="banner-badge">IDOM · 2024</div>
+            <h1 id="banner-title">El Proyecto</h1>
+            <p id="banner-subtitle">Renders, plantas y detalles técnicos de la futura casa del Real Zaragoza, diseñada por IDOM.</p>
         </div>
-    </header>
+    </div>
+
+    <!-- DATOS TÉCNICOS -->
+    <div class="datos-section">
+        <h2 class="section-title">Datos técnicos</h2>
+        <p class="section-subtitle">Las cifras de un estadio de nueva generación</p>
+        <div class="datos-grid">
+            <div class="dato-card"><span class="dato-num" id="dato-aforo">35.000</span><span class="dato-label">Espectadores</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-superficie">67.000 m²</span><span class="dato-label">Superficie total</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-apertura">2027</span><span class="dato-label">Apertura prevista</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-arquitecto">IDOM</span><span class="dato-label">Arquitecto</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-niveles">4</span><span class="dato-label">Niveles de grada</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-cubierta">100%</span><span class="dato-label">Cubierta</span></div>
+        </div>
+    </div>
+
+    <!-- SECCIONES DINÁMICAS -->
+    <div class="secciones-section">
+        <h2 class="section-title">Documentación gráfica</h2>
+        <p class="section-subtitle">Renders, plantas y detalles técnicos del proyecto</p>
+        <div id="proy-secciones-publico">
+            <div style="text-align:center;color:var(--muted);padding:2rem;"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></div>
+        </div>
+    </div>
+
+    <!-- COMPARADOR -->
+    <div class="comparador-section">
+        <h2 class="section-title">Antes y después</h2>
+        <p class="section-subtitle">Arrastra el divisor para comparar la Romareda antigua con el nuevo estadio</p>
+        <div class="comparison-wrapper">
+            <div class="img-comp-container">
+                <div class="img-comp-img">
+                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render interior nueva Romareda">
+                    <div class="img-comp-overlay-label" style="right:20px;">FUTURO</div>
+                </div>
+                <div class="img-comp-img img-comp-overlay">
+                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes">
+                    <div class="img-comp-overlay-label" style="left:20px;">ANTES</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="index.html" style="font-family:'Calibri','Segoe UI',sans-serif;font-weight:700;font-style:italic;font-size:1.8rem;color:white;text-decoration:none;">@ObrasRomareda</a>
+        <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:1rem;">Web no oficial · Renders e imágenes técnicas: IDOM</p>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div id="lb-overlay">
+        <button class="lb-close" onclick="lbClose()" aria-label="Cerrar">×</button>
+        <button class="lb-btn lb-btn-prev" onclick="lbChange(-1)" aria-label="Anterior">❮</button>
+        <img id="lb-img" src="" alt="">
+        <div id="lb-caption"></div>
+        <button class="lb-btn lb-btn-next" onclick="lbChange(1)" aria-label="Siguiente">❯</button>
+    </div>
 
     <script>
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mainNav = document.getElementById('mainNav');
-        hamburgerBtn.addEventListener('click', function() {
-            const isOpen = mainNav.classList.toggle('open');
-            hamburgerBtn.classList.toggle('open', isOpen);
-            hamburgerBtn.setAttribute('aria-expanded', isOpen);
+        const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // BANNER
+        async function loadBanner() {
+            try {
+                const { data } = await sb.from('banners').select('*').eq('pagina','proyecto').limit(1);
+                const row = data && data[0];
+                if (!row) return;
+                if (row.foto_url) document.getElementById('banner-bg').style.backgroundImage = `url('${row.foto_url}')`;
+                if (row.titulo)   document.getElementById('banner-title').textContent   = row.titulo;
+                if (row.subtexto) document.getElementById('banner-subtitle').textContent = row.subtexto;
+            } catch(e) {}
+        }
+
+        // DATOS TÉCNICOS
+        async function loadDatos() {
+            try {
+                const { data } = await sb.from('proyecto').select('campo, valor');
+                if (!data) return;
+                data.forEach(r => {
+                    const el = document.getElementById(`dato-${r.campo}`);
+                    if (el && r.valor) el.textContent = r.valor;
+                });
+            } catch(e) {}
+        }
+
+        // SECCIONES
+        let lbPhotos = [], lbIdx = 0;
+
+        async function loadSecciones() {
+            const container = document.getElementById('proy-secciones-publico');
+            try {
+                const { data: secciones } = await sb.from('proyecto_secciones')
+                    .select('*').order('orden', { ascending: true });
+                if (!secciones || secciones.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">Próximamente</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                for (const sec of secciones) {
+                    const { data: imgs } = await sb.from('proyecto_imagenes')
+                        .select('*').eq('seccion_id', sec.id).order('orden', { ascending: true });
+                    if (!imgs || imgs.length === 0) continue;
+                    const urls = imgs.map(i => i.url);
+                    const secEl = document.createElement('div');
+                    secEl.className = 'seccion-block';
+                    secEl.innerHTML = `
+                        <h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>
+                        <div class="renders-grid">
+                            ${imgs.map((img, i) => `
+                                <div class="render-item" role="button" tabindex="0"
+                                    onclick="openLb(${JSON.stringify(urls)}, ${i})"
+                                    onkeydown="if(event.key==='Enter'||event.key===' ')openLb(${JSON.stringify(urls)},${i})">
+                                    <img src="${img.url}" alt="${sec.nombre} ${i+1}" loading="${i < 3 ? 'eager' : 'lazy'}">
+                                </div>`).join('')}
+                        </div>`;
+                    container.appendChild(secEl);
+                }
+            } catch(e) { console.warn('loadSecciones:', e); container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">Error al cargar</p>'; }
+        }
+
+        function openLb(photos, idx) {
+            lbPhotos = photos; lbIdx = idx;
+            document.getElementById('lb-img').src = lbPhotos[lbIdx];
+            document.getElementById('lb-caption').textContent = (lbIdx+1) + ' / ' + lbPhotos.length;
+            document.getElementById('lb-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function lbChange(dir) {
+            lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
+            document.getElementById('lb-img').src = lbPhotos[lbIdx];
+            document.getElementById('lb-caption').textContent = (lbIdx+1) + ' / ' + lbPhotos.length;
+        }
+        function lbClose() {
+            document.getElementById('lb-overlay').classList.remove('active');
+            document.getElementById('lb-img').src = '';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lb-overlay').classList.contains('active')) return;
+            if (e.key === 'ArrowLeft')  lbChange(-1);
+            if (e.key === 'ArrowRight') lbChange(1);
+            if (e.key === 'Escape')     lbClose();
         });
-        mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-            mainNav.classList.remove('open');
-            hamburgerBtn.classList.remove('open');
-            hamburgerBtn.setAttribute('aria-expanded', false);
-        }));
+        document.getElementById('lb-overlay').addEventListener('click', e => {
+            if (e.target === document.getElementById('lb-overlay')) lbClose();
+        });
+
+        // COMPARADOR
+        function compareImages(overlay) {
+            let clicked = 0;
+            const container = overlay.parentElement;
+            const w = container.offsetWidth;
+            const h = container.offsetHeight;
+            overlay.style.width = (w/2) + 'px';
+            const slider = document.createElement('div');
+            slider.className = 'img-comp-slider';
+            slider.innerHTML = '<i class="fas fa-arrows-left-right" style="color:white;font-size:14px;"></i>';
+            container.insertBefore(slider, overlay);
+            slider.style.top  = (h/2 - slider.offsetHeight/2) + 'px';
+            slider.style.left = (w/2 - slider.offsetWidth/2) + 'px';
+            slider.addEventListener('mousedown',  e => { e.preventDefault(); clicked=1; });
+            slider.addEventListener('touchstart', e => { e.preventDefault(); clicked=1; });
+            window.addEventListener('mouseup',   () => clicked=0);
+            window.addEventListener('touchend',  () => clicked=0);
+            function move(e) {
+                if (!clicked) return;
+                const t  = e.changedTouches ? e.changedTouches[0] : e;
+                const a  = container.getBoundingClientRect();
+                let pos  = Math.max(0, Math.min(t.pageX - a.left - window.pageXOffset, w));
+                overlay.style.width  = pos + 'px';
+                slider.style.left = pos - slider.offsetWidth/2 + 'px';
+            }
+            window.addEventListener('mousemove', move);
+            window.addEventListener('touchmove', move);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBanner();
+            loadDatos();
+            loadSecciones();
+            Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(compareImages);
+        });
     </script>
 
-
+    <script src="header.js"></script>
+</body>
+</html>

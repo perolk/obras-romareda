@@ -59,77 +59,9 @@
         }
 
         /* --- HEADER --- */
-        header {
-            background: rgba(0,40,100,.82);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 1rem 5%;
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.5px solid rgba(255,255,255,.12);
-        }
-
-        .logo {
-            font-family: 'Calibri', 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-style: italic;
-            font-size: 1.8rem;
-            color: white;
-            text-decoration: none;
-            letter-spacing: -0.01em;
-            transition: color 160ms var(--ease-out);
-        }
-        .logo:hover { color: var(--zaragoza-light); }
-
-        nav ul { display: flex; gap: 2.5rem; list-style: none; }
-        nav a {
-            color: rgba(255,255,255,.7);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: .9rem;
-            letter-spacing: .01em;
-            position: relative;
-            transition: color 140ms var(--ease-out);
-        }
-        nav a:hover { color: white; }
-
-        .social-header a {
-            margin-left: 1.5rem;
-            color: white;
-            font-size: 1.3rem;
-            transition: color 0.3s, transform 0.3s;
-        }
-        .social-header a:hover { transform: translateY(-3px); color: var(--zaragoza-light); }
-
-        /* ✅ MEJORA ALTA: Botón hamburguesa - oculto por defecto en escritorio */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 5px;
-            background: none;
-            border: none;
-            z-index: 1100;
-        }
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: white;
-            border-radius: 3px;
-            transition: color 160ms var(--ease-out);
-        }
-        /* Animación del hamburguesa → X */
-        .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-        /* --- HERO SECTION --- */
+/* ✅ MEJORA ALTA: Botón hamburguesa - oculto por defecto en escritorio */
+/* Animación del hamburguesa → X */
+/* --- HERO SECTION --- */
         .hero {
             height: 100vh;
             background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%), url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');
@@ -321,8 +253,7 @@
 
         /* --- ÁLBUMES SEMANALES --- */
         .daily-summary { display: flex; flex-direction: column; }
-        .albums-header { margin-bottom: 25px; }
-        .albums-header h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 0; }
+        .albums-.albums-header h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 0; }
 
         .album-card {
             background: var(--card-glass);
@@ -454,10 +385,7 @@
         .album-modal-container {
             max-width: 900px; margin: 50px auto; padding: 20px;
         }
-        .album-modal-header {
-            display: flex; justify-content: space-between; align-items: center; color: white; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 20px;
-        }
-        .album-grid-content {
+        .album-modal-.album-grid-content {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;
         }
         .album-photo-card {
@@ -634,73 +562,7 @@
         .footer-links a { color: white; font-size: 1.5rem; }
 
         /* ====== RESPONSIVE MÓVIL ====== */
-        @media (max-width: 1024px) {
-            .hero { background-attachment: scroll; }
-            .hero h1 { font-size: 2.8rem; }
-            .hero p { font-size: 1.2rem; margin-top: 24px; margin-bottom: 36px; }
-
-            /* Header hamburguesa */
-            header {
-                flex-direction: row;
-                flex-wrap: nowrap;
-                align-items: center;
-                padding: 1rem 5%;
-            }
-            .hamburger { display: flex; }
-            nav {
-                position: absolute; top: 100%; left: 0;
-                width: 100%; background: var(--zaragoza-blue);
-                padding: 0; max-height: 0; overflow: hidden;
-                transition: max-height 300ms var(--ease-out), padding 200ms var(--ease-out);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            }
-            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
-            nav ul { flex-direction: column; align-items: center; gap: 0; }
-            nav ul li { width: 100%; text-align: center; }
-            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            nav ul li:last-child a { border-bottom: none; }
-            .social-header { display: none; }
-            .mobile-social {
-                display: flex !important; justify-content: center;
-                gap: 2rem; padding: 15px 0 5px;
-            }
-            .mobile-social a { color: white; font-size: 1.4rem; transition: color 0.3s, transform 0.3s; }
-            .mobile-social a:hover { color: var(--zaragoza-light); transform: translateY(-3px); }
-
-            /* Secciones */
-            section { padding: 3.5rem 5%; }
-
-            /* Actualidad en móvil */
-            .actualidad-container { grid-template-columns: 1fr; }
-            .actualidad-cover-wrap { height: 200px; }
-            .actualidad-sidebar { margin-top: 4px; }
-
-            /* Galería en móvil */
-
-            /* Fases en móvil */
-            .phases-container { flex-direction: column; align-items: flex-start; padding-left: 20px; }
-            .phase-item { flex-direction: row; width: 100%; margin-bottom: 30px; text-align: left; }
-            .phase-circle { margin-bottom: 0; margin-right: 20px; }
-            .phase-line { position: absolute; left: 43px; top: 50px; width: 4px; height: 100%; margin-top: 0; }
-            .phase-item:last-child .phase-line { display: none; }
-            .phases-container > .phase-line { display: none; }
-            .phase-item::after { content: ''; position: absolute; left: 23px; top: 50px; width: 4px; height: 40px; background: #e0e0e0; z-index: 1; }
-            .phase-item:last-child::after { display: none; }
-            .phase-item.completed::after { background: var(--zaragoza-blue); }
-
-            /* Comparador */
-            .img-comp-container { height: 260px; }
-
-            /* Modales */
-            .modal-content { width: 95%; }
-            .history-timeline { padding-left: 25px; }
-            .project-item, .history-grid img { max-width: 100%; flex-basis: 100%; }
-
-            /* Section title */
-            .section-title { font-size: 2.2rem; }
-        }
-
-        @media (max-width: 600px) {
+@media (max-width: 600px) {
             .hero h1 { font-size: 2rem; letter-spacing: -0.5px; }
             .hero p { font-size: 1rem; }
             .construction-counter { font-size: 0.95rem; }
@@ -714,10 +576,7 @@
             footer { padding: 3rem 5%; }
         }
 
-        @media (min-width: 1025px) {
-            .mobile-social { display: none !important; }
-        }
-        /* 3. ANIMACIONES DE ENTRADA AL HACER SCROLL */
+/* 3. ANIMACIONES DE ENTRADA AL HACER SCROLL */
         .fade-in {
             opacity: 0;
             transform: translateY(12px);
@@ -749,42 +608,7 @@
     <link rel="preload" as="image" href="https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg">
 </head>
 <body>
-
-    <header>
-        <a href="index.html" class="logo">@ObrasRomareda</a>
-
-        <!-- ✅ MEJORA ALTA: Menú hamburguesa -->
-        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú de navegación" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <nav id="mainNav" aria-label="Navegación principal">
-            <ul>
-                <li><a href="#videos">Actualidad</a></li>
-
-                <li><a href="proyecto.html">El Proyecto</a></li>
-                <li><a href="historia.html">La Vieja Romareda</a></li>
-            </ul>
-            <!-- Redes sociales duplicadas en el menú móvil -->
-            <div class="mobile-social" style="display:none;">
-                <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" añadido -->
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-            </div>
-        </nav>
-
-        <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" añadido -->
-        <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-        </div>
-    </header>
-
-    <section class="hero">
+<section class="hero">
         <h1>El Futuro Comienza Hoy</h1>
         <div class="construction-counter">
             Día <span id="days-count">0</span> de obras
@@ -1308,5 +1132,6 @@
             if (event.target == document.getElementById('imageModal')) closeModal();
         }
     </script>
+    <script src="header.js"></script>
 </body>
 </html>

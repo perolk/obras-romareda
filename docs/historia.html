@@ -18,90 +18,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        header {
-            background: rgba(0,40,100,.82);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.5px solid rgba(255,255,255,.12);
-        }
-        .logo {
-            font-family: 'Calibri', 'Segoe UI', sans-serif;
-            font-weight: 700;
-            font-style: italic;
-            font-size: 1.8rem;
-            color: white;
-            text-decoration: none;
-            letter-spacing: -0.01em;
-            transition: color 160ms cubic-bezier(0.23,1,0.32,1);
-        }
-        .logo:hover { color: #4DA9FF; }
-        nav ul { display: flex; gap: 2.5rem; list-style: none; }
-        nav a {
-            color: rgba(255,255,255,.7);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: .9rem;
-            letter-spacing: .01em;
-            transition: color 140ms cubic-bezier(0.23,1,0.32,1);
-        }
-        nav a:hover, nav a.active { color: white; }
-        .social-header a {
-            margin-left: 1.5rem;
-            color: white;
-            font-size: 1.3rem;
-            transition: color 0.3s, transform 0.3s;
-        }
-        .social-header a:hover { transform: translateY(-3px); color: #4DA9FF; }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            padding: 5px;
-            background: none;
-            border: none;
-            z-index: 1100;
-        }
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: white;
-            border-radius: 3px;
-            transition: all 220ms cubic-bezier(0.23,1,0.32,1);
-        }
-        .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity: 0; }
-        .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-        @media (max-width: 1024px) {
-            header { flex-direction: row; flex-wrap: nowrap; align-items: center; padding: 1rem 5%; }
-            .hamburger { display: flex; }
-            nav {
-                position: absolute; top: 100%; left: 0;
-                width: 100%; background: #00529F;
-                padding: 0; max-height: 0; overflow: hidden;
-                transition: max-height 300ms cubic-bezier(0.23,1,0.32,1), padding 200ms cubic-bezier(0.23,1,0.32,1);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            }
-            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
-            nav ul { flex-direction: column; align-items: center; gap: 0; }
-            nav ul li { width: 100%; text-align: center; }
-            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-            nav ul li:last-child a { border-bottom: none; }
-            .social-header { display: none; }
-            .mobile-social { display: flex !important; justify-content: center; gap: 2rem; padding: 15px 0 5px; }
-            .mobile-social a { color: white; font-size: 1.4rem; transition: color 0.3s, transform 0.3s; }
-            .mobile-social a:hover { color: #4DA9FF; transform: translateY(-3px); }
-        }
-        @media (min-width: 1025px) { .mobile-social { display: none !important; } }
 
 
         :root {
@@ -317,32 +233,9 @@
 
     <style>
         :root { --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
-        header { background:rgba(0,40,100,.82); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); padding:1rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; border-bottom:0.5px solid rgba(255,255,255,.12); }
-        .logo { font-family:"Calibri","Segoe UI",sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; letter-spacing:-0.01em; transition:.3s; }
-        .logo:hover { color:var(--zaragoza-light); }
-        header nav ul { display:flex; gap:2.5rem; list-style:none; }
-        header nav a { color:rgba(255,255,255,.7); text-decoration:none; font-weight:500; font-size:.9rem; letter-spacing:.01em; transition:color 140ms cubic-bezier(0.23,1,0.32,1); }
-        header nav a:hover, header nav a.active { color:var(--zaragoza-light); font-weight:700; }
-        .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
-        .social-header a:hover { transform:translateY(-3px); color:var(--zaragoza-light); }
-        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
-        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition: color .3s ease, background .3s ease, transform .3s ease, opacity .3s ease, border-color .3s ease; }
-        .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
-        .hamburger.open span:nth-child(2) { opacity:0; }
-        .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
-        @media(max-width:1024px) {
-            .hamburger { display:flex; }
             header nav { position:absolute; top:100%; left:0; width:100%; background:var(--zaragoza-blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
             header nav.open { max-height:340px; padding:1rem 0 1.5rem; }
-            header nav ul { flex-direction:column; align-items:center; gap:0; }
-            header nav ul li { width:100%; text-align:center; }
-            header nav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
-            header nav ul li:last-child a { border-bottom:none; }
-            .social-header { display:none; }
-            .mobile-social { display:flex !important; justify-content:center; gap:2rem; padding:15px 0 5px; }
-            .mobile-social a { color:white; font-size:1.4rem; }
         }
-        @media(min-width:1025px) { .mobile-social { display:none !important; } }
 
         /* BANNER UNIFORME */
         #page-banner {
@@ -406,48 +299,7 @@
         }
 
     </style>
-
-    <header>
-        <a href="index.html" class="logo">@ObrasRomareda</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú de navegación" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <nav id="mainNav" aria-label="Navegación principal">
-            <ul>
-                <li><a href="index.html#videos">Actualidad</a></li>
-                <li><a href="proyecto.html">El Proyecto</a></li>
-                <li><a href="historia.html" class="active">La Vieja Romareda</a></li>
-            </ul>
-            <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-            </div>
-        </nav>
-        <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-        </div>
-    </header>
-
-    <script>
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mainNav = document.getElementById('mainNav');
-        hamburgerBtn.addEventListener('click', function() {
-            const isOpen = mainNav.classList.toggle('open');
-            hamburgerBtn.classList.toggle('open', isOpen);
-            hamburgerBtn.setAttribute('aria-expanded', isOpen);
-        });
-        mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-            mainNav.classList.remove('open');
-            hamburgerBtn.classList.remove('open');
-            hamburgerBtn.setAttribute('aria-expanded', false);
-        }));
-    </script>
-    <div id="page-banner">
+<div id="page-banner">
         <div id="banner-bg" style="background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
@@ -661,5 +513,6 @@
         <button id="lb-next" onclick="lbChange(1)">&#10095;</button>
     </div>
 
+    <script src="header.js"></script>
 </body>
 </html>
