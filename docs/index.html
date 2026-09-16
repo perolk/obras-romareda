@@ -63,14 +63,11 @@
         /* --- HEADER --- */
 /* ✅ MEJORA ALTA: Botón hamburguesa - oculto por defecto en escritorio */
 /* Animación del hamburguesa → X */
-/* --- HERO SECTION --- */
+        /* --- HERO SECTION --- */
         .hero {
             height: calc(100vh - 64px);
             min-height: 500px;
-            background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%), url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: scroll;
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -78,6 +75,83 @@
             text-align: center;
             padding: 0 20px;
             color: white;
+            overflow: hidden;
+        }
+
+        /* SLIDESHOW */
+        .hero-slides {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Indicadores del slideshow */
+        .hero-dots {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.4);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 300ms ease, transform 300ms ease;
+        }
+        .hero-dot.active { background: white; transform: scale(1.4); }
+
+        /* Animación de entrada del contenido */
+        @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .hero-content h1 {
+            animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) both;
+        }
+        .hero-content .construction-counter {
+            animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 150ms both;
+        }
+        .hero-content p {
+            animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 250ms both;
+        }
+        .hero-content .cta-btn {
+            animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 380ms both;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-slide { transition: none; }
+            .hero-content h1, .hero-content .construction-counter,
+            .hero-content p, .hero-content .cta-btn { animation: none; }
+        }
         }
 
         .hero h1 {
@@ -612,13 +686,23 @@
 </head>
 <body>
 <section class="hero">
+    <div class="hero-slides" id="heroSlides">
+        <div class="hero-slide active" style="background-image:url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('https://nuevaromareda.es/wp-content/uploads/2024/10/home-nueva-romareda-01-3.png');"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
         <h1>El Futuro Comienza Hoy</h1>
         <div class="construction-counter">
             Día <span id="days-count">0</span> de obras
         </div>
         <p>Sigue el proceso de construcción de la nueva Romareda</p>
         <a href="#videos" class="cta-btn" aria-label="Ver los últimos avances de las obras">Ver Últimos Avances</a>
-    </section>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+</section>
 
     <!-- ====== ACTUALIDAD ====== -->
     <section id="videos" style="background: var(--zaragoza-blue); padding: 5rem 10%;">
@@ -1057,6 +1141,46 @@
         });
 
         // Smooth scroll para enlaces internos
+
+        // SLIDESHOW HERO
+        (function() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dotsContainer = document.getElementById('heroDots');
+            let current = 0;
+            let timer;
+
+            // Crear dots
+            slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Imagen ${i + 1}`);
+                dot.addEventListener('click', () => goTo(i));
+                dotsContainer.appendChild(dot);
+            });
+
+            function goTo(idx) {
+                slides[current].classList.remove('active');
+                dotsContainer.children[current].classList.remove('active');
+                current = (idx + slides.length) % slides.length;
+                slides[current].classList.add('active');
+                dotsContainer.children[current].classList.add('active');
+            }
+
+            function next() { goTo(current + 1); }
+
+            function start() { timer = setInterval(next, 7000); }
+            function stop()  { clearInterval(timer); }
+
+            // Pausar al hover
+            const hero = document.querySelector('.hero');
+            hero.addEventListener('mouseenter', stop);
+            hero.addEventListener('mouseleave', start);
+
+            // Pausar si pefers-reduced-motion
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                start();
+            }
+        })();
 
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', function() {
