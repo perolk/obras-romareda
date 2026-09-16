@@ -2157,3 +2157,57 @@ async function compressProjImage(file) {
 
 // ============================================
 
+// ============================================
+// TOAST
+// ============================================
+function toast(msg, type = 'ok') {
+    let el = document.getElementById('toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'toast';
+        el.setAttribute('role','status');
+        el.setAttribute('aria-live','polite');
+        el.setAttribute('aria-atomic','true');
+        el.style.cssText = 'position:fixed;bottom:2rem;right:2rem;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:600;display:none;align-items:center;gap:10px;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,.4);font-family:Inter,sans-serif;';
+        document.body.appendChild(el);
+    }
+    el.textContent   = msg;
+    el.style.display = 'flex';
+    el.style.background = type === 'ok' ? '#10b981' : '#ef4444';
+    el.style.color = 'white';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => el.style.display = 'none', 3500);
+}
+
+// Drag & drop semanas
+const dz = document.getElementById('dropzone');
+if (dz) {
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', ()  => dz.classList.remove('drag'));
+    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); prepareUpload(e.dataTransfer.files); });
+}
+
+// Drag & drop historia
+const hdz = document.getElementById('hdropzone');
+if (hdz) {
+    hdz.addEventListener('dragover',  e => { e.preventDefault(); hdz.classList.add('drag'); });
+    hdz.addEventListener('dragleave', ()  => hdz.classList.remove('drag'));
+    hdz.addEventListener('drop', e => { e.preventDefault(); hdz.classList.remove('drag'); prepareHistUpload(e.dataTransfer.files); });
+}
+
+// Drag & drop proyecto
+const pdz = document.getElementById('proy-dropzone');
+if (pdz) {
+    pdz.addEventListener('dragover',  e => { e.preventDefault(); pdz.classList.add('drag'); });
+    pdz.addEventListener('dragleave', ()  => pdz.classList.remove('drag'));
+    pdz.addEventListener('drop', e => { e.preventDefault(); pdz.classList.remove('drag'); prepareProyUpload(e.dataTransfer.files); });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('admin_session') === 'active') {
+        startApp();
+    }
+});
+</script>
+</body>
+</html>
