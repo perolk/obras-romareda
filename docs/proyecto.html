@@ -181,7 +181,7 @@
             <button class="tab-btn" onclick="openTab(event,'plantas')">Plantas y Alzados</button>
             <button class="tab-btn" onclick="openTab(event,'secciones')">Secciones</button>
         </div>
-        <div id="renders" class="tab-content active">
+        <div id="renders" class="tab-content active"><div id="renders-container" style="display:contents;">
             <div class="project-item">
                 <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg" alt="Plaza Eduardo Ibarra" loading="lazy">
                 <div class="caption">Plaza Eduardo Ibarra</div>
@@ -297,8 +297,57 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            
+        // Cargar datos del proyecto desde Supabase
+        async function loadProyectoData() {
+            try {
+                const { data } = await sb.from('proyecto').select('campo, valor');
+                if (!data || data.length === 0) return;
+                const map = {};
+                data.forEach(r => { map[r.campo] = r.valor; });
+
+                // Descripción
+                const descEl = document.getElementById('proy-descripcion-text');
+                if (descEl && map.descripcion) descEl.textContent = map.descripcion;
+
+                // Datos técnicos
+                const campos = ['aforo','superficie','apertura','arquitecto','niveles','cubierta'];
+                campos.forEach(campo => {
+                    const el = document.getElementById(`dato-${campo}`);
+                    if (el && map[campo]) el.textContent = map[campo];
+                });
+            } catch(e) { console.warn('loadProyectoData error:', e); }
+        }
+
+        // Cargar renders desde Supabase
+        async function loadProyectoRenders() {
+            try {
+                const { data } = await sb.storage.from('proyecto').list('', {
+                    limit: 100, sortBy: { column: 'created_at', order: 'asc' }
+                });
+                const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
+                if (files.length === 0) return;
+
+                const container = document.getElementById('renders-container');
+                if (!container) return;
+                container.innerHTML = '';
+
+                files.forEach((f, idx) => {
+                    const { data: u } = sb.storage.from('proyecto').getPublicUrl(f.name);
+                    const item = document.createElement('div');
+                    item.className = 'project-item';
+                    item.innerHTML = `
+                        <img src="${u.publicUrl}" alt="Render ${idx+1}" loading="${idx < 3 ? 'eager' : 'lazy'}" width="600" height="400">
+                        <div class="caption">Render ${idx + 1}</div>`;
+                    container.appendChild(item);
+                });
+            } catch(e) { console.warn('loadProyectoRenders error:', e); }
+        }
+
             loadBannerDynamic('proyecto', 'https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
             Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(img => compareImages(img));
+            loadProyectoData();
+            loadProyectoRenders();
         });
     </script>
 </body>
