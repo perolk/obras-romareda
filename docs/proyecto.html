@@ -2,19 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00529F">
     <title>El Proyecto · Obras Romareda</title>
     <meta name="description" content="Renders, plantas y detalles técnicos del proyecto de la nueva Romareda diseñado por IDOM.">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --blue:#00529F; --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; }
+        :root { --blue:#00529F; --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; --ease-out:cubic-bezier(0.23,1,0.32,1); }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
 
@@ -23,107 +23,83 @@
         .logo { font-family:'Calibri','Segoe UI',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem; color:white; text-decoration:none; letter-spacing:-0.01em; transition:color .3s; }
         .logo:hover { color:var(--light); }
         nav ul { display:flex; gap:2.5rem; list-style:none; }
-        nav a { color:rgba(255,255,255,.7); text-decoration:none; font-weight:500; font-size:.9rem; letter-spacing:.01em; transition:color 140ms cubic-bezier(0.23,1,0.32,1); }
+        nav a { color:rgba(255,255,255,.7); text-decoration:none; font-weight:500; font-size:.9rem; letter-spacing:.01em; transition:color 140ms var(--ease-out); }
         nav a:hover, nav a.active { color:white; }
-        nav a:hover, nav a.active { color:var(--light); font-weight:700; }
         .social-header a { margin-left:1.5rem; color:white; font-size:1.3rem; transition:color .3s,transform .3s; }
         .social-header a:hover { transform:translateY(-3px); color:var(--light); }
         .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:5px; background:none; border:none; z-index:1100; }
-        .hamburger span { display:block; width:25px; height:3px; background:white; border-radius:3px; transition: color .3s, background .3s, transform .3s, opacity .3s, border-color .3s; }
-        .hamburger.open span:nth-child(1) { transform:translateY(8px) rotate(45deg); }
+        .hamburger span { display:block; height:2px; background:white; border-radius:2px; transition:all 220ms var(--ease-out); }
+        .hamburger span:nth-child(1) { width:22px; }
+        .hamburger span:nth-child(2) { width:16px; }
+        .hamburger span:nth-child(3) { width:20px; }
+        .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); width:22px; }
         .hamburger.open span:nth-child(2) { opacity:0; }
-        .hamburger.open span:nth-child(3) { transform:translateY(-8px) rotate(-45deg); }
-        @media(max-width:1024px) {
-            .hamburger { display:flex; }
-            nav { position:absolute; top:100%; left:0; width:100%; background:var(--blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
-            nav.open { max-height:340px; padding:1rem 0 1.5rem; }
-            nav ul { flex-direction:column; align-items:center; gap:0; }
-            nav ul li { width:100%; text-align:center; }
-            nav a { display:block; padding:12px 20px; border-bottom:1px solid rgba(255,255,255,.1); }
-            nav ul li:last-child a { border-bottom:none; }
-            .social-header { display:none; }
-            .mobile-social { display:flex !important; justify-content:center; gap:2rem; padding:15px 0 5px; }
-            .mobile-social a { color:white; font-size:1.4rem; }
-        }
-        @media(min-width:1025px) { .mobile-social { display:none !important; } }
+        .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); width:22px; }
 
         /* BANNER */
-        #page-banner {
-            position:relative; height:400px;
-            display:flex; align-items:center; justify-content:center; text-align:center;
-            overflow:hidden;
-        }
-        #banner-bg {
-            position:absolute; inset:0;
-            background-size:cover; background-position:center;
-            opacity:1;
-        }
-        #banner-overlay { position:absolute; inset:0; background:linear-gradient(rgba(0,82,159,.7),rgba(0,0,0,.7)); }
+        #page-banner { position:relative; height:400px; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
+        #banner-bg { position:absolute; inset:0; background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg'); background-size:cover; background-position:center; opacity:1; }
+        #banner-overlay { position:absolute; inset:0; background:linear-gradient(160deg,rgba(0,30,80,.55) 0%,rgba(0,0,0,.75) 100%); }
         #banner-content { position:relative; z-index:2; color:white; padding:0 10%; }
-        #banner-content h1 { font-size:3rem; font-weight:900; color:white; margin-bottom:.75rem; }
+        #banner-content h1 { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:white; margin-bottom:.75rem; letter-spacing:-0.03em; line-height:1.05; text-wrap:balance; }
         #banner-content p { font-size:1.05rem; color:rgba(255,255,255,.75); max-width:600px; margin:0 auto; line-height:1.6; }
-        .banner-badge { display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; padding:5px 16px; border-radius:20px; margin-bottom:1rem; }
+        .banner-badge { display:inline-block; background:rgba(255,255,255,.15); border:0.5px solid rgba(255,255,255,.3); color:white; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; padding:5px 16px; border-radius:100px; margin-bottom:1rem; }
 
-        @media(max-width:768px) {
-            #page-banner { height:300px; }
-            #banner-content h1 { font-size:2rem; }
-        }
-
-        /* DATOS */
+        /* DATOS TÉCNICOS */
         .datos-section { background:white; padding:4rem 10%; }
-        .section-title { font-size:2.2rem; font-weight:900; text-align:center; color:var(--blue); margin-bottom:1rem; }
-        .section-subtitle { text-align:center; color:var(--muted); margin-bottom:2.5rem; font-size:1rem; }
-        .datos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px; max-width:900px; margin:0 auto; }
-        .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:1px solid #e5e7eb; }
-        .dato-num { font-size:2rem; font-weight:900; color:var(--blue); display:block; margin-bottom:4px; }
-        .dato-label { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+        .datos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px; max-width:900px; margin:2rem auto 0; }
+        .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:0.5px solid #e5e7eb; }
+        .dato-num { font-size:1.8rem; font-weight:900; color:var(--blue); display:block; margin-bottom:4px; letter-spacing:-0.02em; }
+        .dato-label { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
 
-        /* TABS */
-        .tab-section { padding:4rem 10%; background:var(--bg); }
-        .tab-buttons { display:flex; justify-content:center; gap:12px; margin-bottom:2rem; flex-wrap:wrap; }
-        .tab-btn { background:transparent; border:2px solid var(--blue); color:var(--blue); font-size:.95rem; font-weight:700; padding:10px 28px; border-radius:50px; cursor:pointer; transition: color .3s, background .3s, transform .3s, opacity .3s, border-color .3s; font-family:'Inter',sans-serif; }
-        .tab-btn.active { background:var(--blue); color:white; }
-        .tab-content { display:none; }
-        .tab-content.active { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; justify-items:center; }
-        .project-item { background:white; padding:16px; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); width:100%; max-width:380px; }
-        .project-item img { width:100%; height:220px; object-fit:cover; border-radius:10px; display:block; }
-        .caption { margin-top:10px; color:var(--blue); font-weight:700; font-size:.9rem; text-align:center; }
+        /* SECCIONES */
+        .section-title { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; text-align:center; color:var(--blue); margin-bottom:.75rem; letter-spacing:-0.02em; text-wrap:balance; }
+        .section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1rem; }
+        .secciones-section { padding:4rem 10%; background:var(--bg); }
+        .seccion-block { margin-bottom:3rem; }
+        .seccion-block h3 { font-size:1.1rem; font-weight:700; color:var(--blue); margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+        .renders-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+        .render-item { background:white; padding:12px; border-radius:14px; box-shadow:0 4px 16px rgba(0,0,0,.06); cursor:pointer; transition:transform 200ms var(--ease-out),box-shadow 200ms var(--ease-out); }
+        @media (hover:hover) and (pointer:fine) { .render-item:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.1); } }
+        .render-item:active { transform:scale(0.98); }
+        .render-item img { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
+        .render-item .caption { margin-top:8px; color:var(--blue); font-weight:700; font-size:.85rem; text-align:center; }
 
         /* COMPARADOR */
         .comparador-section { padding:4rem 10%; background:white; }
         .comparison-wrapper { position:relative; width:100%; max-width:900px; margin:0 auto; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.2); }
-        .img-comp-container { position:relative; height:450px; overflow:hidden; }
+        .img-comp-container { position:relative; height:500px; overflow:hidden; }
         .img-comp-img { position:absolute; width:auto; height:100%; overflow:hidden; }
         .img-comp-img img { display:block; height:100%; width:auto; }
         .img-comp-slider { position:absolute; z-index:9; cursor:ew-resize; width:40px; height:40px; background:var(--light); border:3px solid white; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(0,0,0,.5); }
-        .img-comp-slider::before { content:'\f337'; font-family:"Font Awesome 6 Free"; font-weight:900; color:white; }
         .img-comp-overlay-label { position:absolute; bottom:20px; background:rgba(0,0,0,.5); color:white; padding:5px 15px; border-radius:20px; font-size:.9rem; pointer-events:none; }
 
-        footer { background:var(--blue); color:white; padding:3rem 10%; text-align:center; border-top:6px solid var(--light); }
+        /* LIGHTBOX */
+        #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
+        #lb-overlay.active { display:flex; }
+        #lb-img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; }
+        #lb-caption { color:rgba(255,255,255,.5); font-size:.85rem; margin-top:12px; }
 
-        @media(max-width:768px) {
-            .img-comp-container { height:240px; }
-            .tab-section, .datos-section, .comparador-section { padding:3rem 5%; }
-        }
+        button, a, [role="button"] { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+        h1,h2,h3,h4,.section-title,#banner-content h1 { text-wrap:balance; }
 
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        button, a, [role="button"] {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
-            text-wrap: balance;
+        @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+        @media(max-width:1024px) {
+            .hamburger { display:flex; }
+            nav { position:absolute; top:100%; left:0; width:100%; background:rgba(0,40,100,.95); padding:0; max-height:0; overflow:hidden; transition:max-height 300ms var(--ease-out),padding 200ms var(--ease-out); box-shadow:0 8px 20px rgba(0,0,0,.3); }
+            nav.open { max-height:340px; padding:1rem 0 1.5rem; }
+            nav ul { flex-direction:column; align-items:center; gap:0; }
+            nav ul li { width:100%; text-align:center; }
+            nav a { display:block; padding:12px 20px; border-bottom:0.5px solid rgba(255,255,255,.1); }
+            nav ul li:last-child a { border-bottom:none; }
+            .social-header { display:none; }
+            #page-banner { height:300px; }
+            .img-comp-container { height:260px; }
+            .secciones-section, .datos-section, .comparador-section { padding:3rem 5%; }
         }
     </style>
 </head>
 <body>
-
     <header>
         <a href="index.html" class="logo">@ObrasRomareda</a>
         <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false">
@@ -135,21 +111,17 @@
                 <li><a href="proyecto.html" class="active">El Proyecto</a></li>
                 <li><a href="historia.html">La Vieja Romareda</a></li>
             </ul>
-            <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
-            </div>
         </nav>
         <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
         </div>
     </header>
 
+    <!-- BANNER -->
     <div id="page-banner">
-        <div id="banner-bg" style="background-image:url('https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');"></div>
+        <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
             <div class="banner-badge">IDOM · 2024</div>
@@ -163,49 +135,21 @@
         <h2 class="section-title">Datos técnicos</h2>
         <p class="section-subtitle">Las cifras de un estadio de nueva generación</p>
         <div class="datos-grid">
-            <div class="dato-card"><span class="dato-num">35.000</span><span class="dato-label">Espectadores</span></div>
-            <div class="dato-card"><span class="dato-num">67.000 m²</span><span class="dato-label">Superficie total</span></div>
-            <div class="dato-card"><span class="dato-num">2027</span><span class="dato-label">Apertura prevista</span></div>
-            <div class="dato-card"><span class="dato-num">IDOM</span><span class="dato-label">Arquitecto</span></div>
-            <div class="dato-card"><span class="dato-num">4</span><span class="dato-label">Niveles de grada</span></div>
-            <div class="dato-card"><span class="dato-num">100%</span><span class="dato-label">Cubierta</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-aforo">35.000</span><span class="dato-label">Espectadores</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-superficie">67.000 m²</span><span class="dato-label">Superficie total</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-apertura">2027</span><span class="dato-label">Apertura prevista</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-arquitecto">IDOM</span><span class="dato-label">Arquitecto</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-niveles">4</span><span class="dato-label">Niveles de grada</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-cubierta">100%</span><span class="dato-label">Cubierta</span></div>
         </div>
     </div>
 
-    <!-- DOCUMENTACIÓN GRÁFICA -->
-    <div class="tab-section">
+    <!-- SECCIONES DINÁMICAS -->
+    <div class="secciones-section">
         <h2 class="section-title">Documentación gráfica</h2>
         <p class="section-subtitle">Planos, renders y detalles técnicos del proyecto</p>
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="openTab(event,'renders')">Renders</button>
-            <button class="tab-btn" onclick="openTab(event,'plantas')">Plantas y Alzados</button>
-            <button class="tab-btn" onclick="openTab(event,'secciones')">Secciones</button>
-        </div>
-        <div id="renders" class="tab-content active"><div id="renders-container" style="display:contents;">
-            <div class="project-item">
-                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg" alt="Plaza Eduardo Ibarra" loading="lazy">
-                <div class="caption">Plaza Eduardo Ibarra</div>
-            </div>
-            <div class="project-item">
-                <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" alt="Vista Interior Noche" loading="lazy">
-                <div class="caption">Vista Interior Noche</div>
-            </div>
-            <div class="project-item">
-                <img src="https://pbs.twimg.com/media/GLIp4cAWkAAjB8S?format=jpg&name=large" alt="Vista Aérea General" loading="lazy">
-                <div class="caption">Vista Aérea General</div>
-            </div>
-        </div>
-        <div id="plantas" class="tab-content">
-            <div class="project-item">
-                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Planta+General" alt="Planta General" loading="lazy">
-                <div class="caption">Planta General</div>
-            </div>
-        </div>
-        <div id="secciones" class="tab-content">
-            <div class="project-item">
-                <img src="https://placehold.co/600x400/EEEEEE/00529F/png?text=Seccion+Grada" alt="Sección de Grada" loading="lazy">
-                <div class="caption">Sección Constructiva de Grada</div>
-            </div>
+        <div id="proy-secciones-publico">
+            <div style="text-align:center;color:var(--muted);padding:2rem;"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></div>
         </div>
     </div>
 
@@ -216,31 +160,37 @@
         <div class="comparison-wrapper">
             <div class="img-comp-container">
                 <div class="img-comp-img">
-                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render nueva Romareda">
-                    <div class="img-comp-overlay-label" style="right:20px;">FUTURO (Render)</div>
+                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render de la nueva Romareda">
+                    <div class="img-comp-overlay-label" style="right:20px;">FUTURO</div>
                 </div>
                 <div class="img-comp-img img-comp-overlay">
-                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="Romareda antigua">
+                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes de la demolición">
                     <div class="img-comp-overlay-label" style="left:20px;">ANTES</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer>
+    <footer style="background:var(--blue);color:white;padding:3rem 10%;text-align:center;border-top:6px solid var(--light);">
         <a href="index.html" class="logo" style="display:inline-block;margin-bottom:1rem;">@ObrasRomareda</a>
         <p style="color:rgba(255,255,255,.6);font-size:.85rem;">Web no oficial · Renders e imágenes técnicas: IDOM</p>
     </footer>
+
+    <!-- LIGHTBOX -->
+    <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
+        <button onclick="lbClose()" style="position:fixed;top:20px;right:28px;color:white;font-size:2.5rem;background:none;border:none;cursor:pointer;line-height:1;" aria-label="Cerrar">×</button>
+        <button onclick="lbChange(-1)" style="position:fixed;left:0;top:50%;transform:translateY(-50%);color:white;font-size:2rem;background:rgba(255,255,255,.1);border:none;padding:16px 14px;cursor:pointer;border-radius:0 6px 6px 0;" aria-label="Anterior">❮</button>
+        <img id="lb-img" src="" alt="">
+        <div id="lb-caption"></div>
+        <button onclick="lbChange(1)" style="position:fixed;right:0;top:50%;transform:translateY(-50%);color:white;font-size:2rem;background:rgba(255,255,255,.1);border:none;padding:16px 14px;cursor:pointer;border-radius:6px 0 0 6px;" aria-label="Siguiente">❯</button>
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // BANNER DINÁMICO
-
-
-        // HAMBURGER
+        // Hamburger
         const hBtn = document.getElementById('hamburgerBtn');
         const hNav = document.getElementById('mainNav');
         hBtn.addEventListener('click', () => {
@@ -249,15 +199,95 @@
             hBtn.setAttribute('aria-expanded', open);
         });
 
-        // TABS
-        function openTab(evt, tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            evt.currentTarget.classList.add('active');
+        // Banner
+        async function loadBannerDynamic() {
+            try {
+                const { data } = await sb.from('banners').select('*').eq('pagina','proyecto').limit(1);
+                const row = data && data.length > 0 ? data[0] : null;
+                if (!row) return;
+                const bg = document.getElementById('banner-bg');
+                if (bg && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
+                if (row.titulo)   document.getElementById('banner-title').textContent   = row.titulo;
+                if (row.subtexto) document.getElementById('banner-subtitle').textContent = row.subtexto;
+            } catch(e) {}
         }
 
-        // COMPARADOR
+        // Datos técnicos
+        async function loadProyectoData() {
+            try {
+                const { data } = await sb.from('proyecto').select('campo, valor');
+                if (!data) return;
+                data.forEach(r => {
+                    const el = document.getElementById(`dato-${r.campo}`);
+                    if (el && r.valor) el.textContent = r.valor;
+                });
+            } catch(e) {}
+        }
+
+        // Secciones dinámicas
+        let lbPhotos = [], lbIdx = 0;
+
+        async function loadProyectoSecciones() {
+            const container = document.getElementById('proy-secciones-publico');
+            try {
+                const { data: secciones } = await sb.from('proyecto_secciones').select('*').order('orden', { ascending: true });
+                if (!secciones || secciones.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;">Próximamente</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                for (const sec of secciones) {
+                    const { data: imgs } = await sb.from('proyecto_imagenes')
+                        .select('*').eq('seccion_id', sec.id).order('orden', { ascending: true });
+                    if (!imgs || imgs.length === 0) continue;
+                    const urls = imgs.map(i => i.url);
+                    const secEl = document.createElement('div');
+                    secEl.className = 'seccion-block';
+                    secEl.innerHTML = `
+                        <h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>
+                        <div class="renders-grid">
+                            ${imgs.map((img, i) => `
+                                <div class="render-item" role="button" tabindex="0"
+                                    onclick="openLb(${JSON.stringify(urls)}, ${i})"
+                                    onkeydown="if(event.key==='Enter'||event.key===' ')openLb(${JSON.stringify(urls)}, ${i})">
+                                    <img src="${img.url}" alt="${sec.nombre} ${i+1}" loading="${i < 3 ? 'eager' : 'lazy'}" width="600" height="400">
+                                </div>`).join('')}
+                        </div>`;
+                    container.appendChild(secEl);
+                }
+            } catch(e) { console.warn('loadProyectoSecciones:', e); }
+        }
+
+        function openLb(photos, idx) {
+            lbPhotos = photos; lbIdx = idx; showLb();
+            document.getElementById('lb-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function showLb() {
+            document.getElementById('lb-img').src = lbPhotos[lbIdx];
+            document.getElementById('lb-caption').textContent = (lbIdx + 1) + ' / ' + lbPhotos.length;
+        }
+        function lbChange(dir) { lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length; showLb(); }
+        function lbClose() {
+            document.getElementById('lb-overlay').classList.remove('active');
+            document.getElementById('lb-img').src = '';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('lb-overlay').classList.contains('active')) return;
+            if (e.key === 'ArrowLeft')  lbChange(-1);
+            if (e.key === 'ArrowRight') lbChange(1);
+            if (e.key === 'Escape')     lbClose();
+        });
+
+        // Comparador
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBannerDynamic();
+            loadProyectoData();
+            loadProyectoSecciones();
+            Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(img => compareImages(img));
+        });
+
         function compareImages(img) {
             let clicked = 0;
             const w = img.offsetWidth, h = img.offsetHeight;
@@ -266,89 +296,19 @@
             slider.setAttribute('class', 'img-comp-slider');
             img.parentElement.insertBefore(slider, img);
             slider.style.top  = (h / 2) - (slider.offsetHeight / 2) + 'px';
-            slider.style.left = (w / 2) - (slider.offsetWidth  / 2) + 'px';
-            slider.addEventListener('mousedown',  e => { e.preventDefault(); clicked = 1; window.addEventListener('mousemove', slideMove); window.addEventListener('touchmove', slideMove); });
-            slider.addEventListener('touchstart', e => { e.preventDefault(); clicked = 1; window.addEventListener('mousemove', slideMove); window.addEventListener('touchmove', slideMove); });
+            slider.style.left = (w / 2) - (slider.offsetWidth / 2) + 'px';
+            slider.addEventListener('mousedown', e => { e.preventDefault(); clicked = 1; window.addEventListener('mousemove', move); window.addEventListener('touchmove', move); });
             window.addEventListener('mouseup',  () => clicked = 0);
             window.addEventListener('touchend', () => clicked = 0);
-            function slideMove(e) {
+            function move(e) {
                 if (!clicked) return;
-                e = e.changedTouches ? e.changedTouches[0] : e;
+                const t = e.changedTouches ? e.changedTouches[0] : e;
                 const a = img.getBoundingClientRect();
-                let pos = Math.max(0, Math.min(e.pageX - a.left - window.pageXOffset, w));
+                let pos = Math.max(0, Math.min(t.pageX - a.left - window.pageXOffset, w));
                 img.style.width = pos + 'px';
                 slider.style.left = img.offsetWidth - slider.offsetWidth / 2 + 'px';
             }
         }
-
-        async function loadBannerDynamic(pagina, defaultBg) {
-            const bg  = document.getElementById('banner-bg');
-            const h1  = document.getElementById('banner-title');
-            const sub = document.getElementById('banner-subtitle');
-            if (bg && defaultBg) bg.style.backgroundImage = `url('${defaultBg}')`;
-            try {
-                const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
-                const row = data && data.length > 0 ? data[0] : null;
-                if (!row) return;
-                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
-                if (h1  && row.titulo)   h1.textContent  = row.titulo;
-                if (sub && row.subtexto) sub.textContent = row.subtexto;
-            } catch(e) { console.warn('Banner error:', e); }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            
-        // Cargar datos del proyecto desde Supabase
-        async function loadProyectoData() {
-            try {
-                const { data } = await sb.from('proyecto').select('campo, valor');
-                if (!data || data.length === 0) return;
-                const map = {};
-                data.forEach(r => { map[r.campo] = r.valor; });
-
-                // Descripción
-                const descEl = document.getElementById('proy-descripcion-text');
-                if (descEl && map.descripcion) descEl.textContent = map.descripcion;
-
-                // Datos técnicos
-                const campos = ['aforo','superficie','apertura','arquitecto','niveles','cubierta'];
-                campos.forEach(campo => {
-                    const el = document.getElementById(`dato-${campo}`);
-                    if (el && map[campo]) el.textContent = map[campo];
-                });
-            } catch(e) { console.warn('loadProyectoData error:', e); }
-        }
-
-        // Cargar renders desde Supabase
-        async function loadProyectoRenders() {
-            try {
-                const { data } = await sb.storage.from('proyecto').list('', {
-                    limit: 100, sortBy: { column: 'created_at', order: 'asc' }
-                });
-                const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
-                if (files.length === 0) return;
-
-                const container = document.getElementById('renders-container');
-                if (!container) return;
-                container.innerHTML = '';
-
-                files.forEach((f, idx) => {
-                    const { data: u } = sb.storage.from('proyecto').getPublicUrl(f.name);
-                    const item = document.createElement('div');
-                    item.className = 'project-item';
-                    item.innerHTML = `
-                        <img src="${u.publicUrl}" alt="Render ${idx+1}" loading="${idx < 3 ? 'eager' : 'lazy'}" width="600" height="400">
-                        <div class="caption">Render ${idx + 1}</div>`;
-                    container.appendChild(item);
-                });
-            } catch(e) { console.warn('loadProyectoRenders error:', e); }
-        }
-
-            loadBannerDynamic('proyecto', 'https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_exterior_dia_plaza-1920x1080.jpg');
-            Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(img => compareImages(img));
-            loadProyectoData();
-            loadProyectoRenders();
-        });
     </script>
 </body>
 </html>

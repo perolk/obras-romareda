@@ -799,20 +799,11 @@
             <i class="fas fa-drafting-compass" style="color:var(--light);"></i> Editar página El Proyecto
         </div>
 
-        <!-- Texto descriptivo -->
+        <!-- Texto y datos técnicos -->
         <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-title"><i class="fas fa-align-left"></i> Texto descriptivo</div>
+            <div class="card-title"><i class="fas fa-align-left"></i> Texto y datos técnicos</div>
             <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">DESCRIPCIÓN GENERAL</label>
-            <textarea class="input" id="proy-descripcion" rows="4" style="resize:vertical;margin-bottom:1rem;"
-                placeholder="Descripción general del proyecto..."></textarea>
-            <button class="btn btn-success" onclick="saveProyectoTexto()">
-                <i class="fas fa-save"></i> Guardar texto
-            </button>
-        </div>
-
-        <!-- Datos técnicos -->
-        <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-title"><i class="fas fa-ruler-combined"></i> Datos técnicos</div>
+            <textarea class="input" id="proy-descripcion" rows="3" style="resize:vertical;margin-bottom:1rem;" placeholder="Descripción general del proyecto…"></textarea>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
                 <div>
                     <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">AFORO</label>
@@ -839,73 +830,40 @@
                     <input class="input" type="text" id="proy-cubierta" placeholder="100%">
                 </div>
             </div>
-            <button class="btn btn-success" onclick="saveProyectoDatos()">
-                <i class="fas fa-save"></i> Guardar datos técnicos
+            <button class="btn btn-success" onclick="saveProyectoTextoYDatos()">
+                <i class="fas fa-save"></i> Guardar texto y datos
             </button>
         </div>
 
-        <!-- Renders -->
+        <!-- Secciones de imágenes -->
         <div class="card">
             <div class="card-title">
-                <i class="fas fa-images"></i> Renders
-                <span id="proy-renders-count" style="margin-left:auto;font-size:.8rem;color:var(--muted);"></span>
-            </div>
-
-            <!-- Compresor -->
-            <div class="compress-card" style="margin-bottom:1rem;">
-                <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión</div>
-                <div class="compress-tabs">
-                    <button class="compress-tab active" id="ptab-calidad" onclick="setProjCompressMode('calidad')">Por calidad (%)</button>
-                    <button class="compress-tab inactive" id="ptab-res" onclick="setProjCompressMode('resolucion')">Por resolución (px)</button>
-                </div>
-                <div id="ppanel-calidad">
-                    <div class="compress-slider-row">
-                        <label>Calidad</label>
-                        <input type="range" min="10" max="100" value="85" step="1" id="pslider-calidad" oninput="updatePSlider()">
-                        <span class="compress-val" id="pval-calidad">85%</span>
-                    </div>
-                </div>
-                <div id="ppanel-resolucion" style="display:none;">
-                    <div class="compress-slider-row">
-                        <label>Ancho máx.</label>
-                        <input type="range" min="400" max="4000" value="1920" step="100" id="pslider-res" oninput="updatePSlider()">
-                        <span class="compress-val" id="pval-res">1920px</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dropzone" id="proy-dropzone" onclick="document.getElementById('proy-file').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>Arrastra los renders aquí o <span>haz clic para seleccionarlos</span></p>
-                <p style="margin-top:4px;">JPG, PNG, WEBP · Máx. 10MB</p>
-            </div>
-            <input type="file" id="proy-file" multiple accept="image/*" style="display:none;"
-                onchange="prepareProyUpload(this.files)">
-
-            <!-- Preview panel -->
-            <div class="preview-panel" id="proy-preview-panel">
-                <div class="preview-panel-title">
-                    <i class="fas fa-list"></i>
-                    <span id="proy-preview-title">Vista previa</span>
-                </div>
-                <div id="proy-preview-list"></div>
-                <div class="preview-stats">
-                    <div class="preview-stat"><div class="preview-stat-label">Original</div><div class="preview-stat-val" id="pstat-orig">—</div></div>
-                    <div class="preview-stat highlight"><div class="preview-stat-label">Comprimido</div><div class="preview-stat-val" id="pstat-comp">—</div></div>
-                    <div class="preview-stat highlight"><div class="preview-stat-label">Ahorro</div><div class="preview-stat-val" id="pstat-pct">—</div></div>
-                </div>
-                <button class="btn-upload-preview" id="proy-upload-btn" onclick="doProyUpload()">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span id="proy-upload-label">Subir renders</span>
+                <i class="fas fa-layer-group"></i> Secciones de imágenes
+                <button class="btn btn-primary" style="margin-left:auto;font-size:.8rem;" onclick="showNewSectionModal()">
+                    <i class="fas fa-plus"></i> Nueva sección
                 </button>
             </div>
-
-            <div class="upload-bar" id="proy-upload-bar">
-                <div class="upload-bar-fill" id="proy-upload-fill"></div>
+            <div id="proy-secciones-list">
+                <div style="color:var(--muted);font-size:.85rem;text-align:center;padding:2rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando…
+                </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Grid renders existentes -->
-            <div class="photo-grid" id="proy-renders-grid"></div>
+    <!-- Modal nueva sección -->
+    <div id="new-section-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:90%;max-width:420px;">
+            <h3 style="color:white;font-size:1rem;font-weight:700;margin-bottom:1rem;">Nueva sección</h3>
+            <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">NOMBRE DE LA SECCIÓN</label>
+            <input class="input" type="text" id="new-section-name" placeholder="Ej: Renders, Plantas, Secciones…"
+                onkeydown="if(event.key==='Enter')createSection()" style="margin-bottom:1rem;">
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-outline" style="flex:1;" onclick="hideNewSectionModal()">Cancelar</button>
+                <button class="btn btn-success" style="flex:2;" onclick="createSection()">
+                    <i class="fas fa-plus"></i> Crear sección
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1937,75 +1895,259 @@ dz.addEventListener('drop', e => {
 // ============================================
 // EL PROYECTO — TAB
 // ============================================
-let proyCompressMode = 'calidad';
-let proyPendingBlobs = [];
+let proyCompressMode  = 'calidad';
+let proyPendingBlobs  = [];
+let proyUploadSection = null;
 
 async function loadProyectoTab() {
+    // Cargar campos de texto/datos
     const { data } = await sb.from('proyecto').select('campo, valor');
-    if (data) {
-        data.forEach(row => {
-            const el = document.getElementById(`proy-${row.campo}`);
-            if (el) el.value = row.valor || '';
-        });
-    }
-    await loadProyRenders();
+    if (data) data.forEach(r => {
+        const el = document.getElementById(`proy-${r.campo}`);
+        if (el) el.value = r.valor || '';
+    });
+    // Cargar secciones
+    await renderSecciones();
 }
 
 async function upsertProyectoCampo(campo, valor) {
-    const { data: existing } = await sb.from('proyecto').select('id').eq('campo', campo).limit(1);
-    if (existing && existing.length > 0) {
+    const { data: ex } = await sb.from('proyecto').select('id').eq('campo', campo).limit(1);
+    if (ex && ex.length > 0) {
         await sb.from('proyecto').update({ valor, updated_at: new Date().toISOString() }).eq('campo', campo);
     } else {
         await sb.from('proyecto').insert({ campo, valor, updated_at: new Date().toISOString() });
     }
 }
 
-async function saveProyectoTexto() {
-    await upsertProyectoCampo('descripcion', document.getElementById('proy-descripcion').value.trim());
-    toast('✅ Texto guardado', 'ok');
-}
-
-async function saveProyectoDatos() {
-    for (const campo of ['aforo','superficie','apertura','arquitecto','niveles','cubierta']) {
-        await upsertProyectoCampo(campo, document.getElementById(`proy-${campo}`)?.value.trim() || '');
+async function saveProyectoTextoYDatos() {
+    const campos = ['descripcion','aforo','superficie','apertura','arquitecto','niveles','cubierta'];
+    for (const campo of campos) {
+        const el = document.getElementById(`proy-${campo}`);
+        if (el) await upsertProyectoCampo(campo, el.value.trim());
     }
-    toast('✅ Datos técnicos guardados', 'ok');
+    toast('✅ Texto y datos guardados', 'ok');
 }
 
-function setProjCompressMode(mode) {
-    proyCompressMode = mode;
-    document.getElementById('ptab-calidad').className = mode === 'calidad' ? 'compress-tab active' : 'compress-tab inactive';
-    document.getElementById('ptab-res').className     = mode === 'resolucion' ? 'compress-tab active' : 'compress-tab inactive';
-    document.getElementById('ppanel-calidad').style.display    = mode === 'calidad' ? 'block' : 'none';
-    document.getElementById('ppanel-resolucion').style.display = mode === 'resolucion' ? 'block' : 'none';
+// ---- SECCIONES ----
+function showNewSectionModal() {
+    document.getElementById('new-section-name').value = '';
+    document.getElementById('new-section-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('new-section-name').focus(), 100);
 }
-function updatePSlider() {
-    document.getElementById('pval-calidad').textContent = document.getElementById('pslider-calidad').value + '%';
-    document.getElementById('pval-res').textContent     = document.getElementById('pslider-res').value + 'px';
+function hideNewSectionModal() {
+    document.getElementById('new-section-modal').style.display = 'none';
 }
 
+async function createSection() {
+    const nombre = document.getElementById('new-section-name').value.trim();
+    if (!nombre) return;
+    const { data: secciones } = await sb.from('proyecto_secciones').select('orden').order('orden', { ascending: false }).limit(1);
+    const maxOrden = secciones && secciones.length > 0 ? secciones[0].orden + 1 : 0;
+    const { error } = await sb.from('proyecto_secciones').insert({ nombre, orden: maxOrden });
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    hideNewSectionModal();
+    toast(`✅ Sección "${nombre}" creada`, 'ok');
+    await renderSecciones();
+}
+
+async function deleteSection(id, nombre) {
+    if (!confirm(`¿Eliminar la sección "${nombre}" y todas sus imágenes?`)) return;
+    // Borrar imágenes del storage
+    const { data: imgs } = await sb.from('proyecto_imagenes').select('storage_path').eq('seccion_id', id);
+    if (imgs && imgs.length > 0) {
+        await sb.storage.from('proyecto').remove(imgs.map(i => i.storage_path));
+    }
+    await sb.from('proyecto_secciones').delete().eq('id', id);
+    toast(`Sección eliminada`, 'ok');
+    await renderSecciones();
+}
+
+async function renderSecciones() {
+    const container = document.getElementById('proy-secciones-list');
+    container.innerHTML = '<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:1rem;"><i class="fas fa-spinner fa-spin"></i> Cargando…</div>';
+
+    const { data: secciones } = await sb.from('proyecto_secciones').select('*').order('orden', { ascending: true });
+    if (!secciones || secciones.length === 0) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:.85rem;text-align:center;padding:2rem;">Sin secciones. Crea la primera con el botón <strong>+ Nueva sección</strong>.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    for (const sec of secciones) {
+        const { data: imgs } = await sb.from('proyecto_imagenes')
+            .select('*').eq('seccion_id', sec.id).order('orden', { ascending: true });
+
+        const secEl = document.createElement('div');
+        secEl.style.cssText = 'border:1px solid var(--border);border-radius:12px;margin-bottom:1rem;overflow:hidden;';
+        secEl.innerHTML = `
+            <div style="background:var(--dark);padding:12px 16px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:.85rem;font-weight:700;color:white;flex:1;">${sec.nombre}</span>
+                <span style="font-size:.75rem;color:var(--muted);">${(imgs||[]).length} imágenes</span>
+                <button class="btn btn-outline" style="font-size:.75rem;padding:4px 10px;"
+                    onclick="document.getElementById('upload-sec-${sec.id}').click()">
+                    <i class="fas fa-upload" aria-hidden="true"></i> Subir
+                </button>
+                <input type="file" id="upload-sec-${sec.id}" multiple accept="image/*" style="display:none;"
+                    onchange="prepareSecUpload(${sec.id}, this.files)">
+                <button class="btn btn-outline" style="font-size:.75rem;padding:4px 10px;border-color:var(--error);color:var(--error);"
+                    onclick="deleteSection(${sec.id}, '${sec.nombre.replace(/'/g,"\'")}')">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="sec-preview-${sec.id}" style="display:none;padding:12px;background:var(--card);border-top:1px solid var(--border);"></div>
+            <div id="sec-grid-${sec.id}" class="photo-grid" style="padding:12px;min-height:60px;"></div>`;
+        container.appendChild(secEl);
+
+        // Render existing images with drag handles
+        renderSecGrid(sec.id, imgs || []);
+    }
+}
+
+function renderSecGrid(secId, imgs) {
+    const grid = document.getElementById(`sec-grid-${secId}`);
+    if (!grid) return;
+    if (imgs.length === 0) {
+        grid.innerHTML = '<div style="color:var(--muted);font-size:.78rem;padding:.5rem;">Sin imágenes. Haz clic en Subir.</div>';
+        return;
+    }
+    grid.innerHTML = '';
+    imgs.forEach((img, idx) => {
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+        item.draggable = true;
+        item.dataset.imgId = img.id;
+        item.dataset.secId = secId;
+        item.style.cursor = 'grab';
+        item.innerHTML = `
+            <img src="${img.url}" alt="Imagen ${idx+1}" loading="lazy">
+            <div class="photo-overlay">
+                <button class="photo-btn photo-btn-del" title="Eliminar"
+                    onclick="deleteSecImg(${img.id},'${img.storage_path}',${secId})">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+            </div>`;
+        // Drag events
+        item.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('imgId', img.id);
+            e.dataTransfer.setData('secId', secId);
+            item.style.opacity = '.4';
+        });
+        item.addEventListener('dragend',  () => item.style.opacity = '1');
+        item.addEventListener('dragover', e => e.preventDefault());
+        item.addEventListener('drop', async e => {
+            e.preventDefault();
+            const fromId  = parseInt(e.dataTransfer.getData('imgId'));
+            const fromSec = parseInt(e.dataTransfer.getData('secId'));
+            if (fromId === img.id || fromSec !== secId) return;
+            // Swap orders
+            const { data: all } = await sb.from('proyecto_imagenes')
+                .select('id, orden').eq('seccion_id', secId).order('orden', { ascending: true });
+            const ids = all.map(i => i.id);
+            const fromIdx = ids.indexOf(fromId);
+            const toIdx   = ids.indexOf(img.id);
+            ids.splice(fromIdx, 1);
+            ids.splice(toIdx, 0, fromId);
+            await Promise.all(ids.map((id, orden) =>
+                sb.from('proyecto_imagenes').update({ orden }).eq('id', id)
+            ));
+            const { data: fresh } = await sb.from('proyecto_imagenes')
+                .select('*').eq('seccion_id', secId).order('orden', { ascending: true });
+            renderSecGrid(secId, fresh || []);
+        });
+        grid.appendChild(item);
+    });
+}
+
+async function prepareSecUpload(secId, files) {
+    if (!files || files.length === 0) return;
+    proyUploadSection = secId;
+    proyPendingBlobs  = [];
+    const previewEl = document.getElementById(`sec-preview-${secId}`);
+    previewEl.style.display = 'block';
+    previewEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--muted);"></i> Calculando compresión…';
+
+    let totalOrig = 0, totalComp = 0;
+    let rows = '';
+    for (const file of Array.from(files)) {
+        const result = await compressProjImage(file);
+        proyPendingBlobs.push(result);
+        totalOrig += result.originalSize; totalComp += result.compressedSize;
+        const pct = Math.round((1 - result.compressedSize / result.originalSize) * 100);
+        rows += `<div class="preview-file-row"><i class="fas fa-image" aria-hidden="true"></i><span class="preview-file-name">${file.name}</span><span class="preview-file-orig">${formatBytes(result.originalSize)}</span><span class="preview-arrow">→</span><span class="preview-file-comp">${formatBytes(result.compressedSize)}</span><span class="preview-file-pct">−${pct}%</span></div>`;
+    }
+    const pct = Math.round((1 - totalComp / totalOrig) * 100);
+    previewEl.innerHTML = `
+        ${rows}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+            <span style="font-size:.78rem;color:var(--muted);">${formatBytes(totalOrig)} → <strong style="color:var(--success);">${formatBytes(totalComp)}</strong> (−${pct}%)</span>
+            <button class="btn btn-success" onclick="doSecUpload(${secId})">
+                <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i> Subir ${files.length} imagen${files.length > 1 ? 'es' : ''}
+            </button>
+        </div>`;
+    document.getElementById(`upload-sec-${secId}`).value = '';
+}
+
+async function doSecUpload(secId) {
+    if (!proyPendingBlobs.length) return;
+    const previewEl = document.getElementById(`sec-preview-${secId}`);
+    previewEl.innerHTML = `<i class="fas fa-spinner fa-spin" style="color:var(--light);"></i> Subiendo ${proyPendingBlobs.length} imagen${proyPendingBlobs.length > 1 ? 'es' : ''}…`;
+
+    // Get current max order
+    const { data: existing } = await sb.from('proyecto_imagenes')
+        .select('orden').eq('seccion_id', secId).order('orden', { ascending: false }).limit(1);
+    let orden = existing && existing.length > 0 ? existing[0].orden + 1 : 0;
+
+    for (const result of proyPendingBlobs) {
+        const path = `${secId}_${Date.now()}_${result.name}`;
+        const { error: upErr } = await sb.storage.from('proyecto').upload(path, result.blob, { upsert: true, contentType: 'image/jpeg' });
+        if (upErr) { toast(`Error: ${upErr.message}`, 'err'); continue; }
+        const { data: urlData } = sb.storage.from('proyecto').getPublicUrl(path);
+        await sb.from('proyecto_imagenes').insert({ seccion_id: secId, url: urlData.publicUrl, storage_path: path, orden });
+        orden++;
+    }
+
+    proyPendingBlobs = [];
+    previewEl.style.display = 'none';
+    toast('✅ Imágenes subidas', 'ok');
+
+    const { data: fresh } = await sb.from('proyecto_imagenes')
+        .select('*').eq('seccion_id', secId).order('orden', { ascending: true });
+    renderSecGrid(secId, fresh || []);
+    loadStorageStats();
+}
+
+async function deleteSecImg(imgId, storagePath, secId) {
+    if (!confirm('¿Eliminar esta imagen?')) return;
+    await sb.storage.from('proyecto').remove([storagePath]);
+    await sb.from('proyecto_imagenes').delete().eq('id', imgId);
+    const { data: fresh } = await sb.from('proyecto_imagenes')
+        .select('*').eq('seccion_id', secId).order('orden', { ascending: true });
+    renderSecGrid(secId, fresh || []);
+    toast('Imagen eliminada', 'ok');
+    loadStorageStats();
+}
+
+// Compresor del proyecto (reutiliza sliders de calidad/resolución de otros tabs)
 async function compressProjImage(file) {
     const isHeic = /\.(heic|heif)$/i.test(file.name) || file.type === 'image/heic' || file.type === 'image/heif';
     if (isHeic && typeof heic2any !== 'undefined') {
         try { const r = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 }); file = Array.isArray(r) ? r[0] : r; } catch(e) {}
     }
-    return new Promise((resolve) => {
-        const quality  = parseInt(document.getElementById('pslider-calidad').value) / 100;
-        const maxWidth = parseInt(document.getElementById('pslider-res').value);
-        const reader   = new FileReader();
-        reader.onload  = (e) => {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
             const img = new Image();
             img.onload = () => {
                 let w = img.width, h = img.height;
-                if (proyCompressMode === 'resolucion' && w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+                const maxW = 1920;
+                if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
                 const canvas = document.createElement('canvas');
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                const q = proyCompressMode === 'calidad' ? quality : 0.85;
                 canvas.toBlob(blob => resolve({
                     blob, originalSize: file.size, compressedSize: blob.size,
                     name: file.name.replace(/\.[^.]+$/, '.jpg')
-                }), 'image/jpeg', q);
+                }), 'image/jpeg', 0.85);
             };
             img.src = e.target.result;
         };
@@ -2013,108 +2155,5 @@ async function compressProjImage(file) {
     });
 }
 
-async function prepareProyUpload(files) {
-    if (!files || files.length === 0) return;
-    proyPendingBlobs = [];
-    const panel = document.getElementById('proy-preview-panel');
-    const list  = document.getElementById('proy-preview-list');
-    const btn   = document.getElementById('proy-upload-btn');
-    panel.style.display = 'block';
-    list.innerHTML = '<div style="color:var(--muted);font-size:.82rem;"><i class="fas fa-spinner fa-spin"></i> Calculando…</div>';
-    btn.disabled = true;
-    document.getElementById('proy-preview-title').textContent = `Vista previa · ${files.length} render${files.length > 1 ? 's' : ''}`;
-    let totalOrig = 0, totalComp = 0;
-    list.innerHTML = '';
-    for (const file of Array.from(files)) {
-        const result = await compressProjImage(file);
-        proyPendingBlobs.push(result);
-        totalOrig += result.originalSize; totalComp += result.compressedSize;
-        const pct = Math.round((1 - result.compressedSize / result.originalSize) * 100);
-        const row = document.createElement('div');
-        row.className = 'preview-file-row';
-        row.innerHTML = `<i class="fas fa-image" aria-hidden="true"></i><span class="preview-file-name">${file.name}</span><span class="preview-file-orig">${formatBytes(result.originalSize)}</span><span class="preview-arrow">→</span><span class="preview-file-comp">${formatBytes(result.compressedSize)}</span><span class="preview-file-pct">−${pct}%</span>`;
-        list.appendChild(row);
-    }
-    const pct = Math.round((1 - totalComp / totalOrig) * 100);
-    document.getElementById('pstat-orig').textContent = formatBytes(totalOrig);
-    document.getElementById('pstat-comp').textContent = formatBytes(totalComp);
-    document.getElementById('pstat-pct').textContent  = `−${pct}%`;
-    document.getElementById('proy-upload-label').textContent = `Subir ${files.length} render${files.length > 1 ? 's' : ''} (${formatBytes(totalComp)})`;
-    btn.disabled = false;
-    document.getElementById('proy-file').value = '';
-}
-
-async function doProyUpload() {
-    if (!proyPendingBlobs.length) return;
-    const btn  = document.getElementById('proy-upload-btn');
-    const bar  = document.getElementById('proy-upload-bar');
-    const fill = document.getElementById('proy-upload-fill');
-    btn.disabled = true; bar.style.display = 'block';
-    let done = 0;
-    for (const result of proyPendingBlobs) {
-        await sb.storage.from('proyecto').upload(`${Date.now()}_${result.name}`, result.blob, { upsert: true, contentType: 'image/jpeg' });
-        done++;
-        fill.style.width = (done / proyPendingBlobs.length * 100) + '%';
-    }
-    bar.style.display = 'none'; fill.style.width = '0';
-    toast(`✅ ${done} render${done > 1 ? 's' : ''} subido${done > 1 ? 's' : ''}`, 'ok');
-    document.getElementById('proy-preview-panel').style.display = 'none';
-    proyPendingBlobs = []; btn.disabled = false;
-    await loadProyRenders(); loadStorageStats();
-}
-
-async function loadProyRenders() {
-    const { data } = await sb.storage.from('proyecto').list('', { limit: 1000, sortBy: { column: 'created_at', order: 'asc' } });
-    const files = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
-    const grid  = document.getElementById('proy-renders-grid');
-    document.getElementById('proy-renders-count').textContent = `${files.length} renders`;
-    grid.innerHTML = '';
-    files.forEach(f => {
-        const { data: u } = sb.storage.from('proyecto').getPublicUrl(f.name);
-        const item = document.createElement('div');
-        item.className = 'photo-item';
-        item.innerHTML = `<img src="${u.publicUrl}" alt="${f.name}" loading="lazy"><div class="photo-overlay"><button class="photo-btn photo-btn-del" title="Eliminar" onclick="deleteProyRender('${f.name}',this)"><i class="fas fa-trash" aria-hidden="true"></i></button></div>`;
-        grid.appendChild(item);
-    });
-}
-
-async function deleteProyRender(name, btn) {
-    if (!confirm('¿Eliminar este render?')) return;
-    const { error } = await sb.storage.from('proyecto').remove([name]);
-    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
-    btn.closest('.photo-item').remove();
-    toast('Render eliminado', 'ok');
-    loadStorageStats();
-}
-
-// Drag & drop renders
-document.addEventListener('DOMContentLoaded', () => {
-    const pdz = document.getElementById('proy-dropzone');
-    if (pdz) {
-        pdz.addEventListener('dragover',  e => { e.preventDefault(); pdz.classList.add('drag'); });
-        pdz.addEventListener('dragleave', ()  => pdz.classList.remove('drag'));
-        pdz.addEventListener('drop', e => { e.preventDefault(); pdz.classList.remove('drag'); prepareProyUpload(e.dataTransfer.files); });
-    }
-});
-
 // ============================================
-// ============================================
-function toast(msg, type = 'ok') {
-    let el = document.getElementById('toast');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'toast';
-        el.style.cssText = 'position:fixed;bottom:2rem;right:2rem;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:600;display:none;align-items:center;gap:10px;z-index:10000;box-shadow:0 8px 25px rgba(0,0,0,.4);font-family:Inter,sans-serif;';
-        document.body.appendChild(el);
-    }
-    el.textContent    = msg;
-    el.className      = type;
-    el.style.display  = 'flex';
-    el.style.background = type === 'ok' ? '#10b981' : '#ef4444';
-    el.style.color    = 'white';
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => el.style.display = 'none', 3500);
-}
-</script>
-</body>
-</html>
+
