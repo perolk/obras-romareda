@@ -1,10 +1,12 @@
 (function() {
     const CSS = `
+        html { scrollbar-gutter: stable; }
         header.site-header {
             background: rgba(0,40,100,0.82);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 1rem 5%;
+            padding: 0 5%;
+            height: 64px;
             position: sticky;
             top: 0;
             width: 100%;
