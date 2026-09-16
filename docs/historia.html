@@ -2,242 +2,30 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00529F">
     <title>La Vieja Romareda · Obras Romareda</title>
-    <meta name="description" content="Galería de fotos históricas de la Romareda antes de su demolición. Recuerdos de un estadio legendario.">
-    <meta property="og:title" content="La Vieja Romareda · Obras Romareda">
-    <meta property="og:description" content="Galería de fotos históricas de la Romareda antes de su demolición.">
-    <meta property="og:image" content="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg">
-    <meta name="twitter:card" content="summary_large_image">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="description" content="Archivo fotográfico de La Vieja Romareda. 67 años de historia, pasión y recuerdos blanquiazules.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-
-
         :root {
             --blue: #00529F;
             --light: #4DA9FF;
             --text: #1a1a1a;
             --muted: #6b7280;
             --bg: #f9fafb;
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
 
-        /* TOP BAR */
-        .top-bar {
-            background:var(--blue); padding:14px 5%;
-            display:flex; align-items:center; justify-content:space-between;
-            position:sticky; top:0; z-index:100;
-            box-shadow:0 4px 15px rgba(0,0,0,.2);
-        }
-        .top-bar-logo {
-            font-family:'Calibri','Segoe UI',sans-serif;
-            font-weight:700; font-style:italic;
-            font-size:1.4rem; color:white; text-decoration:none;
-        }
-        .top-bar-logo:hover { color:var(--light); }
-        .back-link {
-            display:flex; align-items:center; gap:8px;
-            color:rgba(255,255,255,.7); font-size:.9rem;
-            text-decoration:none; transition:color .2s;
-        }
-        .back-link:hover { color:white; }
-
-        /* HERO */
-        .hero {
-            background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.7)),
-                        url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');
-            background-size:cover; background-position:center;
-            padding:5rem 10%;
-            color:white; text-align:center;
-        }
-        .hero-badge {
-            display:inline-block; background:rgba(255,255,255,.15);
-            border:1px solid rgba(255,255,255,.3);
-            color:white; font-size:.78rem; font-weight:700;
-            text-transform:uppercase; letter-spacing:2px;
-            padding:5px 16px; border-radius:20px; margin-bottom:1.2rem;
-        }
-        .hero h1 {
-            font-size:3rem; font-weight:900; color:white;
-            margin-bottom:1rem; line-height:1.1;
-        }
-        .hero p {
-            font-size:1.1rem; color:rgba(255,255,255,.75);
-            max-width:600px; margin:0 auto 2rem; line-height:1.65;
-        }
-        .hero-stats {
-            display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap;
-        }
-        .hero-stat { text-align:center; }
-        .hero-stat-num {
-            font-size:1.8rem; font-weight:900; color:var(--light); display:block;
-        }
-        .hero-stat-label {
-            font-size:.78rem; color:rgba(255,255,255,.55);
-            text-transform:uppercase; letter-spacing:1px;
-        }
-
-
-        /* LIGHTBOX */
-        #lb-overlay {
-            overscroll-behavior: contain;
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.96);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        #lb-overlay.active { display: flex; }
-        #lb-img {
-            max-width: 90vw; max-height: 85vh;
-            object-fit: contain; border-radius: 4px;
-            user-select: none;
-        }
-        #lb-caption {
-            color: rgba(255,255,255,0.5); font-size: 0.85rem;
-            margin-top: 12px; font-family: 'Inter', sans-serif;
-        }
-        #lb-close {
-            position: fixed; top: 20px; right: 28px;
-            color: white; font-size: 2.5rem; cursor: pointer;
-            background: none; border: none; line-height: 1; z-index: 100000;
-        }
-        #lb-close:hover { color: #4DA9FF; }
-        #lb-prev, #lb-next {
-            position: fixed; top: 50%; transform: translateY(-50%);
-            color: white; font-size: 2rem; cursor: pointer;
-            background: rgba(255,255,255,0.1); border: none;
-            padding: 16px 14px; transition: background 0.2s; z-index: 100000;
-        }
-        #lb-prev { left: 0; border-radius: 0 6px 6px 0; }
-        #lb-next { right: 0; border-radius: 6px 0 0 6px; }
-        #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.25); }
-
-        /* GALERÍA MASONRY */
-        .gallery-section { padding:4rem 5%; max-width:1400px; margin:0 auto; }
-
-        .gallery-filters {
-            display:flex; align-items:center; gap:12px;
-            margin-bottom:2rem; flex-wrap:wrap;
-        }
-        .gallery-count {
-            font-size:.88rem; color:var(--muted);
-            margin-left:auto;
-        }
-
-        /* Masonry con CSS columns */
-        .masonry {
-            columns:4; column-gap:12px;
-        }
-        .masonry-item {
-            break-inside:avoid; margin-bottom:12px;
-            border-radius:10px; overflow:hidden;
-            cursor:pointer; position:relative;
-            background:#e5e7eb;
-        }
-        .masonry-item img {
-            width:100%; display:block;
-            transition:transform .4s ease, filter .3s;
-        }
-        .masonry-item:hover img {
-            transform:scale(1.04); filter:brightness(.85);
-        }
-        .masonry-item .overlay {
-            position:absolute; inset:0;
-            background:linear-gradient(transparent 50%, rgba(0,0,0,.7));
-            opacity:0; transition:opacity .3s;
-            display:flex; align-items:flex-end; padding:12px;
-        }
-        .masonry-item:hover .overlay { opacity:1; }
-        .masonry-item .overlay span {
-            color:white; font-size:.78rem; font-weight:600;
-            line-height:1.3;
-        }
-
-        /* Skeleton masonry */
-        .masonry-skeleton {
-            break-inside:avoid; margin-bottom:12px;
-            border-radius:10px; overflow:hidden;
-            background:linear-gradient(90deg,#e5e7eb 25%,#d1d5db 50%,#e5e7eb 75%);
-            background-size:200% 100%;
-            animation:shimmer 1.5s infinite;
-        }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-        /* CARGAR MÁS */
-        .load-more-wrap { text-align:center; padding:2rem 0; }
-        .load-more-btn {
-            padding:12px 36px; background:var(--blue); color:white;
-            border:none; border-radius:30px; font-size:.9rem; font-weight:700;
-            font-family:'Inter',sans-serif; cursor:pointer; transition: color .3s, background .3s, transform .3s, opacity .3s, border-color .3s;
-        }
-        .load-more-btn:hover { background:#0063bf; transform:translateY(-2px); }
-        .load-more-btn:disabled { background:#e5e7eb; color:var(--muted); transform:none; cursor:not-allowed; }
-
-        
-        #lb-caption {
-            color:rgba(255,255,255,.6); font-size:.85rem;
-            margin-top:12px; text-align:center;
-        }
-
-        /* COMPARTIR */
-        .share-fab {
-            position:fixed; bottom:2rem; right:2rem;
-            width:52px; height:52px; border-radius:50%;
-            background:var(--blue); color:white; border:none;
-            font-size:1.2rem; cursor:pointer;
-            box-shadow:0 8px 25px rgba(0,82,159,.4);
-            display:flex; align-items:center; justify-content:center;
-            transition:transform .2s, box-shadow .2s;
-            z-index:500;
-        }
-        .share-fab:hover { transform:scale(1.1); box-shadow:0 12px 30px rgba(0,82,159,.5); }
-
-        /* RESPONSIVE */
-}
-        @media(max-width:680px) {
-            .masonry { columns:2; }
-            .hero h1 { font-size:2rem; }
-            .hero { padding:3rem 5%; }
-        }
-        @media(max-width:400px) { .masonry { columns:1; } }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        button, a, [role="button"] {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
-            text-wrap: balance;
-        }
-    </style>
-</head>
-<body>
-
-    <style>
-        :root { --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
-            header nav { position:absolute; top:100%; left:0; width:100%; background:var(--zaragoza-blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
-            header nav.open { max-height:340px; padding:1rem 0 1.5rem; }
-        }
-
-        /* BANNER UNIFORME */
+        /* BANNER — idéntico al de proyecto */
         #page-banner {
             position: relative;
             height: 400px;
@@ -252,13 +40,11 @@
             inset: 0;
             background-size: cover;
             background-position: center;
-            opacity: 1;
-            transition: opacity .5s;
         }
         #banner-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.72));
+            background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%);
         }
         #banner-content {
             position: relative;
@@ -269,22 +55,24 @@
         .banner-badge {
             display: inline-block;
             background: rgba(255,255,255,.15);
-            border: 1px solid rgba(255,255,255,.3);
+            border: 0.5px solid rgba(255,255,255,.3);
             color: white;
             font-size: .78rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: .1em;
             padding: 5px 16px;
-            border-radius: 20px;
+            border-radius: 100px;
             margin-bottom: 1rem;
         }
         #banner-title {
-            font-size: 3rem;
+            font-size: clamp(1.8rem, 4vw, 3rem);
             font-weight: 900;
             color: white;
             margin-bottom: .75rem;
-            line-height: 1.1;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            text-wrap: balance;
         }
         #banner-subtitle {
             font-size: 1.05rem;
@@ -293,13 +81,179 @@
             margin: 0 auto;
             line-height: 1.6;
         }
-        @media(max-width:768px) {
-            #page-banner { height: 300px; }
-            #banner-title { font-size: 2rem; }
-        }
 
+        /* GALERÍA */
+        .gallery-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 5%;
+        }
+        .gallery-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .gallery-count {
+            font-size: .85rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        .masonry {
+            columns: 4 240px;
+            column-gap: 12px;
+        }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+        @keyframes fadeUpItem {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .masonry-item img {
+            width: 100%;
+            display: block;
+            transition: transform 220ms var(--ease-out);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .masonry-item:hover img { transform: scale(1.04); }
+        }
+        .masonry-item .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,.6), transparent 50%);
+            opacity: 0;
+            transition: opacity 200ms var(--ease-out);
+            display: flex;
+            align-items: flex-end;
+            padding: 12px;
+            color: white;
+            font-size: .78rem;
+            font-weight: 500;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .masonry-item:hover .overlay { opacity: 1; }
+        }
+        .masonry-skeleton {
+            break-inside: avoid;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s var(--ease-out) infinite;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .load-more-wrap { text-align: center; margin-top: 2rem; }
+        .load-more-btn {
+            padding: 12px 32px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .load-more-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,82,159,.3); }
+        }
+        .load-more-btn:active { transform: scale(0.97); }
+
+        /* LIGHTBOX */
+        #lb-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,.96);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overscroll-behavior: contain;
+        }
+        #lb-overlay.active { display: flex; }
+        #lb-close {
+            position: fixed;
+            top: 20px;
+            right: 28px;
+            color: white;
+            font-size: 2.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+        }
+        #lb-prev, #lb-next {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            background: rgba(255,255,255,.1);
+            border: none;
+            padding: 16px 14px;
+            cursor: pointer;
+        }
+        #lb-prev { left: 0; border-radius: 0 6px 6px 0; }
+        #lb-next { right: 0; border-radius: 6px 0 0 6px; }
+        #lb-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
+        #lb-caption { color: rgba(255,255,255,.5); font-size: .85rem; margin-top: 12px; }
+
+        /* FAB */
+        .share-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,82,159,.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+            z-index: 100;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .share-fab:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,82,159,.5); }
+        }
+        .share-fab:active { transform: scale(0.95); }
+
+        /* FOOTER */
+        footer { background: var(--blue); color: white; padding: 3rem 10%; text-align: center; border-top: 6px solid var(--light); }
+
+        button, a, [role="button"] { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+        h1, h2, h3 { text-wrap: balance; }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+        }
+        @media (max-width: 768px) {
+            #page-banner { height: 300px; }
+            .masonry { columns: 2 150px; }
+        }
     </style>
-<div id="page-banner">
+</head>
+<body>
+
+    <!-- BANNER -->
+    <div id="page-banner">
         <div id="banner-bg" style="background-image:url('https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
@@ -309,6 +263,7 @@
         </div>
     </div>
 
+    <!-- GALERÍA -->
     <div class="gallery-section">
         <div class="gallery-filters">
             <span style="font-size:1rem; font-weight:700; color:var(--blue);">
@@ -316,19 +271,14 @@
             </span>
             <span class="gallery-count" id="gallery-count"></span>
         </div>
-
         <div class="masonry" id="masonry">
-            <!-- Skeletons -->
             <div class="masonry-skeleton" style="height:220px;"></div>
             <div class="masonry-skeleton" style="height:160px;"></div>
             <div class="masonry-skeleton" style="height:280px;"></div>
             <div class="masonry-skeleton" style="height:200px;"></div>
             <div class="masonry-skeleton" style="height:180px;"></div>
             <div class="masonry-skeleton" style="height:240px;"></div>
-            <div class="masonry-skeleton" style="height:160px;"></div>
-            <div class="masonry-skeleton" style="height:200px;"></div>
         </div>
-
         <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
             <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">
                 <i class="fas fa-chevron-down" aria-hidden="true"></i> Cargar más fotos
@@ -336,86 +286,91 @@
         </div>
     </div>
 
-        <button id="lb-next" onclick="changeLb(1)">&#10095;</button>
+    <footer>
+        <a href="index.html" style="font-family:'Calibri','Segoe UI',sans-serif;font-weight:700;font-style:italic;font-size:1.8rem;color:white;text-decoration:none;">@ObrasRomareda</a>
+        <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:1rem;">Web no oficial · Fotografías históricas de La Vieja Romareda</p>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
+        <button id="lb-close" onclick="lbClose()" aria-label="Cerrar">&#x2715;</button>
+        <button id="lb-prev" onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
+        <img id="lb-img" src="" alt="">
+        <div id="lb-caption"></div>
+        <button id="lb-next" onclick="lbChange(1)" aria-label="Siguiente">&#10095;</button>
     </div>
 
-    <!-- FAB compartir -->
-    <button class="share-fab" onclick="shareHistoria()" title="Compartir">
+    <!-- FAB -->
+    <button class="share-fab" onclick="shareHistoria()" title="Compartir" aria-label="Compartir">
         <i class="fas fa-share-alt" aria-hidden="true"></i>
     </button>
 
     <script>
         const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
-        const BUCKET       = 'historia';
-        const PAGE_SIZE    = 24;
+        const BUCKET    = 'historia';
+        const PAGE_SIZE = 24;
+        const sb        = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let allFiles = [], shown = 0;
+        let lbPhotos = [], lbIdx = 0;
 
-        let allFiles    = [];
-        let shown       = 0;
-        let lbIndex     = 0;
+        // BANNER
+        async function loadBanner() {
+            try {
+                const { data } = await sb.from('banners').select('*').eq('pagina','historia').limit(1);
+                const row = data && data[0];
+                if (!row) return;
+                if (row.foto_url) document.getElementById('banner-bg').style.backgroundImage = `url('${row.foto_url}')`;
+                if (row.titulo)   document.getElementById('banner-title').textContent   = row.titulo;
+                if (row.subtexto) document.getElementById('banner-subtitle').textContent = row.subtexto;
+            } catch(e) {}
+        }
 
-        // ============================================
-        // CARGA DE FOTOS
-        // ============================================
+        // FOTOS
         async function loadPhotos() {
-            const { data, error } = await sb.storage
-                .from(BUCKET)
-                .list('', { limit:1000, sortBy:{ column:'created_at', order:'desc' } });
-
+            const { data, error } = await sb.storage.from(BUCKET).list('', { limit:1000, sortBy:{ column:'created_at', order:'desc' } });
             if (error || !data) {
-                document.getElementById('masonry').innerHTML =
-                    '<p style="color:var(--muted); text-align:center; padding:2rem;">No hay fotos todavía.</p>';
+                document.getElementById('masonry').innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem;">No hay fotos todavía.</p>';
                 return;
             }
-
             allFiles = data.filter(f => f.name !== '.emptyFolderPlaceholder');
-
-            // Stats
-            const statEl = document.getElementById('stat-photos');
-            if (statEl) statEl.textContent = allFiles.length;
             const countEl = document.getElementById('gallery-count');
             if (countEl) countEl.textContent = `${allFiles.length} foto${allFiles.length !== 1 ? 's' : ''}`;
-
-            // Render primera página
             document.getElementById('masonry').innerHTML = '';
             shown = 0;
             renderBatch();
         }
 
         function getUrl(name) {
-            const { data } = sb.storage.from(BUCKET).getPublicUrl(name);
-            return data.publicUrl;
+            return sb.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
         }
 
         function renderBatch() {
             const masonry = document.getElementById('masonry');
             const batch   = allFiles.slice(shown, shown + PAGE_SIZE);
-
             batch.forEach((f, i) => {
                 const url  = getUrl(f.name);
                 const idx  = shown + i;
                 const item = document.createElement('div');
-                item.className = 'masonry-item';
-                item.onclick   = () => lbOpen(allFiles.map(f => getUrl(f.name)), idx);
+                item.className  = 'masonry-item';
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+                item.style.animation = `fadeUpItem 300ms var(--ease-out) ${i * 30}ms both`;
+                item.onclick = () => lbOpen(allFiles.map(f => getUrl(f.name)), idx);
+                item.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') lbOpen(allFiles.map(f => getUrl(f.name)), idx); };
                 item.innerHTML = `
-                    <img src="${url}" alt="La Vieja Romareda" loading="lazy">
-                    <div class="overlay">
-                        <span>${f.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '')}</span>
-                    </div>`;
+                    <img src="${url}" alt="La Vieja Romareda" loading="${idx < 8 ? 'eager' : 'lazy'}">
+                    <div class="overlay"><span>${f.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '')}</span></div>`;
                 masonry.appendChild(item);
             });
-
             shown += batch.length;
-
-            // Botón cargar más
             const wrap = document.getElementById('load-more-wrap');
             const btn  = document.getElementById('load-more-btn');
             if (shown < allFiles.length) {
                 wrap.style.display = 'block';
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-chevron-down" aria-hidden="true"></i> Cargar más fotos (${allFiles.length - shown} restantes)`;
+                btn.innerHTML = `<i class="fas fa-chevron-down" aria-hidden="true"></i> Cargar más (${allFiles.length - shown} restantes)`;
             } else {
                 wrap.style.display = 'none';
             }
@@ -426,13 +381,7 @@
             renderBatch();
         }
 
-        // ============================================
         // LIGHTBOX
-        // ============================================
-
-
-        // LIGHTBOX
-        let lbPhotos = [], lbIdx = 0;
         function lbOpen(photos, idx) {
             lbPhotos = photos; lbIdx = idx; lbShow();
             document.getElementById('lb-overlay').classList.add('active');
@@ -440,78 +389,39 @@
         }
         function lbShow() {
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').textContent =
-                lbPhotos.length > 1 ? (lbIdx + 1) + ' / ' + lbPhotos.length : '';
+            document.getElementById('lb-caption').textContent = lbPhotos.length > 1 ? (lbIdx + 1) + ' / ' + lbPhotos.length : '';
         }
-        function lbChange(dir) {
-            lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
-            lbShow();
-        }
+        function lbChange(dir) { lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length; lbShow(); }
         function lbClose() {
             document.getElementById('lb-overlay').classList.remove('active');
             document.getElementById('lb-img').src = '';
             document.body.style.overflow = '';
         }
-        function lbClickOutside(e) {
-            if (e.target === document.getElementById('lb-overlay')) lbClose();
-        }
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', e => {
             if (!document.getElementById('lb-overlay').classList.contains('active')) return;
             if (e.key === 'ArrowLeft')  lbChange(-1);
             if (e.key === 'ArrowRight') lbChange(1);
             if (e.key === 'Escape')     lbClose();
         });
 
-        // ============================================
         // COMPARTIR
-        // ============================================
         async function shareHistoria() {
             const url  = window.location.href;
             const text = '📸 La Vieja Romareda — Archivo fotográfico de un estadio legendario';
             if (navigator.share) {
-                try { await navigator.share({ title: 'La Vieja Romareda', text, url }); }
-                catch(e) {}
+                try { await navigator.share({ title: 'La Vieja Romareda', text, url }); } catch(e) {}
             } else {
                 await navigator.clipboard.writeText(url);
                 alert('Enlace copiado al portapapeles');
             }
         }
 
-        // ============================================
         // INIT
-        // ============================================
-
-        async function loadBannerDynamic(pagina, defaultBg) {
-            const bg  = document.getElementById('banner-bg');
-            const h1  = document.getElementById('banner-title');
-            const sub = document.getElementById('banner-subtitle');
-            // Set default background
-            if (bg && defaultBg) bg.style.backgroundImage = `url('${defaultBg}')`;
-            try {
-                const { data } = await sb.from('banners').select('*').eq('pagina', pagina).limit(1);
-                const row = data && data.length > 0 ? data[0] : null;
-                if (!row) return;
-                if (bg  && row.foto_url) bg.style.backgroundImage = `url('${row.foto_url}')`;
-                if (h1  && row.titulo)   h1.textContent  = row.titulo;
-                if (sub && row.subtexto) sub.textContent = row.subtexto;
-            } catch(e) { console.warn('Banner load error:', e); }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            loadBannerDynamic('historia', 'https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg');
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBanner();
             loadPhotos();
         });
-
-
     </script>
-    <!-- LIGHTBOX -->
-    <div id="lb-overlay" onclick="lbClickOutside(event)">
-        <button id="lb-close" onclick="lbClose()">&#x2715;</button>
-        <button id="lb-prev" onclick="lbChange(-1)">&#10094;</button>
-        <img id="lb-img" src="" alt="">
-        <div id="lb-caption"></div>
-        <button id="lb-next" onclick="lbChange(1)">&#10095;</button>
-    </div>
 
     <script src="header.js"></script>
 </body>
