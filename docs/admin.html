@@ -2179,35 +2179,7 @@ function toast(msg, type = 'ok') {
     window._toastTimer = setTimeout(() => el.style.display = 'none', 3500);
 }
 
-// Drag & drop semanas
-const dz = document.getElementById('dropzone');
-if (dz) {
-    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
-    dz.addEventListener('dragleave', ()  => dz.classList.remove('drag'));
-    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); prepareUpload(e.dataTransfer.files); });
-}
 
-// Drag & drop historia
-const hdz = document.getElementById('hdropzone');
-if (hdz) {
-    hdz.addEventListener('dragover',  e => { e.preventDefault(); hdz.classList.add('drag'); });
-    hdz.addEventListener('dragleave', ()  => hdz.classList.remove('drag'));
-    hdz.addEventListener('drop', e => { e.preventDefault(); hdz.classList.remove('drag'); prepareHistUpload(e.dataTransfer.files); });
-}
-
-// Drag & drop proyecto
-const pdz = document.getElementById('proy-dropzone');
-if (pdz) {
-    pdz.addEventListener('dragover',  e => { e.preventDefault(); pdz.classList.add('drag'); });
-    pdz.addEventListener('dragleave', ()  => pdz.classList.remove('drag'));
-    pdz.addEventListener('drop', e => { e.preventDefault(); pdz.classList.remove('drag'); prepareProyUpload(e.dataTransfer.files); });
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('admin_session') === 'active') {
-        startApp();
-    }
-});
 </script>
 </body>
 </html>
