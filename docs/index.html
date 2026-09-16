@@ -105,7 +105,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
         }
 
         /* Indicadores del slideshow */
@@ -201,10 +200,16 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
             font-size: 1.1rem;
+            animation: ctaPulse 2.5s cubic-bezier(0.23,1,0.32,1) 1.2s infinite;
         }
-        .cta-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
-        .cta-btn:active { transform: scale(0.97); box-shadow: none; transition-duration: 80ms; }
+        @keyframes ctaPulse {
+            0%, 100% { transform: translateY(0); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+            50%       { transform: translateY(-6px); box-shadow: 0 16px 35px rgba(0,0,0,0.3); }
+        }
+        .cta-btn:hover { animation: none; transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
+        .cta-btn:active { animation: none; transform: scale(0.97); box-shadow: none; transition-duration: 80ms; }
         @media (hover: hover) and (pointer: fine) { .cta-btn:hover { transform: translateY(-4px); } }
+        @media (prefers-reduced-motion: reduce) { .cta-btn { animation: none; } }
 
         /* --- SECTIONS GENERAL --- */
         section { padding: 6rem 10%; }
