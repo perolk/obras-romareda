@@ -13,7 +13,92 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
+    <style>        header {
+            background: rgba(0,40,100,.82);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 0.5px solid rgba(255,255,255,.12);
+        }
+        .logo {
+            font-family: 'Calibri', 'Segoe UI', sans-serif;
+            font-weight: 700;
+            font-style: italic;
+            font-size: 1.8rem;
+            color: white;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            transition: color 160ms cubic-bezier(0.23,1,0.32,1);
+        }
+        .logo:hover { color: #4DA9FF; }
+        nav ul { display: flex; gap: 2.5rem; list-style: none; }
+        nav a {
+            color: rgba(255,255,255,.7);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: .9rem;
+            letter-spacing: .01em;
+            transition: color 140ms cubic-bezier(0.23,1,0.32,1);
+        }
+        nav a:hover, nav a.active { color: white; }
+        .social-header a {
+            margin-left: 1.5rem;
+            color: white;
+            font-size: 1.3rem;
+            transition: color .3s, transform .3s;
+        }
+        .social-header a:hover { transform: translateY(-3px); color: #4DA9FF; }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+            background: none;
+            border: none;
+            z-index: 1100;
+        }
+        .hamburger span {
+            display: block;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 220ms cubic-bezier(0.23,1,0.32,1);
+        }
+        .hamburger span:nth-child(1) { width: 22px; }
+        .hamburger span:nth-child(2) { width: 16px; }
+        .hamburger span:nth-child(3) { width: 20px; }
+        .hamburger:hover span { width: 22px; }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 22px; }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 22px; }
+        @media(max-width: 1024px) {
+            .hamburger { display: flex; }
+            nav {
+                position: absolute; top: 100%; left: 0;
+                width: 100%;
+                background: rgba(0,40,100,.95);
+                padding: 0; max-height: 0; overflow: hidden;
+                transition: max-height 300ms cubic-bezier(0.23,1,0.32,1), padding 200ms cubic-bezier(0.23,1,0.32,1);
+                box-shadow: 0 8px 20px rgba(0,0,0,.3);
+            }
+            nav.open { max-height: 340px; padding: 1rem 0 1.5rem; }
+            nav ul { flex-direction: column; align-items: center; gap: 0; }
+            nav ul li { width: 100%; text-align: center; }
+            nav a { display: block; padding: 12px 20px; font-size: 1.1rem; border-bottom: 0.5px solid rgba(255,255,255,.1); }
+            nav ul li:last-child a { border-bottom: none; }
+            .social-header { display: none; }
+            .mobile-social { display: flex !important; justify-content: center; gap: 2rem; padding: 15px 0 5px; }
+            .mobile-social a { color: white; font-size: 1.4rem; transition: color .3s, transform .3s; }
+        }
+        @media(min-width: 1025px) { .mobile-social { display: none !important; } }
+
         :root { --blue:#00529F;
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
             --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; }
@@ -340,7 +425,6 @@
             hBtn.setAttribute('aria-expanded', false);
         }));
     </script>
-
     <div id="page-banner">
         <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
