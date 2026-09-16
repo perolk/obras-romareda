@@ -333,15 +333,15 @@
                 <li><a href="historia.html" class="active">La Vieja Romareda</a></li>
             </ul>
             <div class="mobile-social" style="display:none;">
-                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+                <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+                <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
             </div>
         </nav>
         <div class="social-header">
-            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
-            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+            <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+            <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
         </div>
     </header>
 
@@ -353,6 +353,11 @@
             hBtn.classList.toggle('open', open);
             hBtn.setAttribute('aria-expanded', open);
         });
+        hNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+            hNav.classList.remove('open');
+            hBtn.classList.remove('open');
+            hBtn.setAttribute('aria-expanded', false);
+        }));
     </script>
 
     <div id="page-banner">
