@@ -63,7 +63,8 @@
 /* Animación del hamburguesa → X */
 /* --- HERO SECTION --- */
         .hero {
-            height: 100vh;
+            height: calc(100vh - 68px);
+            min-height: 500px;
             background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%), url('https://www.idom.com/wp-content/uploads/2023/05/05-FrontaL-Gol.jpg');
             background-size: cover;
             background-position: center;
@@ -787,12 +788,13 @@
             const prev     = document.getElementById('actualidad-prev');
             if (!featured || !prev) return;
 
-            // Obtener las últimas 4 semanas que tengan datos en Supabase
             const { data, error } = await sb
                 .from('semanas')
-                .select('numero, portada_url, video_id')
+                .select('numero, titulo, portada_url, video_id')
                 .order('numero', { ascending: false })
                 .limit(4);
+
+            console.log('loadActualidad:', { data, error });
 
             if (error || !data || data.length === 0) {
                 featured.innerHTML = `
@@ -804,10 +806,7 @@
                 return;
             }
 
-            // La primera es la más reciente con contenido real
             renderFeatured(data[0]);
-
-            // Las siguientes van al sidebar
             prev.innerHTML = '';
             data.slice(1).forEach((w, idx) => prev.appendChild(renderPrevItem(w, idx)));
         }
