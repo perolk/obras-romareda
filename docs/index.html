@@ -790,7 +790,7 @@
 
             const { data, error } = await sb
                 .from('semanas')
-                .select('numero, titulo, portada_url, video_id')
+                .select('numero, portada_url, video_id')
                 .order('numero', { ascending: false })
                 .limit(4);
 
