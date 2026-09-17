@@ -53,15 +53,6 @@
         .render-item:active { transform:scale(0.98); }
         .render-item img { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
 
-        /* COMPARADOR */
-        .comparador-section { padding:4rem 10%; background:white; }
-        .comparison-wrapper { position:relative; width:100%; max-width:900px; margin:0 auto; border-radius:15px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.2); }
-        .img-comp-container { position:relative; height:500px; overflow:hidden; }
-        .img-comp-img { position:absolute; width:auto; height:100%; overflow:hidden; }
-        .img-comp-img img { display:block; height:100%; width:auto; }
-        .img-comp-slider { position:absolute; z-index:9; cursor:ew-resize; width:40px; height:40px; background:var(--light); border:3px solid white; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(0,0,0,.5); }
-        .img-comp-overlay-label { position:absolute; bottom:20px; background:rgba(0,0,0,.5); color:white; padding:5px 15px; border-radius:20px; font-size:.9rem; pointer-events:none; }
-
         /* LIGHTBOX */
         #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
         #lb-overlay.active { display:flex; }
@@ -103,12 +94,12 @@
         <h2 class="section-title">Datos técnicos</h2>
         <p class="section-subtitle">Las cifras de un estadio de nueva generación</p>
         <div class="datos-grid">
-            <div class="dato-card"><span class="dato-num" id="dato-aforo">35.000</span><span class="dato-label">Espectadores</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-superficie">67.000 m²</span><span class="dato-label">Superficie total</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-apertura">2027</span><span class="dato-label">Apertura prevista</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-arquitecto">IDOM</span><span class="dato-label">Arquitecto</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-niveles">4</span><span class="dato-label">Niveles de grada</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-cubierta">100%</span><span class="dato-label">Cubierta</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-aforo">—</span><span class="dato-label">Espectadores</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-superficie">—</span><span class="dato-label">Superficie total</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-apertura">—</span><span class="dato-label">Apertura prevista</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-arquitecto">—</span><span class="dato-label">Arquitecto</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-niveles">—</span><span class="dato-label">Niveles de grada</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-cubierta">—</span><span class="dato-label">Cubierta</span></div>
         </div>
     </div>
 
@@ -118,24 +109,6 @@
         <p class="section-subtitle">Renders, plantas y detalles técnicos del proyecto</p>
         <div id="proy-secciones-publico">
             <div style="text-align:center;color:var(--muted);padding:2rem;"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></div>
-        </div>
-    </div>
-
-    <!-- COMPARADOR -->
-    <div class="comparador-section">
-        <h2 class="section-title">Antes y después</h2>
-        <p class="section-subtitle">Arrastra el divisor para comparar la Romareda antigua con el nuevo estadio</p>
-        <div class="comparison-wrapper">
-            <div class="img-comp-container">
-                <div class="img-comp-img">
-                    <img src="https://www.idom.com/wp-content/uploads/2024/04/IDOM_Nueva-Romareda_render_interior_noche-1920x1080.jpg" width="900" height="500" alt="Render interior nueva Romareda">
-                    <div class="img-comp-overlay-label" style="right:20px;">FUTURO</div>
-                </div>
-                <div class="img-comp-img img-comp-overlay">
-                    <img src="https://www.heraldo.es/uploads/imagenes/2019/08/28/_P924010_f6390c26.jpg" width="900" height="500" alt="La Romareda antes">
-                    <div class="img-comp-overlay-label" style="left:20px;">ANTES</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -199,22 +172,28 @@
                     const { data: imgs } = await sb.from('proyecto_imagenes')
                         .select('*').eq('seccion_id', sec.id).order('orden', { ascending: true });
                     if (!imgs || imgs.length === 0) continue;
-                    const urls = imgs.map(i => i.url);
                     const secEl = document.createElement('div');
                     secEl.className = 'seccion-block';
-                    secEl.innerHTML = `
-                        <h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>
-                        <div class="renders-grid">
-                            ${imgs.map((img, i) => `
-                                <div class="render-item" role="button" tabindex="0"
-                                    onclick="openLb(${JSON.stringify(urls)}, ${i})"
-                                    onkeydown="if(event.key==='Enter'||event.key===' ')openLb(${JSON.stringify(urls)},${i})">
-                                    <img src="${img.url}" alt="${sec.nombre} ${i+1}" loading="${i < 3 ? 'eager' : 'lazy'}">
-                                </div>`).join('')}
-                        </div>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'renders-grid';
+                    imgs.forEach((img, i) => {
+                        const item = document.createElement('div');
+                        item.className = 'render-item';
+                        item.setAttribute('role', 'button');
+                        item.setAttribute('tabindex', '0');
+                        item.innerHTML = `<img src="${img.url}" alt="${sec.nombre} ${i+1}" loading="${i < 3 ? 'eager' : 'lazy'}">`;
+                        item.addEventListener('click', () => openLb(imgs.map(x => x.url), i));
+                        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openLb(imgs.map(x => x.url), i); });
+                        grid.appendChild(item);
+                    });
+                    secEl.innerHTML = `<h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>`;
+                    secEl.appendChild(grid);
                     container.appendChild(secEl);
                 }
-            } catch(e) { console.warn('loadSecciones:', e); container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">Error al cargar</p>'; }
+            } catch(e) {
+                console.warn('loadSecciones:', e);
+                container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem;">Error al cargar</p>';
+            }
         }
 
         function openLb(photos, idx) {
@@ -244,40 +223,10 @@
             if (e.target === document.getElementById('lb-overlay')) lbClose();
         });
 
-        // COMPARADOR
-        function compareImages(overlay) {
-            let clicked = 0;
-            const container = overlay.parentElement;
-            const w = container.offsetWidth;
-            const h = container.offsetHeight;
-            overlay.style.width = (w/2) + 'px';
-            const slider = document.createElement('div');
-            slider.className = 'img-comp-slider';
-            slider.innerHTML = '<i class="fas fa-arrows-left-right" style="color:white;font-size:14px;"></i>';
-            container.insertBefore(slider, overlay);
-            slider.style.top  = (h/2 - slider.offsetHeight/2) + 'px';
-            slider.style.left = (w/2 - slider.offsetWidth/2) + 'px';
-            slider.addEventListener('mousedown',  e => { e.preventDefault(); clicked=1; });
-            slider.addEventListener('touchstart', e => { e.preventDefault(); clicked=1; });
-            window.addEventListener('mouseup',   () => clicked=0);
-            window.addEventListener('touchend',  () => clicked=0);
-            function move(e) {
-                if (!clicked) return;
-                const t  = e.changedTouches ? e.changedTouches[0] : e;
-                const a  = container.getBoundingClientRect();
-                let pos  = Math.max(0, Math.min(t.pageX - a.left - window.pageXOffset, w));
-                overlay.style.width  = pos + 'px';
-                slider.style.left = pos - slider.offsetWidth/2 + 'px';
-            }
-            window.addEventListener('mousemove', move);
-            window.addEventListener('touchmove', move);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             loadBanner();
             loadDatos();
             loadSecciones();
-            Array.from(document.getElementsByClassName('img-comp-overlay')).forEach(compareImages);
         });
     </script>
 
