@@ -517,6 +517,23 @@
             gap: 20px;
             align-items: start;
         }
+        @media (max-width: 768px) {
+            .actualidad-container {
+                grid-template-columns: 1fr;
+            }
+            .actualidad-sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .actualidad-sidebar-label { grid-column: 1 / -1; }
+            .ver-todas-btn { grid-column: 1 / -1; }
+        }
+        @media (max-width: 480px) {
+            .actualidad-sidebar {
+                grid-template-columns: 1fr;
+            }
+        }
 
         /* Tarjeta destacada */
         .actualidad-card {
@@ -660,8 +677,9 @@
             .construction-counter { font-size: 0.95rem; }
             .cta-btn { padding: 13px 30px; font-size: 1rem; }
             section { padding: 3rem 5%; }
+            #videos { padding: 3rem 5%; }
             .section-title { font-size: 1.8rem; margin-bottom: 2.5rem; }
-            .actualidad-cover-wrap { height: 180px; }
+            .actualidad-cover-wrap { height: 200px; }
             .actualidad-title { font-size: 1.05rem; }
             .actualidad-text { font-size: 0.82rem; }
             .album-grid-content { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
