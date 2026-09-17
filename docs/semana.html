@@ -292,6 +292,7 @@
             position: fixed; top: 20px; right: 28px;
             color: white; font-size: 2.5rem; cursor: pointer;
             background: none; border: none; line-height: 1; z-index: 100000;
+            display: none;
         }
         #lb-close:hover { color: #4DA9FF; }
         #lb-prev, #lb-next {
@@ -299,7 +300,11 @@
             color: white; font-size: 2rem; cursor: pointer;
             background: rgba(255,255,255,0.1); border: none;
             padding: 16px 14px; transition: background 140ms var(--ease-out); z-index: 100000;
+            display: none;
         }
+        body.lb-open #lb-close,
+        body.lb-open #lb-prev,
+        body.lb-open #lb-next { display: block; }
         #lb-prev { left: 0; border-radius: 0 6px 6px 0; }
         #lb-next { right: 0; border-radius: 6px 0 0 6px; }
         #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.25); }
@@ -551,6 +556,7 @@
         function lbOpen(photos, idx) {
             lbPhotos = photos; lbIdx = idx; lbShow();
             document.getElementById('lb-overlay').classList.add('active');
+            document.body.classList.add('lb-open');
             document.body.style.overflow = 'hidden';
         }
         function lbShow() {
@@ -564,6 +570,7 @@
         }
         function lbClose() {
             document.getElementById('lb-overlay').classList.remove('active');
+            document.body.classList.remove('lb-open');
             document.getElementById('lb-img').src = '';
             document.body.style.overflow = '';
         }
