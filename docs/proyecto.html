@@ -15,6 +15,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
+        html { scrollbar-gutter: stable; }
+        h1, h2, h3, #banner-title { font-optical-sizing: auto; }
+        @media (prefers-reduced-transparency: reduce) {
+            #banner-overlay { background: rgba(0,20,70,.85); backdrop-filter: none; }
+        }
         :root { --blue:#00529F; --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; --ease-out:cubic-bezier(0.23,1,0.32,1); }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
@@ -44,6 +49,7 @@
         .renders-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
         .render-item { background:white; padding:12px; border-radius:14px; box-shadow:0 4px 16px rgba(0,0,0,.06); cursor:pointer; transition:transform 200ms var(--ease-out),box-shadow 200ms var(--ease-out); }
         @media (hover:hover) and (pointer:fine) { .render-item:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.1); } }
+        .render-item { will-change: transform; }
         .render-item:active { transform:scale(0.98); }
         .render-item img { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
 

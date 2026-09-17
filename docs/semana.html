@@ -14,6 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        html { scrollbar-gutter: stable; }
+        h1, h2, h3, .week-title, #banner-title { font-optical-sizing: auto; }
+        @media (prefers-reduced-transparency: reduce) {
+            #page-banner { background: rgba(0,40,100,.95); }
+        }
 
 
         :root { --blue:#00529F;
@@ -97,7 +102,7 @@
             margin-bottom:1rem; display:flex; align-items:center; gap:10px;
         }
         .photos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-        .photo-item { border-radius:12px; overflow:hidden; aspect-ratio:4/3; cursor:pointer; background:var(--bg); }
+        .photo-item { border-radius:12px; overflow:hidden; will-change:transform; aspect-ratio:4/3; cursor:pointer; background:var(--bg); }
         .photo-item img { width:100%; height:100%; object-fit:cover; transition:transform 220ms var(--ease-out); display:block; }
         @media (hover: hover) and (pointer: fine) { .photo-item:hover img { transform:scale(1.05); } }
 

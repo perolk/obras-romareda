@@ -14,6 +14,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        html { scrollbar-gutter: stable; }
+        h1, h2, h3, #banner-title { font-optical-sizing: auto; }
+        @media (prefers-reduced-transparency: reduce) {
+            #banner-overlay { background: rgba(0,20,70,.85); backdrop-filter: none; }
+        }
         :root {
             --blue: #00529F;
             --light: #4DA9FF;
@@ -117,6 +122,7 @@
             from { opacity: 0; transform: translateY(6px); }
             to   { opacity: 1; transform: translateY(0); }
         }
+        .masonry-item { will-change: transform; }
         .masonry-item img {
             width: 100%;
             display: block;
@@ -195,6 +201,7 @@
             cursor: pointer;
             line-height: 1;
         }
+        #lb-prev:active, #lb-next:active { transform: translateY(-50%) scale(0.9); transition-duration: 80ms; }
         #lb-prev, #lb-next {
             position: fixed;
             top: 50%;

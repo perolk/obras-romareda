@@ -16,6 +16,7 @@
             align-items: center;
             border-bottom: 0.5px solid rgba(255,255,255,0.12);
             box-sizing: border-box;
+            will-change: backdrop-filter;
         }
         .site-logo {
             font-family: 'Calibri','Segoe UI',sans-serif;
@@ -131,6 +132,17 @@
         }
         @media (min-width: 1025px) {
             .site-mobile-social { display: none; }
+        }
+        @media (prefers-reduced-transparency: reduce) {
+            header.site-header {
+                background: rgba(0, 40, 100, 0.98);
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .site-hamburger span { transition: none; }
+            .site-nav { transition: none; }
         }
     `;
 
