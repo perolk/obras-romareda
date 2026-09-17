@@ -256,54 +256,16 @@
         }
 
 
-        /* ── LIGHTBOX ── */
-        #lb-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background: rgba(0,0,0,0.96);
-            z-index: 999999;
-            justify-content: center;
-            align-items: center;
-        }
-        #lb-overlay.active { display: flex; }
-        #lb-img {
-            display: block;
-            max-width: 90vw;
-            max-height: 85vh;
-            object-fit: contain;
-            border-radius: 4px;
-        }
-        #lb-close, #lb-prev, #lb-next, #lb-caption { display: none; }
-        #lb-close {
-            position: fixed; top: 1.2rem; right: 1.2rem;
-            z-index: 1000000;
-            background: rgba(255,255,255,0.15); border: none;
-            color: white; font-size: 1.4rem;
-            width: 40px; height: 40px; border-radius: 50%;
-            cursor: pointer; line-height: 40px; text-align: center;
-        }
-        #lb-prev, #lb-next {
-            position: fixed; top: 50%; transform: translateY(-50%);
-            z-index: 1000000;
-            background: rgba(255,255,255,0.12); border: none;
-            color: white; font-size: 1.4rem;
-            padding: 1rem 0.85rem; cursor: pointer;
-        }
-        #lb-prev { left: 0; border-radius: 0 8px 8px 0; }
-        #lb-next { right: 0; border-radius: 8px 0 0 8px; }
-        #lb-caption {
-            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-            color: rgba(255,255,255,.55); font-size: .85rem;
-            font-family: 'Inter', sans-serif; z-index: 1000000; white-space: nowrap;
-        }
-        body.lb-open #lb-close,
-        body.lb-open #lb-prev,
-        body.lb-open #lb-next,
-        body.lb-open #lb-caption { display: block; }
+        /* LIGHTBOX */
+        #lb-overlay { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; }
+        #lb-overlay.active { display:flex; }
+        #lb-img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; display:block; }
+        #lb-close { display:none; position:fixed; top:20px; right:28px; color:white; font-size:2.5rem; background:none; border:none; cursor:pointer; line-height:1; z-index:1000000; }
+        #lb-prev, #lb-next { display:none; position:fixed; top:50%; transform:translateY(-50%); color:white; font-size:2rem; background:rgba(255,255,255,.1); border:none; padding:16px 14px; cursor:pointer; z-index:1000000; }
+        #lb-prev { left:0; border-radius:0 6px 6px 0; }
+        #lb-next { right:0; border-radius:6px 0 0 6px; }
+        #lb-caption { display:none; position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,.55); font-size:.85rem; z-index:1000000; white-space:nowrap; }
+        body.lb-open #lb-close, body.lb-open #lb-prev, body.lb-open #lb-next, body.lb-open #lb-caption { display:block; }
     </style>
 </head>
 <body>
@@ -574,17 +536,8 @@
         let lbPhotos = [], lbIdx = 0;
         function lbOpen(photos, idx) {
             lbPhotos = photos; lbIdx = idx;
-            // Move overlay to direct child of body to avoid stacking context issues
-            const overlay = document.getElementById('lb-overlay');
-            if (overlay.parentElement !== document.body) {
-                document.body.appendChild(overlay);
-            }
-            ['lb-close','lb-prev','lb-next','lb-caption'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el && el.parentElement !== document.body) document.body.appendChild(el);
-            });
             lbShow();
-            overlay.classList.add('active');
+            document.getElementById('lb-overlay').classList.add('active');
             document.body.classList.add('lb-open');
             document.body.style.overflow = 'hidden';
         }
@@ -685,12 +638,12 @@
 
     <!-- LIGHTBOX -->
     <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
-        <img id="lb-img" src="" alt="">
+        <button id="lb-close"  onclick="lbClose()"    aria-label="Cerrar">&#x2715;</button>
+        <button id="lb-prev"   onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
+        <img    id="lb-img"    src="" alt="">
+        <div    id="lb-caption"></div>
+        <button id="lb-next"   onclick="lbChange(1)"  aria-label="Siguiente">&#10095;</button>
     </div>
-    <button id="lb-close"  onclick="lbClose()" aria-label="Cerrar">&#x2715;</button>
-    <button id="lb-prev"   onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
-    <button id="lb-next"   onclick="lbChange(1)"  aria-label="Siguiente">&#10095;</button>
-    <div    id="lb-caption"></div>
 
     <script src="header.js"></script>
 </body>
