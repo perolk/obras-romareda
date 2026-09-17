@@ -514,13 +514,20 @@
                 return;
             }
 
-            grid.innerHTML = files.map((f, idx) => {
-                const url = getPublicUrl(f.name);
-                return `
-                    <div class="photo-item" role="button" tabindex="0" onclick="lbOpen(lightboxPhotos.map(f=>getPublicUrl(f.name)), ${idx})">
-                        <img src="${url}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="lazy">
-                    </div>`;
-            }).join('');
+            grid.innerHTML = '';
+            const urls = files.map(f => getPublicUrl(f.name));
+
+            files.forEach((f, idx) => {
+                const url  = urls[idx];
+                const item = document.createElement('div');
+                item.className = 'photo-item';
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+                item.innerHTML = `<img src="${url}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="${idx < 6 ? 'eager' : 'lazy'}">`;
+                item.addEventListener('click', () => lbOpen(urls, idx));
+                item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') lbOpen(urls, idx); });
+                grid.appendChild(item);
+            });
         }
 
         async function renderNav() {
