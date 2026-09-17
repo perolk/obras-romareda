@@ -518,7 +518,18 @@
         </div>
 
         <div class="grid-2">
-            <!-- Vídeo de YouTube -->
+            <!-- Descripción de la semana -->
+        <div class="card" style="margin-bottom:1.5rem;">
+            <div class="card-title"><i class="fas fa-align-left"></i> Descripción de la semana</div>
+            <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">TEXTO (opcional — se mostrará entre el banner y las fotos)</label>
+            <textarea class="input" id="week-descripcion" rows="4" style="resize:vertical;margin-bottom:1rem;"
+                placeholder="Escribe aquí un resumen o descripción de los avances de esta semana…"></textarea>
+            <button class="btn btn-success" onclick="saveWeekDescripcion()">
+                <i class="fas fa-save"></i> Guardar descripción
+            </button>
+        </div>
+
+        <!-- Vídeo de YouTube -->
             <div class="card">
                 <div class="card-title"><i class="fab fa-youtube"></i> Vídeo de YouTube</div>
                 <div class="video-input-wrap">
@@ -962,6 +973,18 @@ function goToWeek(val) {
     currentWeek = n;
     updateWeekUI();
     loadWeek();
+}
+
+async function saveWeekDescripcion() {
+    const num  = parseInt(document.getElementById('week-num').textContent);
+    const desc = document.getElementById('week-descripcion').value.trim();
+    const { data: ex } = await sb.from('semanas').select('id').eq('numero', num).limit(1);
+    if (ex && ex.length > 0) {
+        await sb.from('semanas').update({ descripcion: desc }).eq('numero', num);
+    } else {
+        await sb.from('semanas').insert({ numero: num, descripcion: desc });
+    }
+    toast('✅ Descripción guardada', 'ok');
 }
 
 async function loadLatestWeek() {
@@ -1485,6 +1508,9 @@ async function setAsPortada(url) {
 // TABS
 // ============================================
 function switchTab(tab) {
+    // Cerrar modal de nueva sección si está abierto
+    const modal = document.getElementById('new-section-modal');
+    if (modal) modal.style.display = 'none';
     ['semanas','historia','banners','proyecto'].forEach(t => {
         const panel = document.getElementById(`tab-${t}`);
         const btn   = document.getElementById(`tab-btn-${t}`);
@@ -2018,13 +2044,23 @@ function renderSecGrid(secId, imgs) {
         item.dataset.imgId = img.id;
         item.dataset.secId = secId;
         item.style.cursor = 'grab';
+        item.style.display = 'flex';
+        item.style.flexDirection = 'column';
         item.innerHTML = `
-            <img src="${img.url}" alt="Imagen ${idx+1}" loading="lazy">
-            <div class="photo-overlay">
-                <button class="photo-btn photo-btn-del" title="Eliminar"
-                    onclick="deleteSecImg(${img.id},'${img.storage_path}',${secId})">
-                    <i class="fas fa-trash" aria-hidden="true"></i>
-                </button>
+            <div style="position:relative;flex:1;">
+                <img src="${img.url}" alt="Imagen ${idx+1}" loading="lazy" style="width:100%;height:140px;object-fit:cover;display:block;border-radius:8px 8px 0 0;">
+                <div class="photo-overlay">
+                    <button class="photo-btn photo-btn-del" title="Eliminar"
+                        onclick="deleteSecImg(${img.id},'${img.storage_path}',${secId})">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="padding:6px;">
+                <input type="text" value="${img.caption||''}" placeholder="Pie de foto…"
+                    style="width:100%;background:rgba(255,255,255,.07);border:0.5px solid rgba(255,255,255,.15);border-radius:6px;padding:5px 8px;font-size:.75rem;color:white;font-family:'Inter',sans-serif;"
+                    onchange="saveCaption(${img.id}, this.value)"
+                    onclick="event.stopPropagation()">
             </div>`;
         // Drag events
         item.addEventListener('dragstart', e => {
@@ -2102,7 +2138,9 @@ async function doSecUpload(secId) {
         const { error: upErr } = await sb.storage.from('proyecto').upload(path, result.blob, { upsert: true, contentType: 'image/jpeg' });
         if (upErr) { toast(`Error: ${upErr.message}`, 'err'); continue; }
         const { data: urlData } = sb.storage.from('proyecto').getPublicUrl(path);
-        await sb.from('proyecto_imagenes').insert({ seccion_id: secId, url: urlData.publicUrl, storage_path: path, orden });
+        const captionInput = document.getElementById(`caption-${secId}`);
+        const caption = captionInput ? captionInput.value.trim() : '';
+        await sb.from('proyecto_imagenes').insert({ seccion_id: secId, url: urlData.publicUrl, storage_path: path, orden, caption });
         orden++;
     }
 
@@ -2114,6 +2152,11 @@ async function doSecUpload(secId) {
         .select('*').eq('seccion_id', secId).order('orden', { ascending: true });
     renderSecGrid(secId, fresh || []);
     loadStorageStats();
+}
+
+async function saveCaption(imgId, caption) {
+    await sb.from('proyecto_imagenes').update({ caption }).eq('id', imgId);
+    toast('Pie de foto guardado', 'ok');
 }
 
 async function deleteSecImg(imgId, storagePath, secId) {

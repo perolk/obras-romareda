@@ -286,6 +286,11 @@
         </div>
     </div>
 
+    <!-- DESCRIPCIÓN SEMANA -->
+    <div id="week-descripcion-section" style="display:none; background:white; padding:2rem 10%;">
+        <div id="week-descripcion-text" style="max-width:800px; margin:0 auto; font-size:1rem; line-height:1.8; color:#374151;"></div>
+    </div>
+
     <div class="week-content">
         <div class="week-video-section" id="week-video-section" style="display:none;">
             <h2><i class="fas fa-play-circle" style="color:var(--light);" aria-hidden="true"></i> Vídeo de la semana</h2>
@@ -431,7 +436,6 @@
             const dates = getWeekDates(WEEK_NUM);
             const bg    = document.getElementById('banner-bg');
 
-            // Fondo: portada de la semana si existe
             if (meta.portada_url) {
                 bg.style.backgroundImage = `url('${meta.portada_url}')`;
             }
@@ -440,6 +444,16 @@
             document.getElementById('hero-title').textContent  = meta.title || `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
+
+            // Mostrar descripción si existe
+            const descSection = document.getElementById('week-descripcion-section');
+            const descText    = document.getElementById('week-descripcion-text');
+            if (meta.descripcion && meta.descripcion.trim()) {
+                descText.textContent = meta.descripcion;
+                descSection.style.display = 'block';
+            } else {
+                descSection.style.display = 'none';
+            }
         }
 
         function renderVideo(meta) {

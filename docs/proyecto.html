@@ -52,6 +52,7 @@
         .render-item { will-change: transform; }
         .render-item:active { transform:scale(0.98); }
         .render-item img { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:8px; display:block; }
+        .render-item .caption { padding:8px 10px; font-size:.78rem; color:var(--muted); line-height:1.4; background:white; border-radius:0 0 6px 6px; }
 
         /* LIGHTBOX */
         #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
@@ -156,7 +157,7 @@
         }
 
         // SECCIONES
-        let lbPhotos = [], lbIdx = 0;
+        let lbPhotos = [], lbCaptions = [], lbIdx = 0;
 
         async function loadSecciones() {
             const container = document.getElementById('proy-secciones-publico');
@@ -170,7 +171,7 @@
                 container.innerHTML = '';
                 for (const sec of secciones) {
                     const { data: imgs } = await sb.from('proyecto_imagenes')
-                        .select('*').eq('seccion_id', sec.id).order('orden', { ascending: true });
+                        .select('id, url, caption, orden').eq('seccion_id', sec.id).order('orden', { ascending: true });
                     if (!imgs || imgs.length === 0) continue;
                     const secEl = document.createElement('div');
                     secEl.className = 'seccion-block';
@@ -181,9 +182,12 @@
                         item.className = 'render-item';
                         item.setAttribute('role', 'button');
                         item.setAttribute('tabindex', '0');
-                        item.innerHTML = `<img src="${img.url}" alt="${sec.nombre} ${i+1}" loading="${i < 3 ? 'eager' : 'lazy'}">`;
-                        item.addEventListener('click', () => openLb(imgs.map(x => x.url), i));
-                        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openLb(imgs.map(x => x.url), i); });
+                        item.innerHTML = `
+                <img src="${img.url}" alt="${img.caption || sec.nombre + ' ' + (i+1)}" loading="${i < 3 ? 'eager' : 'lazy'}" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px 8px ${img.caption ? '0 0' : '8px 8px'};display:block;">
+                ${img.caption ? `<div style="padding:8px 10px;font-size:.78rem;color:var(--muted);line-height:1.4;">${img.caption}</div>` : ''}
+            `;
+                        item.addEventListener('click', () => openLb(imgs.map(x => x.url), imgs.map(x => x.caption||''), i));
+                        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openLb(imgs.map(x => x.url), imgs.map(x => x.caption||''), i); });
                         grid.appendChild(item);
                     });
                     secEl.innerHTML = `<h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>`;
@@ -196,17 +200,17 @@
             }
         }
 
-        function openLb(photos, idx) {
-            lbPhotos = photos; lbIdx = idx;
+        function openLb(photos, captions, idx) {
+            lbPhotos = photos; lbCaptions = captions || []; lbIdx = idx;
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').textContent = (lbIdx+1) + ' / ' + lbPhotos.length;
+            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${lbCaptions[lbIdx]}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
             document.getElementById('lb-overlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         function lbChange(dir) {
             lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').textContent = (lbIdx+1) + ' / ' + lbPhotos.length;
+            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${lbCaptions[lbIdx]}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
         }
         function lbClose() {
             document.getElementById('lb-overlay').classList.remove('active');
