@@ -1,6 +1,7 @@
 (function() {
     const CSS = `
         html { scrollbar-gutter: stable; }
+
         header.site-header {
             background: rgba(0,40,100,0.82);
             backdrop-filter: blur(20px) saturate(180%);
@@ -16,8 +17,8 @@
             align-items: center;
             border-bottom: 0.5px solid rgba(255,255,255,0.12);
             box-sizing: border-box;
-            will-change: backdrop-filter;
         }
+
         .site-logo {
             font-family: 'Calibri','Segoe UI',sans-serif;
             font-weight: 700;
@@ -27,9 +28,11 @@
             text-decoration: none;
             letter-spacing: -0.01em;
             flex-shrink: 0;
+            line-height: 1;
             transition: color 160ms ease;
         }
         .site-logo:hover { color: #4DA9FF; }
+
         .site-nav-list {
             display: flex;
             gap: 2.5rem;
@@ -49,10 +52,10 @@
         }
         .site-nav-list a:hover,
         .site-nav-list a.active { color: #ffffff; }
+
         .site-social-links {
             display: flex;
             align-items: center;
-            gap: 0;
             flex-shrink: 0;
         }
         .site-social-links a {
@@ -63,6 +66,8 @@
             transition: color 0.3s, transform 0.3s;
         }
         .site-social-links a:hover { transform: translateY(-3px); color: #4DA9FF; }
+
+        /* Hamburger — oculto en escritorio */
         .site-hamburger {
             display: none;
             flex-direction: column;
@@ -72,6 +77,7 @@
             background: none;
             border: none;
             flex-shrink: 0;
+            z-index: 1002;
         }
         .site-hamburger span {
             display: block;
@@ -84,15 +90,27 @@
         .site-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
         .site-hamburger.open span:nth-child(2) { opacity: 0; }
         .site-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        /* Nav móvil — debajo del header, no encima */
+        .site-nav {
+            display: contents; /* En escritorio se comporta como si no existiera */
+        }
+
+        .site-mobile-social { display: none; }
+
         @media (max-width: 1024px) {
             .site-hamburger { display: flex; }
             .site-social-links { display: none; }
+
             .site-nav {
+                display: block;
                 position: fixed;
-                top: 0;
+                top: 64px; /* Justo debajo del header de 64px */
                 left: 0;
                 width: 100%;
-                background: #00529F;
+                background: rgba(0,50,130,0.97);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
                 padding: 0;
                 max-height: 0;
                 overflow: hidden;
@@ -102,7 +120,7 @@
             }
             .site-nav.open {
                 max-height: 400px;
-                padding: 4rem 0 1.5rem;
+                padding: 1rem 0 1.5rem;
             }
             .site-nav-list {
                 flex-direction: column;
@@ -130,9 +148,7 @@
                 text-decoration: none;
             }
         }
-        @media (min-width: 1025px) {
-            .site-mobile-social { display: none; }
-        }
+
         @media (prefers-reduced-transparency: reduce) {
             header.site-header {
                 background: rgba(0, 40, 100, 0.98);
@@ -146,7 +162,7 @@
         }
     `;
 
-    // Inject CSS into head
+    // Inject CSS
     const style = document.createElement('style');
     style.textContent = CSS;
     document.head.appendChild(style);
@@ -156,7 +172,7 @@
     const isProyecto = page === 'proyecto.html';
     const isHistoria = page === 'historia.html';
 
-    // Build header element
+    // Build header
     const header = document.createElement('header');
     header.className = 'site-header';
     header.innerHTML = `
@@ -183,10 +199,9 @@
         </div>
     `;
 
-    // Insert as first child of body
     document.body.insertBefore(header, document.body.firstChild);
 
-    // Hamburger toggle
+    // Hamburger logic
     const btn = document.getElementById('siteHamburger');
     const nav = document.getElementById('siteNav');
 
@@ -197,7 +212,6 @@
         btn.setAttribute('aria-expanded', open);
     });
 
-    // Close on nav link click
     nav.querySelectorAll('a').forEach(function(a) {
         a.addEventListener('click', function() {
             nav.classList.remove('open');
@@ -206,7 +220,6 @@
         });
     });
 
-    // Close on outside click
     document.addEventListener('click', function(e) {
         if (!header.contains(e.target)) {
             nav.classList.remove('open');
