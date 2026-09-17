@@ -106,12 +106,48 @@
         .photo-item img { width:100%; height:100%; object-fit:cover; transition:transform 220ms var(--ease-out); display:block; }
         @media (hover: hover) and (pointer: fine) { .photo-item:hover img { transform:scale(1.05); } }
 
-        .week-        @media (hover: hover) and (pointer: fine) { .week-nav-btn:hover { border-color:var(--blue); background:rgba(0,82,159,.04); } }
-        .week-nav-btn { transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out); }
-        .week-nav-btn.prev { justify-content:flex-start; }
-        .week-nav-btn.next { justify-content:flex-end; text-align:right; }
-        .week-nav-label { font-size:.75rem; color:var(--muted); display:block; }
-        .week-nav-name  { font-size:.9rem; font-weight:700; color:var(--blue); display:block; }
+        .week-nav {
+            display: flex;
+            gap: 12px;
+            padding: 1.5rem 10%;
+            background: white;
+            border-top: 0.5px solid #e5e7eb;
+        }
+        .week-nav-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--bg);
+            border: 0.5px solid #e5e7eb;
+            border-radius: 14px;
+            text-decoration: none;
+            transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out), transform 160ms var(--ease-out);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .week-nav-btn:hover { border-color: var(--blue); background: rgba(0,82,159,.04); transform: translateY(-2px); }
+        }
+        .week-nav-btn:active { transform: scale(0.98); }
+        .week-nav-btn.prev { justify-content: flex-start; }
+        .week-nav-btn.next { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
+        .week-nav-btn.disabled { opacity: .35; pointer-events: none; }
+        .week-nav-icon {
+            width: 36px; height: 36px;
+            background: var(--blue);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: .85rem;
+            flex-shrink: 0;
+        }
+        .week-nav-btn.disabled .week-nav-icon { background: #d1d5db; }
+        .week-nav-label { font-size: .72rem; color: var(--muted); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: .06em; }
+        .week-nav-name  { font-size: .95rem; font-weight: 700; color: var(--blue); display: block; }
+        .week-nav-btn.disabled .week-nav-name { color: var(--muted); }
+        @media (max-width: 600px) {
+            .week-nav { padding: 1rem 5%; }
+            .week-nav-name { font-size: .85rem; }
+        }
 
         
 
@@ -277,7 +313,6 @@
         <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
-            <div id="hero-badge" class="week-badge">Cargando…</div>
             <h1 id="hero-title" class="week-title">Cargando semana…</h1>
             <div class="week-meta">
                 <span><i class="fas fa-calendar" aria-hidden="true"></i> <span id="hero-date"></span></span>
@@ -311,7 +346,7 @@
 
         <div class="week-nav">
             <a id="nav-prev" class="week-nav-btn prev" href="#">
-                <i class="fas fa-chevron-left" style="color:var(--muted);" aria-hidden="true"></i>
+                <div class="week-nav-icon"><i class="fas fa-chevron-left" aria-hidden="true"></i></div>
                 <div>
                     <span class="week-nav-label">Semana anterior</span>
                     <span class="week-nav-name" id="nav-prev-label">—</span>
@@ -322,7 +357,7 @@
                     <span class="week-nav-label">Semana siguiente</span>
                     <span class="week-nav-name" id="nav-next-label">—</span>
                 </div>
-                <i class="fas fa-chevron-right" style="color:var(--muted);" aria-hidden="true"></i>
+                <div class="week-nav-icon"><i class="fas fa-chevron-right" aria-hidden="true"></i></div>
             </a>
         </div>
     </div>
@@ -370,9 +405,6 @@
 
             <button class="share-close" onclick="closeShare()">Cancelar</button>
         </div>
-    </div>
-
-        <button id="lightbox-next" onclick="changeLightbox(1)">&#10095;</button>
     </div>
 
     <script>
@@ -440,8 +472,7 @@
                 bg.style.backgroundImage = `url('${meta.portada_url}')`;
             }
 
-            document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
-            document.getElementById('hero-title').textContent  = meta.title || `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
 
