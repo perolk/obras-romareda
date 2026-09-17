@@ -79,6 +79,10 @@
             flex-shrink: 0;
             z-index: 1002;
         }
+        @media (min-width: 1025px) {
+            .site-hamburger { display: none !important; }
+            .site-mobile-social { display: none !important; }
+        }
         .site-hamburger span {
             display: block;
             width: 25px;

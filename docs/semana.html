@@ -313,7 +313,8 @@
         <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
-            <h1 id="hero-title" class="week-title">Cargando semana…</h1>
+            <div id="hero-badge" class="week-badge">Semana —</div>
+            <h1 id="hero-title" class="week-title">Cargando…</h1>
             <div class="week-meta">
                 <span><i class="fas fa-calendar" aria-hidden="true"></i> <span id="hero-date"></span></span>
                 <span><i class="fas fa-images" aria-hidden="true"></i> <span id="hero-photos">0 fotos</span></span>
@@ -472,6 +473,7 @@
                 bg.style.backgroundImage = `url('${meta.portada_url}')`;
             }
 
+            document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
