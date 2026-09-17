@@ -2,34 +2,34 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-        <meta name="theme-color" content="#00529F">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00529F">
     <title>Semana · Obras Romareda</title>
     <meta name="description" content="Crónica semanal de las obras de la nueva Romareda">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        html { scrollbar-gutter: stable; }
-        h1, h2, h3, .week-title, #banner-title { font-optical-sizing: auto; }
-        @media (prefers-reduced-transparency: reduce) {
-            #page-banner { background: rgba(0,40,100,.95); }
-        }
-
-
-        :root { --blue:#00529F;
+        /* ── VARIABLES ── */
+        :root {
+            --blue: #00529F;
+            --light: #4DA9FF;
+            --text: #1a1a1a;
+            --muted: #6b7280;
+            --bg: #f9fafb;
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); --light:#4DA9FF; --text:#1a1a1a; --muted:#6b7280; --bg:#f9fafb; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scrollbar-gutter: stable; }
+        body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
+        h1, h2, h3 { text-wrap: balance; font-optical-sizing: auto; }
+        button, a, [role="button"] { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
-
-
-        /* PAGE BANNER — igual que historia y proyecto */
+        /* ── BANNER ── */
         #page-banner {
             position: relative;
             height: 400px;
@@ -45,8 +45,7 @@
             background: var(--blue);
             background-size: cover;
             background-position: center;
-            opacity: 1;
-            transition: opacity .5s cubic-bezier(0.23,1,0.32,1);
+            transition: opacity .5s var(--ease-out);
         }
         #banner-overlay {
             position: absolute;
@@ -63,49 +62,91 @@
             display: inline-block;
             background: rgba(255,255,255,.15);
             border: 0.5px solid rgba(255,255,255,.3);
-            color: white; font-size: .78rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            padding: 5px 16px; border-radius: 100px; margin-bottom: 1rem;
+            color: white;
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            padding: 5px 16px;
+            border-radius: 100px;
+            margin-bottom: 1rem;
         }
         .week-title {
             font-size: clamp(1.6rem, 4vw, 2.5rem);
-            font-weight: 900; color: white;
-            line-height: 1.05; letter-spacing: -0.02em;
+            font-weight: 900;
+            color: white;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
             margin-bottom: .75rem;
-            text-wrap: balance;
         }
         .week-meta {
-            font-size: .88rem; color: rgba(255,255,255,.65);
-            display: flex; align-items: center; justify-content: center;
-            gap: 16px; flex-wrap: wrap;
+            font-size: .88rem;
+            color: rgba(255,255,255,.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
         .week-meta span { display: flex; align-items: center; gap: 6px; }
-        @media(max-width:768px) { #page-banner { height: 300px; } }
+        @media (max-width: 768px) { #page-banner { height: 300px; } }
 
-        .week-content { max-width:900px; margin:0 auto; padding:3rem 5%; }
+        /* ── DESCRIPCIÓN ── */
+        #week-descripcion-section {
+            background: white;
+            padding: 2rem 10%;
+        }
+        #week-descripcion-text {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #374151;
+        }
 
-        .week-video-section { margin-bottom:3rem; }
+        /* ── CONTENIDO ── */
+        .week-content { max-width: 900px; margin: 0 auto; padding: 3rem 5%; }
+
+        .week-video-section { margin-bottom: 3rem; }
         .week-video-section h2 {
-            font-size:1.3rem; font-weight:700; color:var(--blue);
-            margin-bottom:1rem; display:flex; align-items:center; gap:10px;
+            font-size: 1.3rem; font-weight: 700; color: var(--blue);
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;
         }
         .video-wrapper {
-            position:relative; padding-bottom:56.25%; height:0;
-            overflow:hidden; border-radius:16px;
-            box-shadow:0 10px 30px rgba(0,0,0,.12);
+            position: relative; padding-bottom: 56.25%; height: 0;
+            overflow: hidden; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.12);
         }
-        .video-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        .week-photos-section { margin-bottom:3rem; }
+        .week-photos-section { margin-bottom: 3rem; }
         .week-photos-section h2 {
-            font-size:1.3rem; font-weight:700; color:var(--blue);
-            margin-bottom:1rem; display:flex; align-items:center; gap:10px;
+            font-size: 1.3rem; font-weight: 700; color: var(--blue);
+            margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;
         }
-        .photos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-        .photo-item { border-radius:12px; overflow:hidden; aspect-ratio:4/3; cursor:pointer; background:var(--bg); }
-        .photo-item img { width:100%; height:100%; object-fit:cover; transition:transform 220ms var(--ease-out); display:block; }
-        @media (hover: hover) and (pointer: fine) { .photo-item:hover img { transform:scale(1.05); } }
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .photo-item {
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            background: var(--bg);
+        }
+        .photo-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 220ms var(--ease-out);
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .photo-item:hover img { transform: scale(1.05); }
+        }
 
+        /* ── NAVEGACIÓN ── */
         .week-nav {
             display: flex;
             gap: 12px;
@@ -123,12 +164,11 @@
             border: 0.5px solid #e5e7eb;
             border-radius: 14px;
             text-decoration: none;
-            transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out), transform 160ms var(--ease-out);
+            transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out);
         }
         @media (hover: hover) and (pointer: fine) {
-            .week-nav-btn:hover { border-color: var(--blue); background: rgba(0,82,159,.04); transform: translateY(-2px); }
+            .week-nav-btn:hover { border-color: var(--blue); background: rgba(0,82,159,.04); }
         }
-        .week-nav-btn:active { transform: scale(0.98); }
         .week-nav-btn.prev { justify-content: flex-start; }
         .week-nav-btn.next { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
         .week-nav-btn.disabled { opacity: .35; pointer-events: none; }
@@ -137,8 +177,7 @@
             background: var(--blue);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: .85rem;
-            flex-shrink: 0;
+            color: white; font-size: .85rem; flex-shrink: 0;
         }
         .week-nav-btn.disabled .week-nav-icon { background: #d1d5db; }
         .week-nav-label { font-size: .72rem; color: var(--muted); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: .06em; }
@@ -147,148 +186,125 @@
         @media (max-width: 600px) {
             .week-nav { padding: 1rem 5%; }
             .week-nav-name { font-size: .85rem; }
+            .photos-grid { grid-template-columns: repeat(2, 1fr); }
+            .week-content { padding: 2rem 5%; }
         }
 
-        
-
-        /* COMPARTIR */
+        /* ── COMPARTIR ── */
         .share-btn {
-            display:flex; align-items:center; gap:8px;
-            background:rgba(255,255,255,.15);
-            border:1px solid rgba(255,255,255,.3);
-            color:white; padding:8px 16px; border-radius:30px;
-            font-size:.85rem; font-weight:600;
-            cursor:pointer; font-family:'Inter',sans-serif;
-            transition: background 160ms var(--ease-out), transform 160ms var(--ease-out);
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            color: white; padding: 8px 16px; border-radius: 30px;
+            font-size: .85rem; font-weight: 600;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: background 160ms var(--ease-out);
         }
-        @media (hover: hover) and (pointer: fine) { .share-btn:hover { background:rgba(255,255,255,.25); } }
-        .share-btn:active { transform: scale(0.97); transition-duration: 80ms; }
-
+        @media (hover: hover) and (pointer: fine) { .share-btn:hover { background: rgba(255,255,255,.25); } }
+        .share-btn:active { transform: scale(0.97); }
         .share-menu {
+            position: fixed; inset: 0; z-index: 9000;
+            display: none; align-items: flex-end; justify-content: center;
+            background: rgba(0,0,0,.7);
             overscroll-behavior: contain;
-            position:fixed; inset:0; z-index:3000;
-            display:none; align-items:flex-end; justify-content:center;
-            background:rgba(0,0,0,.7);
         }
-        .share-menu.open { display:flex; }
+        .share-menu.open { display: flex; }
         .share-sheet {
+            background: rgba(10,10,30,.97);
+            border: 0.5px solid rgba(255,255,255,.12);
+            border-radius: 24px 24px 0 0;
+            padding: 1.5rem 2rem 2rem;
+            width: 100%; max-width: 480px;
             overscroll-behavior: contain;
-            background:rgba(10,10,30,.96); border:0.5px solid rgba(255,255,255,.12); border-radius:24px 24px 0 0;
-            padding:1.5rem 2rem 2rem; width:100%; max-width:480px;
-            animation:slideUp .3s ease;
+            animation: slideUp 280ms var(--ease-out);
         }
-        @keyframes slideUp {
-            from { transform:translateY(100%); opacity:0; }
-            to   { transform:translateY(0);    opacity:1; }
-        }
-        .share-sheet {
-            overscroll-behavior: contain; animation-timing-function: var(--ease-out) !important; animation-duration: 280ms !important; }
-        .share-sheet h3 {
-            font-size:1rem; font-weight:700; color:white;
-            margin-bottom:.5rem; text-align:center;
-        }
-        .share-sheet p {
-            font-size:.82rem; color:rgba(255,255,255,.5);
-            text-align:center; margin-bottom:1.5rem;
-        }
-        .share-options {
-            display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
-            margin-bottom:1.25rem;
-        }
-        .share-option {
-            display:flex; flex-direction:column; align-items:center; gap:8px;
-            cursor:pointer; transition:transform 160ms cubic-bezier(0.23,1,0.32,1);
-        }
-        .share-option:active { transform:scale(0.92); }
-        @media (hover: hover) and (pointer: fine) { .share-option:hover { transform:translateY(-3px); } }
-        .share-option { transition: transform 160ms var(--ease-out); }
-        .share-option-icon {
-            width:52px; height:52px; border-radius:14px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.4rem;
-        }
-        .share-option span {
-            font-size:.72rem; color:rgba(255,255,255,.6); font-weight:600;
-        }
-        .share-copy-row {
-            display:flex; gap:8px; margin-bottom:1.25rem;
-        }
-        .share-url {
-            flex:1; padding:10px 14px; background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.15); border-radius:10px;
-            color:rgba(255,255,255,.7); font-size:.8rem;
-            font-family:'Inter',sans-serif; overflow:hidden;
-            text-overflow:ellipsis; white-space:nowrap;
-        }
-        .share-copy-btn {
-            padding:8px 14px; background:var(--light);
-            border:none; border-radius:8px; color:#003a7a;
-            font-size:.78rem; font-weight:700;
-            cursor:pointer; font-family:'Inter',sans-serif;
-            transition:transform 100ms cubic-bezier(0.23,1,0.32,1);
-            white-space:nowrap; flex-shrink:0;
-        }
-        .share-copy-btn:active { transform:scale(0.95); }
-        @media (hover: hover) and (pointer: fine) { .share-copy-btn:hover { background:#0063bf; } }
-        .share-close {
-            width:100%; padding:12px; background:rgba(255,255,255,.08);
-            border:1px solid rgba(255,255,255,.15); border-radius:12px;
-            color:rgba(255,255,255,.7); font-size:.9rem; font-weight:600;
-            cursor:pointer; font-family:'Inter',sans-serif; transition: background 160ms var(--ease-out), transform 160ms var(--ease-out);
-        }
-        .share-close:hover { background:rgba(255,255,255,.15); }
-            background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);
-            background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px;
-        }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .share-sheet h3 { font-size: 1rem; font-weight: 700; color: white; margin-bottom: .5rem; text-align: center; }
+        .share-sheet p  { font-size: .82rem; color: rgba(255,255,255,.5); text-align: center; margin-bottom: 1.5rem; }
+        .share-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+        .share-option { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 160ms var(--ease-out); }
+        .share-option:active { transform: scale(0.92); }
+        @media (hover: hover) and (pointer: fine) { .share-option:hover { transform: translateY(-3px); } }
+        .share-option-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .share-option span { font-size: .72rem; color: rgba(255,255,255,.6); font-weight: 600; }
+        .share-copy-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+        .share-url { flex: 1; padding: 10px 14px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 10px; color: rgba(255,255,255,.7); font-size: .8rem; font-family: 'Inter', sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .share-copy-btn { padding: 8px 14px; background: var(--light); border: none; border-radius: 8px; color: #003a7a; font-size: .78rem; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; flex-shrink: 0; }
+        .share-copy-btn:active { transform: scale(0.95); }
+        .share-close { width: 100%; padding: 12px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; color: rgba(255,255,255,.7); font-size: .9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
 
-        @media(max-width:768px){
-            .week-title { font-size:1.8rem; }
-            .week-content { padding:2rem 5%; }
-            .photos-grid { grid-template-columns:repeat(2,1fr); }
-            .week-
-        button, a, [role="button"] {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+        /* ── LIGHTBOX ── */
+        #lb-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0, 0, 0, .96);
+            justify-content: center;
+            align-items: center;
         }
-        h1, h2, h3, h4, .section-title, #banner-title, .week-title, .hero h1 {
-            text-wrap: balance;
+        #lb-overlay.active { display: flex; }
+        #lb-img {
+            display: block;
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 4px;
+            user-select: none;
         }
+        #lb-close {
+            display: none;
+            position: fixed;
+            top: 20px; right: 24px;
+            z-index: 100000;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,.15);
+            border: none; border-radius: 50%;
+            color: white; font-size: 1.2rem;
+            cursor: pointer; line-height: 40px; text-align: center;
+        }
+        #lb-prev, #lb-next {
+            display: none;
+            position: fixed;
+            top: 50%; transform: translateY(-50%);
+            z-index: 100000;
+            background: rgba(255,255,255,.12);
+            border: none; color: white;
+            font-size: 1.4rem;
+            padding: 1rem .85rem;
+            cursor: pointer;
+        }
+        #lb-prev { left: 0; border-radius: 0 8px 8px 0; }
+        #lb-next { right: 0; border-radius: 8px 0 0 8px; }
+        @media (hover: hover) and (pointer: fine) {
+            #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,.25); }
+            #lb-close:hover { background: rgba(255,255,255,.3); }
+        }
+        #lb-caption {
+            display: none;
+            position: fixed;
+            bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 100000;
+            color: rgba(255,255,255,.55);
+            font-size: .85rem;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+        /* Mostrar controles solo cuando el lightbox está activo */
+        #lb-overlay.active ~ #lb-close,
+        #lb-overlay.active ~ #lb-prev,
+        #lb-overlay.active ~ #lb-next,
+        #lb-overlay.active ~ #lb-caption { display: block; }
 
-
-        /* LIGHTBOX */
-        #lb-overlay { display:none; position:fixed; inset:0; z-index:999999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; }
-        #lb-overlay.active { display:flex; }
-        #lb-img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; display:block; }
-        #lb-close { display:none; position:fixed; top:20px; right:28px; color:white; font-size:2.5rem; background:none; border:none; cursor:pointer; line-height:1; z-index:1000000; }
-        #lb-prev, #lb-next { display:none; position:fixed; top:50%; transform:translateY(-50%); color:white; font-size:2rem; background:rgba(255,255,255,.1); border:none; padding:16px 14px; cursor:pointer; z-index:1000000; }
-        #lb-prev { left:0; border-radius:0 6px 6px 0; }
-        #lb-next { right:0; border-radius:6px 0 0 6px; }
-        #lb-caption { display:none; position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); color:rgba(255,255,255,.55); font-size:.85rem; z-index:1000000; white-space:nowrap; }
-        body.lb-open #lb-close, body.lb-open #lb-prev, body.lb-open #lb-next, body.lb-open #lb-caption { display:block; }
+        @media (prefers-reduced-motion: reduce) {
+            .photo-item img, .share-btn, .week-nav-btn, .share-sheet { transition: none; animation: none; }
+        }
     </style>
 </head>
 <body>
 
-    <style>
-        :root { --zaragoza-blue:#00529F; --zaragoza-light:#4DA9FF; }
-        .share-header-btn { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:white; padding:7px 14px; border-radius:30px; font-size:.82rem; font-weight:600; cursor:pointer; font-family:"Inter",sans-serif; transition: background 160ms var(--ease-out), transform 160ms var(--ease-out); }
-        .share-header-btn:hover { background:rgba(255,255,255,.25); }
-            nav { position:absolute; top:100%; left:0; width:100%; background:var(--zaragoza-blue); padding:0; max-height:0; overflow:hidden; transition:max-height .4s ease,padding .3s; box-shadow:0 8px 20px rgba(0,0,0,.3); }
-            nav.open { max-height:340px; padding:1rem 0 1.5rem; }
-        }
-
-
-        #lb-prev { left: 0; border-radius: 0 6px 6px 0; }
-        #lb-next { right: 0; border-radius: 6px 0 0 6px; }
-        #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.25); }
-
-            @media (prefers-reduced-motion: reduce) {
-            .photo-item img, .share-btn, .week-nav-btn { transition: none; }
-            @keyframes lbZoom { from { opacity:0; } to { opacity:1; } }
-        }
-    </style>
-<div id="page-banner">
+    <!-- BANNER -->
+    <div id="page-banner">
         <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
@@ -301,11 +317,12 @@
         </div>
     </div>
 
-    <!-- DESCRIPCIÓN SEMANA -->
-    <div id="week-descripcion-section" style="display:none; background:white; padding:2rem 10%;">
-        <div id="week-descripcion-text" style="max-width:800px; margin:0 auto; font-size:1rem; line-height:1.8; color:#374151;"></div>
+    <!-- DESCRIPCIÓN -->
+    <div id="week-descripcion-section" style="display:none;">
+        <div id="week-descripcion-text"></div>
     </div>
 
+    <!-- CONTENIDO -->
     <div class="week-content">
         <div class="week-video-section" id="week-video-section" style="display:none;">
             <h2><i class="fas fa-play-circle" style="color:var(--light);" aria-hidden="true"></i> Vídeo de la semana</h2>
@@ -317,10 +334,9 @@
         <div class="week-photos-section">
             <h2><i class="fas fa-camera" style="color:var(--light);" aria-hidden="true"></i> Fotos <span id="photos-count"></span></h2>
             <div class="photos-grid" id="photos-grid">
-                <div class="skeleton" style="aspect-ratio:4/3;"></div>
-                <div class="skeleton" style="aspect-ratio:4/3;"></div>
-                <div class="skeleton" style="aspect-ratio:4/3;"></div>
-                <div class="skeleton" style="aspect-ratio:4/3;"></div>
+                <div style="aspect-ratio:4/3;background:#e5e7eb;border-radius:12px;"></div>
+                <div style="aspect-ratio:4/3;background:#e5e7eb;border-radius:12px;"></div>
+                <div style="aspect-ratio:4/3;background:#e5e7eb;border-radius:12px;"></div>
             </div>
         </div>
 
@@ -348,74 +364,68 @@
             <div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 1.25rem;"></div>
             <h3>Compartir Semana <span id="share-week-num"></span></h3>
             <p id="share-subtitle">Obras Romareda · Seguimiento semanal</p>
-
             <div class="share-options">
                 <div class="share-option" onclick="shareWhatsApp()">
-                    <div class="share-option-icon" style="background:#25D366;">
-                        <i class="fab fa-whatsapp" style="color:white;" aria-hidden="true"></i>
-                    </div>
+                    <div class="share-option-icon" style="background:#25D366;"><i class="fab fa-whatsapp" style="color:white;" aria-hidden="true"></i></div>
                     <span>WhatsApp</span>
                 </div>
                 <div class="share-option" onclick="shareTwitter()">
-                    <div class="share-option-icon" style="background:#000;">
-                        <i class="fab fa-x-twitter" style="color:white;" aria-hidden="true"></i>
-                    </div>
+                    <div class="share-option-icon" style="background:#000;"><i class="fab fa-x-twitter" style="color:white;" aria-hidden="true"></i></div>
                     <span>X / Twitter</span>
                 </div>
                 <div class="share-option" onclick="shareTelegram()">
-                    <div class="share-option-icon" style="background:#229ED9;">
-                        <i class="fab fa-telegram" style="color:white;" aria-hidden="true"></i>
-                    </div>
+                    <div class="share-option-icon" style="background:#229ED9;"><i class="fab fa-telegram" style="color:white;" aria-hidden="true"></i></div>
                     <span>Telegram</span>
                 </div>
                 <div class="share-option" onclick="shareNative()">
-                    <div class="share-option-icon" style="background:#374151;">
-                        <i class="fas fa-ellipsis" style="color:white;" aria-hidden="true"></i>
-                    </div>
+                    <div class="share-option-icon" style="background:#374151;"><i class="fas fa-ellipsis" style="color:white;" aria-hidden="true"></i></div>
                     <span>Más</span>
                 </div>
             </div>
-
             <div class="share-copy-row">
                 <div class="share-url" id="share-url-display"></div>
                 <button class="share-copy-btn" id="share-copy-btn" onclick="copyUrl()">
                     <i class="fas fa-copy" aria-hidden="true"></i> Copiar
                 </button>
             </div>
-
             <button class="share-close" onclick="closeShare()">Cancelar</button>
         </div>
     </div>
 
+    <!-- LIGHTBOX — hermano directo de todos los elementos, sin contenedor wrapper -->
+    <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
+        <img id="lb-img" src="" alt="">
+    </div>
+    <button id="lb-close"  onclick="lbClose()"    aria-label="Cerrar">&#x2715;</button>
+    <button id="lb-prev"   onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
+    <button id="lb-next"   onclick="lbChange(1)"  aria-label="Siguiente">&#10095;</button>
+    <div    id="lb-caption"></div>
+
     <script>
-        const SUPABASE_URL  = 'https://vakpbedvlvxzybxqival.supabase.co';
-        const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
-        const BUCKET        = 'fotos';
-        const sb            = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+        const BUCKET = 'fotos';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const OBRAS_START = new Date('2024-07-08T00:00:00');
-
-        function getWeekDates(weekNum) {
-            const start = new Date(OBRAS_START);
-            start.setDate(start.getDate() + (weekNum - 1) * 7);
-            const end = new Date(start);
-            end.setDate(end.getDate() + 6);
-            const fmt = (d) => d.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
-            return { start: fmt(start), end: fmt(end) };
-        }
-
-        // Leer número de semana del parámetro ?n=86
         const params   = new URLSearchParams(window.location.search);
         const WEEK_NUM = parseInt(params.get('n')) || 1;
 
-        let lightboxPhotos = [];
-        let lightboxIndex  = 0;
+        function getWeekDates(n) {
+            const s = new Date(OBRAS_START);
+            s.setDate(s.getDate() + (n - 1) * 7);
+            const e = new Date(s);
+            e.setDate(e.getDate() + 6);
+            const fmt = d => d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+            return { start: fmt(s), end: fmt(e) };
+        }
+
+        function getPublicUrl(filename) {
+            return sb.storage.from(BUCKET).getPublicUrl(`semana-${WEEK_NUM}/${filename}`).data.publicUrl;
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             document.title = `Semana ${WEEK_NUM} · Obras Romareda`;
-
             const [meta, photos] = await Promise.all([loadMeta(), loadPhotos()]);
-
             renderHero(meta, photos.length);
             renderVideo(meta);
             renderPhotos(photos);
@@ -423,196 +433,126 @@
         });
 
         async function loadMeta() {
-            const { data } = await sb
-                .from('semanas')
-                .select('*')
-                .eq('numero', WEEK_NUM)
-                .single();
+            const { data } = await sb.from('semanas').select('*').eq('numero', WEEK_NUM).single();
             return data || {};
         }
 
         async function loadPhotos() {
-            const { data, error } = await sb.storage
-                .from(BUCKET)
-                .list(`semana-${WEEK_NUM}`, { sortBy: { column: 'created_at', order: 'asc' } });
+            const { data, error } = await sb.storage.from(BUCKET).list(`semana-${WEEK_NUM}`, { sortBy: { column: 'created_at', order: 'asc' } });
             if (error || !data) return [];
             return data.filter(f => f.name !== '.emptyFolderPlaceholder');
         }
 
-        function getPublicUrl(filename) {
-            const { data } = sb.storage.from(BUCKET).getPublicUrl(`semana-${WEEK_NUM}/${filename}`);
-            return data.publicUrl;
-        }
-
         function renderHero(meta, photoCount) {
             const dates = getWeekDates(WEEK_NUM);
-            const bg    = document.getElementById('banner-bg');
-
-            if (meta.portada_url) {
-                bg.style.backgroundImage = `url('${meta.portada_url}')`;
-            }
-
+            if (meta.portada_url) document.getElementById('banner-bg').style.backgroundImage = `url('${meta.portada_url}')`;
             document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
-
-            // Mostrar descripción si existe
             const descSection = document.getElementById('week-descripcion-section');
             const descText    = document.getElementById('week-descripcion-text');
             if (meta.descripcion && meta.descripcion.trim()) {
                 descText.textContent = meta.descripcion;
                 descSection.style.display = 'block';
-            } else {
-                descSection.style.display = 'none';
             }
         }
 
         function renderVideo(meta) {
             if (!meta.video_id) return;
-            const section = document.getElementById('week-video-section');
             document.getElementById('week-video-iframe').src = `https://www.youtube.com/embed/${meta.video_id}`;
-            section.style.display = 'block';
+            document.getElementById('week-video-section').style.display = 'block';
         }
 
         function renderPhotos(files) {
-            const grid  = document.getElementById('photos-grid');
-            const count = document.getElementById('photos-count');
-            count.textContent = `(${files.length})`;
-            lightboxPhotos = files;
-
+            const grid = document.getElementById('photos-grid');
+            document.getElementById('photos-count').textContent = `(${files.length})`;
             if (files.length === 0) {
-                grid.innerHTML = '<p style="color:var(--muted); grid-column:1/-1;">Aún no hay fotos en esta semana.</p>';
+                grid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1;">Aún no hay fotos en esta semana.</p>';
                 return;
             }
-
-            grid.innerHTML = '';
             const urls = files.map(f => getPublicUrl(f.name));
-
+            grid.innerHTML = '';
             files.forEach((f, idx) => {
-                const url  = urls[idx];
                 const item = document.createElement('div');
                 item.className = 'photo-item';
                 item.setAttribute('role', 'button');
                 item.setAttribute('tabindex', '0');
-                item.innerHTML = `<img src="${url}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="${idx < 6 ? 'eager' : 'lazy'}">`;
-                item.addEventListener('click', () => lbOpen(urls, idx));
-                item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') lbOpen(urls, idx); });
+                item.innerHTML = `<img src="${urls[idx]}" alt="Semana ${WEEK_NUM} foto ${idx+1}" loading="${idx < 6 ? 'eager' : 'lazy'}">`;
+                item.addEventListener('click',   ()  => lbOpen(urls, idx));
+                item.addEventListener('keydown', e   => { if (e.key === 'Enter' || e.key === ' ') lbOpen(urls, idx); });
                 grid.appendChild(item);
             });
         }
 
         async function renderNav() {
+            const { data: p } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM - 1).limit(1);
+            const { data: n } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM + 1).limit(1);
             const prev = document.getElementById('nav-prev');
             const next = document.getElementById('nav-next');
-
-            // Comprobar si existen semanas adyacentes en BD
-            const { data: prevRows } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM - 1).limit(1);
-            const { data: nextRows } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM + 1).limit(1);
-            const prevData = prevRows && prevRows.length > 0 ? prevRows[0] : null;
-            const nextData = nextRows && nextRows.length > 0 ? nextRows[0] : null;
-
-            if (prevData) {
+            if (p && p.length > 0) {
                 prev.href = `semana.html?n=${WEEK_NUM - 1}`;
                 document.getElementById('nav-prev-label').textContent = `Semana ${WEEK_NUM - 1}`;
-            } else {
-                prev.style.opacity = '.3'; prev.style.pointerEvents = 'none';
-            }
-
-            if (nextData) {
+            } else { prev.classList.add('disabled'); }
+            if (n && n.length > 0) {
                 next.href = `semana.html?n=${WEEK_NUM + 1}`;
                 document.getElementById('nav-next-label').textContent = `Semana ${WEEK_NUM + 1}`;
-            } else {
-                next.style.opacity = '.3'; next.style.pointerEvents = 'none';
-            }
+            } else { next.classList.add('disabled'); }
         }
 
-
-        function lbClickOut(e) {
-            if (e.target === document.getElementById('lb-overlay')) lbClose();
-        }
-
-        // LIGHTBOX FUNCTIONS
+        // ── LIGHTBOX ──
         let lbPhotos = [], lbIdx = 0;
+        const lbOverlay = document.getElementById('lb-overlay');
+        const lbImg     = document.getElementById('lb-img');
+        const lbCaption = document.getElementById('lb-caption');
+
         function lbOpen(photos, idx) {
-            lbPhotos = photos; lbIdx = idx;
-            lbShow();
-            document.getElementById('lb-overlay').classList.add('active');
-            document.body.classList.add('lb-open');
+            lbPhotos = photos;
+            lbIdx    = idx;
+            lbImg.src = lbPhotos[lbIdx];
+            lbCaption.textContent = lbPhotos.length > 1 ? `${lbIdx + 1} / ${lbPhotos.length}` : '';
+            lbOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
-        function lbShow() {
-            document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').textContent =
-                lbPhotos.length > 1 ? (lbIdx + 1) + ' / ' + lbPhotos.length : '';
         }
         function lbChange(dir) {
             lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
-            lbShow();
+            lbImg.src = lbPhotos[lbIdx];
+            lbCaption.textContent = lbPhotos.length > 1 ? `${lbIdx + 1} / ${lbPhotos.length}` : '';
         }
         function lbClose() {
-            document.getElementById('lb-overlay').classList.remove('active');
-            document.body.classList.remove('lb-open');
-            document.getElementById('lb-img').src = '';
+            lbOverlay.classList.remove('active');
+            lbImg.src = '';
             document.body.style.overflow = '';
         }
-        function lbClickOutside(e) {
-            if (e.target === document.getElementById('lb-overlay')) lbClose();
-        }
-        document.addEventListener('keydown', function(e) {
-            if (!document.getElementById('lb-overlay').classList.contains('active')) return;
+        document.addEventListener('keydown', e => {
+            if (!lbOverlay.classList.contains('active')) return;
             if (e.key === 'ArrowLeft')  lbChange(-1);
             if (e.key === 'ArrowRight') lbChange(1);
             if (e.key === 'Escape')     lbClose();
         });
-// ============================================
-        // COMPARTIR
-        // ============================================
-        function getShareData() {
-            const url  = window.location.href;
-            const text = `🏗️ Obras Romareda · Semana ${WEEK_NUM} — Sigue el avance de las obras de la nueva Romareda`;
-            return { url, text };
-        }
 
+        // ── COMPARTIR ──
+        function getShareData() {
+            return { url: window.location.href, text: `🏗️ Obras Romareda · Semana ${WEEK_NUM} — Sigue el avance de las obras de la nueva Romareda` };
+        }
         function openShare() {
             const { url } = getShareData();
-            document.getElementById('share-week-num').textContent = WEEK_NUM;
+            document.getElementById('share-week-num').textContent   = WEEK_NUM;
             document.getElementById('share-url-display').textContent = url;
             document.getElementById('share-menu').classList.add('open');
         }
-
         function closeShare(e) {
-            if (!e || e.target === document.getElementById('share-menu')) {
+            if (!e || e.target === document.getElementById('share-menu'))
                 document.getElementById('share-menu').classList.remove('open');
-            }
         }
-
-        function shareWhatsApp() {
-            const { url, text } = getShareData();
-            window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`, '_blank');
-        }
-
-        function shareTwitter() {
-            const { url, text } = getShareData();
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=ObrasRomareda`, '_blank');
-        }
-
-        function shareTelegram() {
-            const { url, text } = getShareData();
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
-        }
-
+        function shareWhatsApp() { const { url, text } = getShareData(); window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`, '_blank'); }
+        function shareTwitter()  { const { url, text } = getShareData(); window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&via=ObrasRomareda`, '_blank'); }
+        function shareTelegram() { const { url, text } = getShareData(); window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank'); }
         async function shareNative() {
             const { url, text } = getShareData();
-            if (navigator.share) {
-                try {
-                    await navigator.share({ title: `Obras Romareda · Semana ${WEEK_NUM}`, text, url });
-                } catch(e) {}
-            } else {
-                copyUrl();
-            }
+            if (navigator.share) { try { await navigator.share({ title: `Obras Romareda · Semana ${WEEK_NUM}`, text, url }); } catch(e) {} }
+            else { copyUrl(); }
         }
-
         async function copyUrl() {
             const { url } = getShareData();
             const btn = document.getElementById('share-copy-btn');
@@ -620,33 +560,12 @@
                 await navigator.clipboard.writeText(url);
                 btn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> Copiado';
                 btn.style.background = '#10b981';
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i> Copiar';
-                    btn.style.background = '';
-                }, 2000);
-            } catch(e) {
-                btn.textContent = 'Error';
-            }
+                setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i> Copiar'; btn.style.background = ''; }, 2000);
+            } catch(e) { btn.textContent = 'Error'; }
         }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeShare();
-        });
-
-</script>
-
-
-
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShare(); });
+    </script>
 
     <script src="header.js"></script>
-
-    <!-- LIGHTBOX — debe ser último hijo del body -->
-    <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
-        <button id="lb-close"  onclick="lbClose()"    aria-label="Cerrar">&#x2715;</button>
-        <button id="lb-prev"   onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
-        <img    id="lb-img"    src="" alt="">
-        <div    id="lb-caption"></div>
-        <button id="lb-next"   onclick="lbChange(1)"  aria-label="Siguiente">&#10095;</button>
-    </div>
 </body>
 </html>
