@@ -173,7 +173,7 @@
         .share-menu.open { display:flex; }
         .share-sheet {
             overscroll-behavior: contain;
-            background:rgba(20,20,40,.88); backdrop-filter:blur(40px) saturate(200%); -webkit-backdrop-filter:blur(40px) saturate(200%); border:0.5px solid rgba(255,255,255,.12); border-radius:24px 24px 0 0;
+            background:rgba(10,10,30,.96); border:0.5px solid rgba(255,255,255,.12); border-radius:24px 24px 0 0;
             padding:1.5rem 2rem 2rem; width:100%; max-width:480px;
             animation:slideUp .3s ease;
         }
@@ -636,7 +636,11 @@
 </script>
 
 
-    <!-- LIGHTBOX -->
+
+
+    <script src="header.js"></script>
+
+    <!-- LIGHTBOX — debe ser último hijo del body -->
     <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
         <button id="lb-close"  onclick="lbClose()"    aria-label="Cerrar">&#x2715;</button>
         <button id="lb-prev"   onclick="lbChange(-1)" aria-label="Anterior">&#10094;</button>
@@ -644,7 +648,5 @@
         <div    id="lb-caption"></div>
         <button id="lb-next"   onclick="lbChange(1)"  aria-label="Siguiente">&#10095;</button>
     </div>
-
-    <script src="header.js"></script>
 </body>
 </html>
