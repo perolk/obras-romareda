@@ -863,7 +863,7 @@
     </div>
 
     <!-- Modal nueva sección -->
-    <div id="new-section-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;">
+    <div id="new-section-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;" onclick="if(event.target===this){hideNewSectionModal();document.body.style.overflow='';}">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:90%;max-width:420px;">
             <h3 style="color:white;font-size:1rem;font-weight:700;margin-bottom:1rem;">Nueva sección</h3>
             <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">NOMBRE DE LA SECCIÓN</label>
@@ -1509,7 +1509,9 @@ async function setAsPortada(url) {
 function switchTab(tab) {
     // Cerrar modal de nueva sección si está abierto
     const modal = document.getElementById('new-section-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
+    // Cerrar cualquier otro modal abierto
+    document.querySelectorAll('[id$="-modal"]').forEach(m => { m.style.display = 'none'; });
     ['semanas','historia','banners','proyecto'].forEach(t => {
         const panel = document.getElementById(`tab-${t}`);
         const btn   = document.getElementById(`tab-btn-${t}`);
