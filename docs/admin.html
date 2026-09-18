@@ -1507,11 +1507,11 @@ async function setAsPortada(url) {
 // TABS
 // ============================================
 function switchTab(tab) {
-    // Cerrar modal de nueva sección si está abierto
+    // Cerrar modal de nueva sección
     const modal = document.getElementById('new-section-modal');
-    if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
-    // Cerrar cualquier otro modal abierto
-    document.querySelectorAll('[id$="-modal"]').forEach(m => { m.style.display = 'none'; });
+    if (modal) { modal.style.display = 'none'; modal.style.visibility = 'hidden'; document.body.style.overflow = ''; }
+    // Cerrar cualquier otro modal
+    document.querySelectorAll('[id$="-modal"]').forEach(m => { m.style.display = 'none'; m.style.visibility = 'hidden'; });
     ['semanas','historia','banners','proyecto'].forEach(t => {
         const panel = document.getElementById(`tab-${t}`);
         const btn   = document.getElementById(`tab-btn-${t}`);
@@ -1919,11 +1919,15 @@ async function saveProyectoTextoYDatos() {
 // ---- SECCIONES ----
 function showNewSectionModal() {
     document.getElementById('new-section-name').value = '';
-    document.getElementById('new-section-modal').style.display = 'flex';
+    const m = document.getElementById('new-section-modal');
+    m.style.visibility = 'visible';
+    m.style.display = 'flex';
     setTimeout(() => document.getElementById('new-section-name').focus(), 100);
 }
 function hideNewSectionModal() {
-    document.getElementById('new-section-modal').style.display = 'none';
+    const m = document.getElementById('new-section-modal');
+    m.style.display = 'none';
+    m.style.visibility = 'hidden';
 }
 
 async function createSection() {
