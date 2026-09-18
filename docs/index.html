@@ -27,81 +27,140 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        
-        
-        
-        
-        .img-comp-img img { display: block; height: 100%; width: auto; }
+        /* ── VARIABLES ── */
+        :root {
+            --zaragoza-blue: #00529F;
+            --blue: #00529F;
+            --zaragoza-light: #4DA9FF;
+            --light: #4DA9FF;
+            --text-dark: #1a1a1a;
+            --text-muted: #6b7280;
+            --bg-light: #f9fafb;
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scrollbar-gutter: stable; }
+        h1, h2, h3, .section-title { font-optical-sizing: auto; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4, h5 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: var(--zaragoza-blue);
+            line-height: 1.2;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            height: calc(100vh - 64px);
+            min-height: 500px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            color: white;
+            overflow: hidden;
+        }
+        .hero h1 {
+            color: white !important;
+            font-size: clamp(3rem, 7vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            text-shadow: 0 4px 24px rgba(0,0,0,.75), 0 1px 4px rgba(0,0,0,.95);
+            margin-bottom: 3rem;
+        }
+        .hero-slides { position: absolute; inset: 0; z-index: 0; }
+        .hero-slide {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.23,1,0.32,1);
+            will-change: opacity;
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(0,30,80,.55) 0%, rgba(0,0,0,.75) 100%); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+        .hero-dots { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2; }
+        .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.4); border: none; cursor: pointer; padding: 0; transition: background 300ms ease, transform 300ms ease; }
+        .hero-dot.active { background: white; transform: scale(1.4); }
+
+        @keyframes heroFadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .hero-content h1   { animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) both; }
+        .hero-content .construction-counter { animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 150ms both; }
+        .hero-content p    { animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 250ms both; }
+        .hero-content .cta-btn { animation: heroFadeUp 800ms cubic-bezier(0.23,1,0.32,1) 380ms both; }
+
+        .construction-counter {
+            background: rgba(255,255,255,.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 8px 25px;
+            border-radius: 100px;
+            border: 0.5px solid rgba(255,255,255,.25);
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+            display: inline-block;
+        }
+        .construction-counter span { font-weight: 900; color: var(--zaragoza-light); font-size: 1.3rem; }
+
+        .hero p {
+            font-size: 1.1rem; color: rgba(255,255,255,.8);
+            margin: 1.5rem 0; max-width: 600px;
+        }
+        .cta-btn {
+            padding: 16px 45px;
+            background: white;
+            color: var(--zaragoza-blue);
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 100px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+            animation: ctaFloat 3s cubic-bezier(0.45,0.05,0.55,0.95) 1s infinite alternate;
+            transition: transform 80ms ease, box-shadow 80ms ease;
+        }
+        @keyframes ctaFloat {
+            from { transform: translateY(0);    box-shadow: 0 8px 25px rgba(0,0,0,.2); }
+            to   { transform: translateY(-8px); box-shadow: 0 18px 35px rgba(0,0,0,.3); }
+        }
+        @media (hover:hover) and (pointer:fine) { .cta-btn:hover { animation-play-state:paused; } }
+        .cta-btn:active { animation:none; transform:scale(0.97); transition-duration:80ms; }
+
+        /* ── SECCIONES ── */
+        section { padding: 6rem 10%; }
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: -0.02em;
+            color: var(--zaragoza-blue);
+            margin-bottom: 3rem;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes fadeUpItem { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        @media (prefers-reduced-transparency: reduce) { .hero-overlay { background: rgba(0,20,70,.85); } }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-slide, .cta-btn { transition: none; animation: none; }
+            .hero-content h1, .hero-content .construction-counter, .hero-content p, .hero-content .cta-btn { animation: none; }
+        }
         
         
         
 
-        /* --- PROYECTO & HISTORIA --- */
-        .project-gallery, .history-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; display: none; justify-content: center; justify-items: center; 
-        }
-        #renders, .history-grid { display: grid; }
-
-        .project-item, .history-grid img {
-            background: var(--bg-light); padding: 15px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            width: 100%; max-width: 380px; 
-        }
-        .project-item img, .history-grid img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
-        .history-grid img { cursor: pointer; transition: transform 0.3s, filter 0.3s; }
-        .history-grid img:hover { transform: scale(1.03); filter: brightness(0.8); }
-        .caption { margin-top: 10px; color: var(--zaragoza-blue); font-weight: 700; font-size: 0.9rem;}
-
-        .tab-button {
-            background: transparent; border: 2px solid var(--zaragoza-blue); color: var(--zaragoza-blue);
-            font-size: 1rem; font-weight: 700; padding: 10px 30px; border-radius: 50px; cursor: pointer; transition: color 0.3s, background 0.3s, transform 0.3s, opacity 0.3s, border-color 0.3s;
-        }
-        .tab-button:hover { background: rgba(0, 82, 159, 0.1); }
-        .tab-button.active { background: var(--zaragoza-blue); color: white; }
-
-        .history-timeline { max-width: 1000px; margin: 0 auto; padding-left: 40px; position: relative; }
-        .history-timeline::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--zaragoza-blue); }
-        .history-item::before { content: ''; position: absolute; left: -10px; top: 5px; width: 20px; height: 20px; background: white; border: 4px solid var(--zaragoza-blue); border-radius: 50%; }
-        .history-item { text-align: center; }
-
-        /* --- MODALES --- */
-        #albumModal, #archiveModal, #imageModal {
-            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
-        }
-        #imageModal { z-index: 3000; align-items: center; justify-content: center; flex-direction: column; background-color: rgba(0,0,0,0.98); }
+        
 
         
-        
-        .album-photo-card {
-            background: #1a1a1a; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.3s;
-        }
-        .album-photo-card:hover { transform: scale(1.03); border: 2px solid var(--zaragoza-light); }
-        .album-photo-card img {
-            width: 100%; height: 200px; object-fit: cover; display: block;
-        }
-        .album-photo-desc {
-            padding: 15px; color: #ccc; font-size: 0.9rem; text-align: center;
-        }
-
-        .modal-content {
-            margin: auto; display: block; max-width: 80%; max-height: 80vh; object-fit: contain; border-radius: 5px; animation-name: zoom; animation-duration: 0.3s;
-        }
-        #caption {
-            margin: auto; display: block; width: 80%; max-width: 700px; text-align: center; color: #ccc; padding: 10px 0; height: auto; font-size: 1.2rem; font-weight: 500;
-        }
-        .close {
-            position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: color 160ms var(--ease-out); cursor: pointer; z-index: 3001;
-        }
-        .close:hover { color: var(--zaragoza-light); }
-
-        .prev, .next {
-            cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px; margin-top: -50px; color: white; font-weight: bold; font-size: 30px; transition: 0.6s ease; border-radius: 0 3px 3px 0; user-select: none; -webkit-user-select: none; z-index: 3001;
-        }
-        .next { right: 0; border-radius: 3px 0 0 3px; }
-        .prev { left: 0; border-radius: 3px 0 0 3px; }
-        .prev:hover, .next:hover { background-color: rgba(0, 0, 0, 0.8); color: var(--zaragoza-light); }
-
-        @keyframes zoom { from {transform:scale(0)} to {transform:scale(1)} }
 
         /* --- ACTUALIDAD --- */
         .actualidad-container {
