@@ -55,14 +55,16 @@
         .render-item .caption { padding:8px 10px; font-size:.78rem; color:var(--muted); line-height:1.4; background:white; border-radius:0 0 6px 6px; }
 
         /* LIGHTBOX */
-        #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; flex-direction:column; overscroll-behavior:contain; }
+        #lb-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.96); align-items:center; justify-content:center; overscroll-behavior:contain; }
         #lb-overlay.active { display:flex; }
         #lb-img { max-width:90vw; max-height:85vh; object-fit:contain; border-radius:4px; }
-        #lb-caption { color:rgba(255,255,255,.5); font-size:.85rem; margin-top:12px; }
-        .lb-btn { position:fixed; top:50%; transform:translateY(-50%); color:white; font-size:2rem; background:rgba(255,255,255,.1); border:none; padding:16px 14px; cursor:pointer; }
+        #lb-caption { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; }
+        .lb-close { display:none; position:fixed; top:20px; right:28px; color:white; font-size:2.5rem; background:none; border:none; cursor:pointer; line-height:1; z-index:10000; }
+        .lb-btn { display:none; position:fixed; top:50%; transform:translateY(-50%); color:white; font-size:2rem; background:rgba(255,255,255,.1); border:none; padding:16px 14px; cursor:pointer; z-index:10000; }
         .lb-btn-prev { left:0; border-radius:0 6px 6px 0; }
         .lb-btn-next { right:0; border-radius:6px 0 0 6px; }
-        .lb-close { position:fixed; top:20px; right:28px; color:white; font-size:2.5rem; background:none; border:none; cursor:pointer; line-height:1; }
+        body.lb-open .lb-close,
+        body.lb-open .lb-btn { display:block; }
 
         /* FOOTER */
         footer { background:var(--blue); color:white; padding:3rem 10%; text-align:center; border-top:6px solid var(--light); }
@@ -72,7 +74,7 @@
         @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
         @media(max-width:1024px) {
             #page-banner { height:300px; }
-            .img-comp-container { height:260px; }
+    
             .secciones-section, .datos-section, .comparador-section { padding:3rem 5%; }
         }
     </style>
@@ -119,13 +121,13 @@
     </footer>
 
     <!-- LIGHTBOX -->
-    <div id="lb-overlay">
-        <button class="lb-close" onclick="lbClose()" aria-label="Cerrar">×</button>
-        <button class="lb-btn lb-btn-prev" onclick="lbChange(-1)" aria-label="Anterior">❮</button>
+    <div id="lb-overlay" onclick="if(event.target===this)lbClose()">
         <img id="lb-img" src="" alt="">
-        <div id="lb-caption"></div>
-        <button class="lb-btn lb-btn-next" onclick="lbChange(1)" aria-label="Siguiente">❯</button>
     </div>
+    <button class="lb-close" onclick="lbClose()" aria-label="Cerrar">×</button>
+    <button class="lb-btn lb-btn-prev" onclick="lbChange(-1)" aria-label="Anterior">❮</button>
+    <button class="lb-btn lb-btn-next" onclick="lbChange(1)" aria-label="Siguiente">❯</button>
+    <div id="lb-caption"></div>
 
     <script>
         const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
@@ -205,6 +207,7 @@
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
             document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${lbCaptions[lbIdx]}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
             document.getElementById('lb-overlay').classList.add('active');
+            document.body.classList.add('lb-open');
             document.body.style.overflow = 'hidden';
         }
         function lbChange(dir) {
@@ -214,6 +217,7 @@
         }
         function lbClose() {
             document.getElementById('lb-overlay').classList.remove('active');
+            document.body.classList.remove('lb-open');
             document.getElementById('lb-img').src = '';
             document.body.style.overflow = '';
         }
