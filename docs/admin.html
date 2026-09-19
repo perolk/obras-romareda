@@ -1759,6 +1759,7 @@ async function openCropper(pagina, file) {
     cropImg.src = '';
     cropImg.onload = null;
 
+    modal.style.visibility = 'visible';   // switchTab() lo deja en "hidden" (id termina en -modal) y nunca se restauraba
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
