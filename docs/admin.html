@@ -194,6 +194,26 @@
         .compress-val { font-size:.95rem; font-weight:700; color:var(--light); min-width:52px; text-align:right; }
         .compress-hint { font-size:.75rem; color:var(--muted); margin:0; }
 
+        /* Interruptor de compresión */
+        .compress-toggle-row {
+            display:flex; align-items:center; justify-content:space-between; gap:12px;
+            margin-bottom:1rem; padding:10px 12px;
+            background:var(--dark); border:1px solid var(--border); border-radius:10px;
+        }
+        .compress-toggle-text { font-size:.85rem; font-weight:600; color:var(--text); }
+        .compress-toggle-text small { display:block; font-weight:400; font-size:.72rem; color:var(--muted); margin-top:2px; }
+        .switch { position:relative; display:inline-block; width:44px; height:24px; flex-shrink:0; }
+        .switch input { opacity:0; width:0; height:0; position:absolute; }
+        .switch-slider { position:absolute; inset:0; background:var(--border); border-radius:24px; cursor:pointer; transition:background .2s; }
+        .switch-slider::before { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:white; border-radius:50%; transition:transform .2s; }
+        .switch input:checked + .switch-slider { background:var(--success); }
+        .switch input:checked + .switch-slider::before { transform:translateX(20px); }
+        .switch input:focus-visible + .switch-slider { outline:2px solid var(--light); outline-offset:2px; }
+        .switch input:disabled + .switch-slider { opacity:.5; cursor:wait; }
+        .compress-off .compress-tabs,
+        .compress-off .compress-slider-row,
+        .compress-off .compress-hint { opacity:.35; pointer-events:none; }
+
         /* Preview cards con peso */
         .photo-item .photo-size {
             position:absolute; bottom:4px; left:4px;
@@ -408,14 +428,16 @@
         <div class="login-logo">@ObrasRomareda</div>
         <h1>Panel de administración</h1>
         <p>Acceso restringido</p>
-        <input class="input" type="password" id="pwd" placeholder="Contraseña"
+        <input class="input" type="email" id="email" placeholder="Email" autocomplete="username"
+            onkeydown="if(event.key==='Enter')login()">
+        <input class="input" type="password" id="pwd" placeholder="Contraseña" autocomplete="current-password"
             style="letter-spacing:4px;" onkeydown="if(event.key==='Enter')login()">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; text-align:left;">
             <input type="checkbox" id="keep-session" style="width:16px; height:16px; cursor:pointer; accent-color:var(--light);">
             <label for="keep-session" style="font-size:.85rem; color:var(--muted); cursor:pointer;">Mantener sesión iniciada</label>
         </div>
         <div id="login-err" style="color:var(--error);font-size:.82rem;margin-bottom:.75rem;display:none;">
-            <i class="fas fa-exclamation-circle"></i> Contraseña incorrecta
+            <i class="fas fa-exclamation-circle"></i> <span id="login-err-text">Email o contraseña incorrectos</span>
         </div>
         <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="login()">
             <i class="fas fa-lock-open"></i> Entrar
@@ -568,6 +590,15 @@
         <!-- Compresor -->
         <div class="compress-card">
             <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+            <div class="compress-toggle-row">
+                <div class="compress-toggle-text">Comprimir al subir
+                    <small>Desactívalo si las fotos ya vienen comprimidas: se suben tal cual. Ajuste común a todas las subidas del panel.</small>
+                </div>
+                <label class="switch" title="Activar o desactivar la compresión">
+                    <input type="checkbox" class="compress-switch" checked onchange="setCompressEnabled(this.checked)" aria-label="Comprimir imágenes al subir">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
             <div class="compress-tabs">
                 <button class="compress-tab active" id="tab-calidad" onclick="setCompressMode('calidad')">Por calidad (%)</button>
                 <button class="compress-tab inactive" id="tab-res" onclick="setCompressMode('resolucion')">Por resolución (px)</button>
@@ -681,6 +712,15 @@
         <!-- Compresor (reutiliza los mismos sliders) -->
         <div class="compress-card">
             <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+            <div class="compress-toggle-row">
+                <div class="compress-toggle-text">Comprimir al subir
+                    <small>Desactívalo si las fotos ya vienen comprimidas: se suben tal cual. Ajuste común a todas las subidas del panel.</small>
+                </div>
+                <label class="switch" title="Activar o desactivar la compresión">
+                    <input type="checkbox" class="compress-switch" checked onchange="setCompressEnabled(this.checked)" aria-label="Comprimir imágenes al subir">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
             <div class="compress-tabs">
                 <button class="compress-tab active" id="htab-calidad" onclick="setHistCompressMode('calidad')">Por calidad (%)</button>
                 <button class="compress-tab inactive" id="htab-res" onclick="setHistCompressMode('resolucion')">Por resolución (px)</button>
@@ -846,6 +886,21 @@
             </button>
         </div>
 
+        <!-- Compresión (El Proyecto) -->
+        <div class="compress-card">
+            <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+            <div class="compress-toggle-row" style="margin-bottom:.75rem;">
+                <div class="compress-toggle-text">Comprimir al subir
+                    <small>Desactívalo si las imágenes ya vienen comprimidas: se suben tal cual. Ajuste común a todas las subidas del panel.</small>
+                </div>
+                <label class="switch" title="Activar o desactivar la compresión">
+                    <input type="checkbox" class="compress-switch" checked onchange="setCompressEnabled(this.checked)" aria-label="Comprimir imágenes al subir">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
+            <p class="compress-hint">Con la compresión activada, las imágenes se redimensionan a 1920 px de ancho máx. y calidad 85%.</p>
+        </div>
+
         <!-- Secciones de imágenes -->
         <div class="card">
             <div class="card-title">
@@ -904,7 +959,7 @@
 // ============================================
 // CONFIGURACIÓN
 // ============================================
-const ADMIN_PASSWORD = 'romareda2024';  // ← cambia esto
+// El acceso al panel se gestiona con Supabase Auth (email + contraseña). No hay contraseña en el código.
 const SUPABASE_URL   = 'https://vakpbedvlvxzybxqival.supabase.co';
 const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
 const BUCKET         = 'fotos';
@@ -918,16 +973,28 @@ let portadaUrl   = null;
 // ============================================
 // LOGIN
 // ============================================
-function login() {
-    if (document.getElementById('pwd').value === ADMIN_PASSWORD) {
-        if (document.getElementById('keep-session').checked) {
-            localStorage.setItem('admin_session', 'active');
-        }
-        startApp();
-    } else {
-        document.getElementById('login-err').style.display = 'block';
-        document.getElementById('pwd').value = '';
+async function login() {
+    const email = document.getElementById('email').value.trim();
+    const pwd   = document.getElementById('pwd').value;
+    const errEl = document.getElementById('login-err');
+    errEl.style.display = 'none';
+    if (!email || !pwd) {
+        document.getElementById('login-err-text').textContent = 'Introduce email y contraseña';
+        errEl.style.display = 'block';
+        return;
     }
+    const { error } = await sb.auth.signInWithPassword({ email, password: pwd });
+    if (error) {
+        document.getElementById('login-err-text').textContent = 'Email o contraseña incorrectos';
+        errEl.style.display = 'block';
+        document.getElementById('pwd').value = '';
+        return;
+    }
+    // Supabase guarda la sesión; "Mantener sesión" decide si sobrevive al cerrar el navegador
+    localStorage.setItem('admin_keep', document.getElementById('keep-session').checked ? '1' : '0');
+    sessionStorage.setItem('admin_active', '1');
+    document.getElementById('pwd').value = '';
+    startApp();
 }
 
 function startApp() {
@@ -937,17 +1004,31 @@ function startApp() {
     loadStorageStats();
 }
 
-function logout() {
-    localStorage.removeItem('admin_session');
+async function logout() {
+    await sb.auth.signOut();
+    localStorage.removeItem('admin_keep');
+    sessionStorage.removeItem('admin_active');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     document.getElementById('pwd').value = '';
 }
 
 // Comprobar sesión guardada al cargar
-window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('admin_session') === 'active') {
+window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    if (localStorage.getItem('admin_keep') === '1' || sessionStorage.getItem('admin_active') === '1') {
         startApp();
+    } else {
+        await sb.auth.signOut();   // sesión anterior sin "Mantener sesión": se pide login de nuevo
+    }
+});
+
+// Si la sesión caduca o se cierra en otra pestaña, volver al login
+sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
     }
 });
 
@@ -976,14 +1057,17 @@ function goToWeek(val) {
 }
 
 async function saveWeekDescripcion() {
-    const num  = parseInt(document.getElementById('week-num').textContent);
     const desc = document.getElementById('week-descripcion').value.trim();
-    const { data: ex } = await sb.from('semanas').select('id').eq('numero', num).limit(1);
+    const { data: ex, error: exErr } = await sb.from('semanas').select('id').eq('numero', currentWeek).limit(1);
+    if (exErr) { toast(`Error: ${exErr.message}`, 'err'); return; }
+    let error;
     if (ex && ex.length > 0) {
-        await sb.from('semanas').update({ descripcion: desc }).eq('numero', num);
+        ({ error } = await sb.from('semanas').update({ descripcion: desc }).eq('numero', currentWeek));
     } else {
-        await sb.from('semanas').insert({ numero: num, descripcion: desc });
+        ({ error } = await sb.from('semanas').insert({ numero: currentWeek, descripcion: desc }));
+        if (!error && !currentData) currentData = { numero: currentWeek };
     }
+    if (error) { toast(`Error al guardar: ${error.message}`, 'err'); return; }
     toast('✅ Descripción guardada', 'ok');
 }
 
@@ -1016,6 +1100,7 @@ async function loadWeek() {
         .single();
 
     currentData = data || null;
+    document.getElementById('week-descripcion').value = (data && data.descripcion) || '';
 
     if (data) {
         // Vídeo
@@ -1306,6 +1391,7 @@ async function prepareUpload(files) {
     if (!files || files.length === 0) return;
     pendingFiles    = Array.from(files);
     compressedBlobs = [];
+    const run = ++prepRun;
 
     const panel     = document.getElementById('preview-panel');
     const fileList  = document.getElementById('preview-file-list');
@@ -1323,6 +1409,7 @@ async function prepareUpload(files) {
 
     for (const file of pendingFiles) {
         const result = await compressImage(file);
+        if (run !== prepRun) return;
         compressedBlobs.push(result);
         totalOrig += result.originalSize;
         totalComp += result.compressedSize;
@@ -1336,7 +1423,7 @@ async function prepareUpload(files) {
             <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
             <span class="preview-arrow">→</span>
             <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
-            <span class="preview-file-pct">−${pct}%</span>`;
+            <span class="preview-file-pct">${result.skipped ? 'sin cambios' : '−' + pct + '%'}</span>`;
         fileList.appendChild(row);
     }
 
@@ -1344,7 +1431,7 @@ async function prepareUpload(files) {
     const totalPct = Math.round((1 - totalComp / totalOrig) * 100);
     document.getElementById('stat-orig').textContent = formatBytes(totalOrig);
     document.getElementById('stat-comp').textContent = formatBytes(totalComp);
-    document.getElementById('stat-pct').textContent  = `−${totalPct}%`;
+    document.getElementById('stat-pct').textContent  = totalPct > 0 ? `−${totalPct}%` : '0%';
 
     // Uso de Supabase
     await updateStorageBar(totalComp);
@@ -1392,7 +1479,7 @@ async function doUpload() {
         totalComp += result.compressedSize;
         const path = `semana-${currentWeek}/${Date.now()}_${result.name}`;
         await sb.storage.from(BUCKET).upload(path, result.blob, {
-            upsert: true, contentType: 'image/jpeg'
+            upsert: true, contentType: result.type || 'image/jpeg'
         });
         done++;
         fill.style.width = (done / compressedBlobs.length * 100) + '%';
@@ -1424,6 +1511,50 @@ async function uploadPhotos(files) {
 // ============================================
 let compressMode = 'calidad';
 
+// ---- Interruptor global de compresión (se recuerda entre sesiones) ----
+let compressEnabled  = localStorage.getItem('compress_enabled') !== 'false';
+let histPendingFiles = [];
+let proyPendingFiles = [];
+let prepRun = 0, histRun = 0, secRun = 0;   // evita que dos cálculos simultáneos se mezclen
+
+function applyCompressUI() {
+    document.querySelectorAll('.compress-switch').forEach(cb => { cb.checked = compressEnabled; });
+    document.querySelectorAll('.compress-card').forEach(c => c.classList.toggle('compress-off', !compressEnabled));
+}
+
+async function setCompressEnabled(on) {
+    compressEnabled = !!on;
+    localStorage.setItem('compress_enabled', compressEnabled ? 'true' : 'false');
+    applyCompressUI();
+    toast(compressEnabled ? 'Compresión activada' : 'Compresión desactivada · las fotos se subirán tal cual', 'ok');
+    // Si ya hay fotos seleccionadas, recalcular la vista previa con el nuevo ajuste
+    if (pendingFiles.length)     await prepareUpload(pendingFiles);
+    if (histPendingFiles.length) await prepareHistUpload(histPendingFiles);
+    if (proyPendingFiles.length && proyUploadSection) await prepareSecUpload(proyUploadSection, proyPendingFiles);
+}
+document.addEventListener('DOMContentLoaded', applyCompressUI);
+
+// Sube el archivo sin recomprimir. Solo convierte HEIC/HEIF a JPEG (los navegadores no lo muestran)
+// y limpia el nombre para que Supabase Storage lo acepte.
+async function passthroughImage(file) {
+    const origName = file.name, origSize = file.size;
+    const ext = (origName.split('.').pop() || '').toLowerCase();
+    let blob = file;
+    let type = file.type || ({ png:'image/png', webp:'image/webp', gif:'image/gif' }[ext] || 'image/jpeg');
+    let name = origName;
+    const isHeic = /\.(heic|heif)$/i.test(origName) || /image\/(heic|heif)/.test(file.type);
+    if (isHeic && typeof heic2any !== 'undefined') {
+        try {
+            const r = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            blob = Array.isArray(r) ? r[0] : r;
+            type = 'image/jpeg';
+            name = origName.replace(/\.[^.]+$/, '.jpg');
+        } catch(e) { console.warn('heic2any failed', e); }
+    }
+    name = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]+/g, '_');
+    return { blob, originalSize: origSize, compressedSize: blob.size, name, type, skipped: true };
+}
+
 function setCompressMode(mode) {
     compressMode = mode;
     document.getElementById('tab-calidad').className = mode === 'calidad' ? 'compress-tab active' : 'compress-tab inactive';
@@ -1444,6 +1575,8 @@ function formatBytes(bytes) {
 }
 
 async function compressImage(file) {
+    if (!compressEnabled) return passthroughImage(file);
+    const origName = file.name, origSize = file.size;   // se conservan: tras convertir HEIC el Blob ya no tiene nombre
     // Convert HEIC/HEIF first
     const isHeic = file.type === 'image/heic' || file.type === 'image/heif' ||
                    file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
@@ -1474,9 +1607,9 @@ async function compressImage(file) {
                 canvas.toBlob((blob) => {
                     resolve({
                         blob,
-                        originalSize:   file.size,
+                        originalSize:   origSize,
                         compressedSize: blob.size,
-                        name: file.name.replace(/\.[^.]+$/, '.jpg')
+                        name: origName.replace(/\.[^.]+$/, '.jpg')
                     });
                 }, 'image/jpeg', q);
             };
@@ -1763,6 +1896,15 @@ function updateHSlider() {
 }
 
 async function compressHistImage(file) {
+    if (!compressEnabled) return passthroughImage(file);
+    const origName = file.name, origSize = file.size;
+    // HEIC/HEIF -> JPEG (antes no se convertía aquí y la vista previa se quedaba colgada)
+    if ((/\.(heic|heif)$/i.test(origName) || /image\/(heic|heif)/.test(file.type)) && typeof heic2any !== 'undefined') {
+        try {
+            const r = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            file = Array.isArray(r) ? r[0] : r;
+        } catch(e) { console.warn('heic2any failed', e); }
+    }
     return new Promise((resolve) => {
         const quality  = parseInt(document.getElementById('hslider-calidad').value) / 100;
         const maxWidth = parseInt(document.getElementById('hslider-res').value);
@@ -1779,8 +1921,8 @@ async function compressHistImage(file) {
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                 const q = histCompressMode === 'calidad' ? quality : 0.85;
                 canvas.toBlob((blob) => resolve({
-                    blob, originalSize: file.size, compressedSize: blob.size,
-                    name: file.name.replace(/\.[^.]+$/, '.jpg')
+                    blob, originalSize: origSize, compressedSize: blob.size,
+                    name: origName.replace(/\.[^.]+$/, '.jpg')
                 }), 'image/jpeg', q);
             };
             img.src = e.target.result;
@@ -1791,6 +1933,8 @@ async function compressHistImage(file) {
 
 async function prepareHistUpload(files) {
     if (!files || files.length === 0) return;
+    histPendingFiles = Array.from(files);
+    const run = ++histRun;
     histPendingBlobs = [];
     const panel  = document.getElementById('hist-preview-panel');
     const list   = document.getElementById('hist-preview-list');
@@ -1807,6 +1951,7 @@ async function prepareHistUpload(files) {
 
     for (const file of Array.from(files)) {
         const result = await compressHistImage(file);
+        if (run !== histRun) return;
         histPendingBlobs.push(result);
         totalOrig += result.originalSize;
         totalComp += result.compressedSize;
@@ -1819,14 +1964,14 @@ async function prepareHistUpload(files) {
             <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
             <span class="preview-arrow">→</span>
             <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
-            <span class="preview-file-pct">−${pct}%</span>`;
+            <span class="preview-file-pct">${result.skipped ? 'sin cambios' : '−' + pct + '%'}</span>`;
         list.appendChild(row);
     }
 
     const pct = Math.round((1 - totalComp / totalOrig) * 100);
     document.getElementById('hstat-orig').textContent = formatBytes(totalOrig);
     document.getElementById('hstat-comp').textContent = formatBytes(totalComp);
-    document.getElementById('hstat-pct').textContent  = `−${pct}%`;
+    document.getElementById('hstat-pct').textContent  = pct > 0 ? `−${pct}%` : '0%';
     document.getElementById('hist-upload-label').textContent =
         `Subir ${files.length} foto${files.length > 1 ? 's' : ''} (${formatBytes(totalComp)})`;
     btn.disabled = false;
@@ -1845,7 +1990,7 @@ async function doHistUpload() {
         totalOrig += result.originalSize; totalComp += result.compressedSize;
         const path = `${Date.now()}_${result.name}`;
         await sb.storage.from('historia').upload(path, result.blob, {
-            upsert: true, contentType: 'image/jpeg'
+            upsert: true, contentType: result.type || 'image/jpeg'
         });
         done++;
         fill.style.width = (done / histPendingBlobs.length * 100) + '%';
@@ -1856,7 +2001,7 @@ async function doHistUpload() {
     toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
 
     document.getElementById('hist-preview-panel').style.display = 'none';
-    histPendingBlobs = []; btn.disabled = false;
+    histPendingBlobs = []; histPendingFiles = []; btn.disabled = false;
     loadHistStats();
 }
 
@@ -2063,6 +2208,8 @@ function renderSecGrid(secId, imgs) {
 async function prepareSecUpload(secId, files) {
     if (!files || files.length === 0) return;
     proyUploadSection = secId;
+    proyPendingFiles  = Array.from(files);
+    const run = ++secRun;
     proyPendingBlobs  = [];
     const previewEl = document.getElementById(`sec-preview-${secId}`);
     previewEl.style.display = 'block';
@@ -2072,16 +2219,17 @@ async function prepareSecUpload(secId, files) {
     let rows = '';
     for (const file of Array.from(files)) {
         const result = await compressProjImage(file);
+        if (run !== secRun) return;
         proyPendingBlobs.push(result);
         totalOrig += result.originalSize; totalComp += result.compressedSize;
         const pct = Math.round((1 - result.compressedSize / result.originalSize) * 100);
-        rows += `<div class="preview-file-row"><i class="fas fa-image" aria-hidden="true"></i><span class="preview-file-name">${file.name}</span><span class="preview-file-orig">${formatBytes(result.originalSize)}</span><span class="preview-arrow">→</span><span class="preview-file-comp">${formatBytes(result.compressedSize)}</span><span class="preview-file-pct">−${pct}%</span></div>`;
+        rows += `<div class="preview-file-row"><i class="fas fa-image" aria-hidden="true"></i><span class="preview-file-name">${file.name}</span><span class="preview-file-orig">${formatBytes(result.originalSize)}</span><span class="preview-arrow">→</span><span class="preview-file-comp">${formatBytes(result.compressedSize)}</span><span class="preview-file-pct">${result.skipped ? 'sin cambios' : '−' + pct + '%'}</span></div>`;
     }
     const pct = Math.round((1 - totalComp / totalOrig) * 100);
     previewEl.innerHTML = `
         ${rows}
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-            <span style="font-size:.78rem;color:var(--muted);">${formatBytes(totalOrig)} → <strong style="color:var(--success);">${formatBytes(totalComp)}</strong> (−${pct}%)</span>
+            <span style="font-size:.78rem;color:var(--muted);">${formatBytes(totalOrig)} → <strong style="color:var(--success);">${formatBytes(totalComp)}</strong> ${pct > 0 ? '(−' + pct + '%)' : '(sin comprimir)'}</span>
             <button class="btn btn-success" onclick="doSecUpload(${secId})">
                 <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i> Subir ${files.length} imagen${files.length > 1 ? 'es' : ''}
             </button>
@@ -2101,7 +2249,7 @@ async function doSecUpload(secId) {
 
     for (const result of proyPendingBlobs) {
         const path = `${secId}_${Date.now()}_${result.name}`;
-        const { error: upErr } = await sb.storage.from('proyecto').upload(path, result.blob, { upsert: true, contentType: 'image/jpeg' });
+        const { error: upErr } = await sb.storage.from('proyecto').upload(path, result.blob, { upsert: true, contentType: result.type || 'image/jpeg' });
         if (upErr) { toast(`Error: ${upErr.message}`, 'err'); continue; }
         const { data: urlData } = sb.storage.from('proyecto').getPublicUrl(path);
         const captionInput = document.getElementById(`caption-${secId}`);
@@ -2111,6 +2259,7 @@ async function doSecUpload(secId) {
     }
 
     proyPendingBlobs = [];
+    proyPendingFiles = [];
     previewEl.style.display = 'none';
     toast('✅ Imágenes subidas', 'ok');
 
@@ -2138,6 +2287,8 @@ async function deleteSecImg(imgId, storagePath, secId) {
 
 // Compresor del proyecto (reutiliza sliders de calidad/resolución de otros tabs)
 async function compressProjImage(file) {
+    if (!compressEnabled) return passthroughImage(file);
+    const origName = file.name, origSize = file.size;   // se conservan: tras convertir HEIC el Blob ya no tiene nombre
     const isHeic = /\.(heic|heif)$/i.test(file.name) || file.type === 'image/heic' || file.type === 'image/heif';
     if (isHeic && typeof heic2any !== 'undefined') {
         try { const r = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 }); file = Array.isArray(r) ? r[0] : r; } catch(e) {}
@@ -2154,8 +2305,8 @@ async function compressProjImage(file) {
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                 canvas.toBlob(blob => resolve({
-                    blob, originalSize: file.size, compressedSize: blob.size,
-                    name: file.name.replace(/\.[^.]+$/, '.jpg')
+                    blob, originalSize: origSize, compressedSize: blob.size,
+                    name: origName.replace(/\.[^.]+$/, '.jpg')
                 }), 'image/jpeg', 0.85);
             };
             img.src = e.target.result;
