@@ -24,7 +24,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
     
     <style>
         /* ── VARIABLES ── */
@@ -72,8 +73,8 @@
         .hero h1 {
             color: white !important;
             font-size: clamp(3rem, 7vw, 6rem);
-            font-weight: 900;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            letter-spacing: -0.025em;
             line-height: 1.05;
             text-shadow: 0 4px 24px rgba(0,0,0,.75), 0 1px 4px rgba(0,0,0,.95);
             margin-bottom: 3rem;
@@ -111,7 +112,7 @@
             margin-bottom: 0;
             display: inline-block;
         }
-        .construction-counter span { font-weight: 900; color: var(--zaragoza-light); font-size: 1.3rem; }
+        .construction-counter span { font-weight: 800; color: var(--zaragoza-light); font-size: 1.3rem; font-variant-numeric: tabular-nums; }
 
         .hero p {
             font-size: 1.1rem; color: rgba(255,255,255,.8);
@@ -140,12 +141,14 @@
         section { padding: 6rem 10%; }
         .section-title {
             font-size: clamp(1.8rem, 3vw, 2.4rem);
-            font-weight: 900;
+            font-weight: 800;
             text-align: center;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
             color: var(--zaragoza-blue);
             margin-bottom: 3rem;
         }
+        /* La sección de actualidad es azul: el título debe ir en blanco (antes era azul sobre azul e invisible) */
+        #videos .section-title { color: #fff; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes fadeUpItem { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
@@ -446,7 +449,7 @@
     </div>
 
     <footer>
-        <div class="logo" style="margin-bottom: 20px; color:white;">@ObrasRomareda</div>
+        <div class="logo" style="margin-bottom: 20px; color:white; font-family:'Calibri','Carlito',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem;">@ObrasRomareda</div>
         <div class="footer-links">
             <!-- ✅ MEJORA MEDIA: rel="noopener noreferrer" en todos los enlaces externos -->
             <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
@@ -690,7 +693,7 @@
                 modal.innerHTML = `
                     <div style="max-width:900px;margin:0 auto;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-                            <h2 style="color:white;font-size:1.5rem;font-weight:900;">Todas las semanas</h2>
+                            <h2 style="color:white;font-size:1.5rem;font-weight:800;">Todas las semanas</h2>
                             <button onclick="document.getElementById('all-weeks-modal').style.display='none';document.body.style.overflow='';"
                                 style="background:none;border:none;color:white;font-size:2rem;cursor:pointer;line-height:1;">×</button>
                         </div>

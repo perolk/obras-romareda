@@ -10,7 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -73,13 +74,15 @@
         }
         .week-title {
             font-size: clamp(1.6rem, 4vw, 2.5rem);
-            font-weight: 900;
+            font-weight: 800;
             color: white;
             line-height: 1.05;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
+            font-variant-numeric: tabular-nums;
             margin-bottom: .75rem;
         }
         .week-meta {
+            font-variant-numeric: tabular-nums;
             font-size: .88rem;
             color: rgba(255,255,255,.65);
             display: flex;

@@ -20,7 +20,7 @@
         }
 
         .site-logo {
-            font-family: 'Calibri','Segoe UI',sans-serif;
+            font-family: 'Calibri','Carlito',sans-serif;
             font-weight: 700;
             font-style: italic;
             font-size: 1.8rem;
