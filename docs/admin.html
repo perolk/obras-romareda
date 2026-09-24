@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin · Obras Romareda</title>
+    <meta name="robots" content="noindex, nofollow">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -583,6 +584,11 @@
                     onclick="document.getElementById('portada-file').click()">
                     <i class="fas fa-upload"></i>
                     <span id="portada-btn-text">Subir foto de portada</span>
+                </button>
+                <button class="btn btn-outline" id="portada-clear-btn" style="width:100%;margin-top:8px;display:none;color:var(--error);border-color:var(--error);"
+                    onclick="clearPortada()">
+                    <i class="fas fa-trash"></i>
+                    <span>Quitar portada</span>
                 </button>
             </div>
         </div>
@@ -1197,15 +1203,18 @@ function renderPortada() {
     const img  = document.getElementById('portada-img');
     const ph   = document.getElementById('portada-placeholder');
     const btn  = document.getElementById('portada-btn-text');
+    const clearBtn = document.getElementById('portada-clear-btn');
     if (portadaUrl) {
         img.src = portadaUrl;
         img.style.display  = 'block';
         ph.style.display   = 'none';
         btn.textContent    = 'Cambiar portada';
+        clearBtn.style.display = 'block';
     } else {
         img.style.display = 'none';
         ph.style.display  = 'flex';
         btn.textContent   = 'Subir foto de portada';
+        clearBtn.style.display = 'none';
     }
 }
 
@@ -1623,10 +1632,18 @@ async function deletePhoto(path, btn) {
     if (!confirm('¿Eliminar esta foto?')) return;
     const { error } = await sb.storage.from(BUCKET).remove([path]);
     if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    const fileName = path.split('/').pop();
+    const wasPortada = portadaUrl && portadaUrl.includes(fileName);
     btn.closest('.photo-item').remove();
     const count = document.querySelectorAll('.photo-item').length;
     document.getElementById('photo-count').textContent = `${count} fotos`;
-    toast('Foto eliminada', 'ok');
+    if (wasPortada) {
+        portadaUrl = null;
+        renderPortada();
+        toast('Foto eliminada. Era la portada, así que también se ha quitado. Recuerda guardar la semana.', 'ok');
+    } else {
+        toast('Foto eliminada', 'ok');
+    }
 }
 
 async function setAsPortada(url) {
@@ -1634,6 +1651,14 @@ async function setAsPortada(url) {
     renderPortada();
     document.querySelectorAll('.photo-item').forEach(el => el.classList.remove('is-portada'));
     toast('✅ Portada seleccionada. Recuerda guardar la semana.', 'ok');
+}
+
+function clearPortada() {
+    if (!confirm('¿Quitar la foto de portada de esta semana?')) return;
+    portadaUrl = null;
+    renderPortada();
+    document.querySelectorAll('.photo-item').forEach(el => el.classList.remove('is-portada'));
+    toast('Portada eliminada. Recuerda guardar la semana.', 'ok');
 }
 
 // ============================================
