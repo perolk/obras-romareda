@@ -1638,6 +1638,23 @@ function readExifDateFromBuffer(buf) {
                 if (d) return d;
             }
         }
+        return null;
+    }
+    // WebP: el EXIF va en un chunk RIFF propio ("EXIF"), normalmente al final del archivo
+    if (len > 16 && dv.getUint32(0) === 0x52494646 && dv.getUint32(8) === 0x57454250) {
+        let p = 12;
+        while (p + 8 <= len) {
+            const fourcc = dv.getUint32(p);
+            const size = dv.getUint32(p + 4, true);         // en RIFF, el tamaño de cada chunk es little-endian
+            const dataStart = p + 8;
+            if (fourcc === 0x45584946) {                    // 'EXIF'
+                // algunos codificadores anteponen "Exif\0\0" antes del TIFF; otros escriben el TIFF directamente
+                const hasPrefix = dataStart + 6 <= len && dv.getUint8(dataStart) === 0x45 && dv.getUint8(dataStart + 1) === 0x78 &&
+                    dv.getUint8(dataStart + 2) === 0x69 && dv.getUint8(dataStart + 3) === 0x66 && dv.getUint8(dataStart + 4) === 0 && dv.getUint8(dataStart + 5) === 0;
+                return exifDateFromTiff(dv, hasPrefix ? dataStart + 6 : dataStart);
+            }
+            p = dataStart + size + (size % 2);              // los chunks RIFF se rellenan a tamaño par
+        }
     }
     return null;
 }
@@ -1646,7 +1663,9 @@ function readExifDateFromBuffer(buf) {
 async function readCaptureDate(file) {
     try {
         const isHeic = /\.(heic|heif)$/i.test(file.name) || /image\/(heic|heif)/.test(file.type);
-        const part = isHeic ? file : file.slice(0, 262144);
+        const isWebp = /\.webp$/i.test(file.name) || file.type === 'image/webp';
+        // El EXIF de WebP suele ir al final del archivo, y el de HEIC en cualquier punto: hace falta leerlos enteros
+        const part = (isHeic || isWebp) ? file : file.slice(0, 262144);
         const d = readExifDateFromBuffer(await part.arrayBuffer());
         if (d) return { date: d, source: 'exif' };
     } catch (e) { console.warn('EXIF:', e); }
@@ -1676,8 +1695,13 @@ function capBadge(cap, n) {
     return `<span class="preview-file-date" title="Fecha de captura (EXIF)">${txt}</span>`;
 }
 
-// Descarga solo el principio de una imagen (el EXIF está ahí)
+// Descarga solo el principio de una imagen (el EXIF suele estar ahí). En WebP el EXIF va al final, así que ahí se descarga entero.
 async function fetchHead(url, bytes = 262144) {
+    if (/\.webp(\?|$)/i.test(url)) {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return await res.arrayBuffer();
+    }
     let res;
     try { res = await fetch(url, { headers: { Range: `bytes=0-${bytes - 1}` } }); }
     catch (e) { res = await fetch(url); }
