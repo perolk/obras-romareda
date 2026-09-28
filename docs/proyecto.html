@@ -14,7 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         html { scrollbar-gutter: stable; }
         h1, h2, h3, #banner-title { font-optical-sizing: auto; }
@@ -38,10 +37,17 @@
         .datos-section { background:white; padding:4rem 10%; }
         .section-title { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:800; text-align:center; color:var(--blue); margin-bottom:.75rem; letter-spacing:-0.025em; text-wrap:balance; }
         .section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1rem; }
-        .datos-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px; max-width:900px; margin:2rem auto 0; }
-        .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:0.5px solid #e5e7eb; }
-        .dato-num { font-size:1.8rem; font-weight:800; color:var(--blue); display:block; margin-bottom:4px; letter-spacing:-0.025em; font-variant-numeric:tabular-nums; }
+        /* Dos filas de 3 datos (también en móvil) */
+        .datos-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; max-width:900px; margin:2rem auto 0; }
+        .dato-card { background:var(--bg); border-radius:14px; padding:1.5rem; text-align:center; border:0.5px solid #e5e7eb; min-width:0; }
+        .dato-num { font-size:1.8rem; font-weight:800; color:var(--blue); display:block; margin-bottom:4px; letter-spacing:-0.025em; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
         .dato-label { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+        @media (max-width:600px) {
+            .datos-grid { gap:10px; }
+            .dato-card { padding:1rem .4rem; border-radius:12px; }
+            .dato-num { font-size:clamp(1rem,4.8vw,1.35rem); }
+            .dato-label { font-size:.62rem; letter-spacing:.04em; }
+        }
 
         /* SECCIONES DINÁMICAS */
         .secciones-section { padding:4rem 10%; background:var(--bg); }
@@ -98,12 +104,14 @@
         <h2 class="section-title">Datos técnicos</h2>
         <p class="section-subtitle">Las cifras de un estadio de nueva generación</p>
         <div class="datos-grid">
-            <div class="dato-card"><span class="dato-num" id="dato-aforo">—</span><span class="dato-label">Espectadores</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-superficie">—</span><span class="dato-label">Superficie total</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-apertura">—</span><span class="dato-label">Apertura prevista</span></div>
+            <!-- Fila superior -->
             <div class="dato-card"><span class="dato-num" id="dato-arquitecto">—</span><span class="dato-label">Arquitecto</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-aforo">—</span><span class="dato-label">Aforo</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-superficie">—</span><span class="dato-label">Superficie total</span></div>
+            <!-- Fila inferior -->
+            <div class="dato-card"><span class="dato-num" id="dato-apertura">—</span><span class="dato-label">Apertura prevista</span></div>
             <div class="dato-card"><span class="dato-num" id="dato-niveles">—</span><span class="dato-label">Niveles de grada</span></div>
-            <div class="dato-card"><span class="dato-num" id="dato-cubierta">—</span><span class="dato-label">Cubierta</span></div>
+            <div class="dato-card"><span class="dato-num" id="dato-cubierta">—</span><span class="dato-label">Localidades cubiertas</span></div>
         </div>
     </div>
 
@@ -134,6 +142,13 @@
         const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Escapa texto antes de insertarlo como HTML (evita que un caracter como < o " rompa la página o inyecte código)
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str == null ? '' : String(str);
+            return d.innerHTML;
+        }
 
         // BANNER
         async function loadBanner() {
@@ -186,14 +201,14 @@
                         item.setAttribute('role', 'button');
                         item.setAttribute('tabindex', '0');
                         item.innerHTML = `
-                <img src="${img.url}" alt="${img.caption || sec.nombre + ' ' + (i+1)}" loading="${i < 3 ? 'eager' : 'lazy'}" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px 8px ${img.caption ? '0 0' : '8px 8px'};display:block;">
-                ${img.caption ? `<div style="padding:8px 10px;font-size:.78rem;color:var(--muted);line-height:1.4;">${img.caption}</div>` : ''}
+                <img src="${esc(img.url)}" alt="${esc(img.caption || sec.nombre + ' ' + (i+1))}" loading="${i < 3 ? 'eager' : 'lazy'}" style="width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:8px 8px ${img.caption ? '0 0' : '8px 8px'};display:block;">
+                ${img.caption ? `<div style="padding:8px 10px;font-size:.78rem;color:var(--muted);line-height:1.4;">${esc(img.caption)}</div>` : ''}
             `;
                         item.addEventListener('click', () => openLb(imgs.map(x => x.url), imgs.map(x => x.caption||''), i));
                         item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openLb(imgs.map(x => x.url), imgs.map(x => x.caption||''), i); });
                         grid.appendChild(item);
                     });
-                    secEl.innerHTML = `<h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${sec.nombre}</h3>`;
+                    secEl.innerHTML = `<h3><i class="fas fa-images" style="color:var(--light);" aria-hidden="true"></i> ${esc(sec.nombre)}</h3>`;
                     secEl.appendChild(grid);
                     container.appendChild(secEl);
                 }
@@ -206,7 +221,7 @@
         function openLb(photos, captions, idx) {
             lbPhotos = photos; lbCaptions = captions || []; lbIdx = idx;
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${lbCaptions[lbIdx]}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
+            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${esc(lbCaptions[lbIdx])}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
             document.getElementById('lb-overlay').classList.add('active');
             document.body.classList.add('lb-open');
             document.body.style.overflow = 'hidden';
@@ -214,7 +229,7 @@
         function lbChange(dir) {
             lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
             document.getElementById('lb-img').src = lbPhotos[lbIdx];
-            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${lbCaptions[lbIdx]}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
+            document.getElementById('lb-caption').innerHTML = (lbCaptions[lbIdx] ? `<span style="display:block;font-size:.95rem;color:white;margin-bottom:4px;">${esc(lbCaptions[lbIdx])}</span>` : '') + `<span style="opacity:.5;font-size:.82rem;">${lbIdx+1} / ${lbPhotos.length}</span>`;
         }
         function lbClose() {
             document.getElementById('lb-overlay').classList.remove('active');
