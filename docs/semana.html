@@ -466,7 +466,9 @@
 
         function renderHero(meta, photoCount) {
             const dates = getWeekDates(WEEK_NUM);
-            if (meta.portada_url) document.getElementById('banner-bg').style.backgroundImage = `url('${meta.portada_url}')`;
+            // Banner con recorte ajustado desde el admin; si no lo hay, la portada (recorte automático centrado)
+            const bannerSrc = meta.banner_url || meta.portada_url;
+            if (bannerSrc) document.getElementById('banner-bg').style.backgroundImage = `url('${bannerSrc}')`;
             document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;

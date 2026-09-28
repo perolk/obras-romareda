@@ -159,6 +159,11 @@
         }
         .photo-btn-star { background:var(--light); color:white; }
         .photo-btn-del  { background:var(--error); color:white; }
+        .photo-item .photo-date {
+            position:absolute; left:0; right:0; bottom:0; padding:14px 6px 4px;
+            font-size:.62rem; font-weight:600; color:#fff; text-align:center;
+            background:linear-gradient(to top, rgba(0,0,0,.65), transparent); pointer-events:none;
+        }
         .photo-item.is-portada::after {
             content:'★'; position:absolute; top:4px; left:4px;
             background:var(--light); color:white; font-size:.65rem;
@@ -353,6 +358,12 @@
             flex:1; font-size:.82rem; color:var(--text);
             overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
         }
+        .preview-file-date {
+            font-size:.72rem; font-weight:600; padding:2px 7px; border-radius:10px; white-space:nowrap;
+            background:rgba(16,185,129,.15); color:var(--success);
+        }
+        .preview-file-date.warn { background:rgba(245,158,11,.15); color:var(--warning); }
+        .preview-file-date.bad  { background:rgba(239,68,68,.15);  color:var(--error); }
         .preview-file-orig { font-size:.78rem; color:var(--muted); white-space:nowrap; }
         .preview-arrow { color:var(--muted); font-size:.8rem; }
         .preview-file-comp { font-size:.82rem; font-weight:700; color:var(--success); white-space:nowrap; }
@@ -590,6 +601,21 @@
                     <i class="fas fa-trash"></i>
                     <span>Quitar portada</span>
                 </button>
+
+                <!-- Banner de la semana: recorte ajustable (mismo recortador que los banners de página) -->
+                <div id="banner-adjust" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+                    <div style="font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:6px;">BANNER DE LA SEMANA</div>
+                    <div id="banner-preview-wrap" style="display:none;aspect-ratio:16/5;border-radius:8px;overflow:hidden;margin-bottom:8px;background:#000;">
+                        <img id="banner-preview-img" alt="Banner de la semana" style="width:100%;height:100%;object-fit:cover;display:block;">
+                    </div>
+                    <div id="banner-status" style="font-size:.78rem;color:var(--muted);margin-bottom:8px;line-height:1.4;"></div>
+                    <button class="btn btn-outline" style="width:100%;" onclick="openWeekBannerCropper()">
+                        <i class="fas fa-crop-alt"></i> <span id="banner-crop-text">Ajustar recorte del banner</span>
+                    </button>
+                    <button class="btn btn-outline" id="banner-reset-btn" style="width:100%;margin-top:8px;display:none;" onclick="resetBanner()">
+                        <i class="fas fa-rotate-left"></i> Volver al recorte automático
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -634,6 +660,14 @@
             <div class="card-title">
                 <i class="fas fa-images"></i> Galería de fotos
                 <span id="photo-count" style="margin-left:auto; font-size:.8rem; color:var(--muted);"></span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:.75rem;flex-wrap:wrap;">
+                <button class="btn btn-outline" id="btn-reorder" style="padding:6px 12px;font-size:.8rem;"
+                    onclick="reorderWeekByCapture()" title="Lee la fecha EXIF de las fotos ya subidas y las ordena cronológicamente">
+                    <i class="fas fa-clock"></i> Ordenar por fecha de captura
+                </button>
+                <span id="reorder-status" style="font-size:.78rem;color:var(--muted);"></span>
             </div>
 
             <div class="dropzone" id="dropzone"
@@ -975,6 +1009,12 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentWeek  = 86;
 let currentData  = null;  // datos de la semana actual en BD
 let portadaUrl   = null;
+// Banner de la semana (recorte ajustado del hero). bannerBlob = recorte pendiente de subir al guardar.
+let bannerUrl    = null;   // URL guardada (columna semanas.banner_url)
+let bannerOrigUrl = null;  // la que había al cargar la semana (para borrar el archivo antiguo al reemplazarla)
+let bannerBlob   = null;
+let bannerObjUrl = null;
+let bannerDirty  = false;  // true si se ha cambiado el banner en esta sesión
 
 // ============================================
 // LOGIN
@@ -1114,12 +1154,18 @@ async function loadWeek() {
         previewVideo();
         // Portada
         portadaUrl = data.portada_url || null;
+        bannerUrl = bannerOrigUrl = data.banner_url || null;
+        bannerBlob = null; bannerDirty = false;
+        if (bannerObjUrl) { URL.revokeObjectURL(bannerObjUrl); bannerObjUrl = null; }
         renderPortada();
         setStatus(`<i class="fas fa-circle-check" style="color:var(--success)"></i> Semana guardada`);
     } else {
         document.getElementById('video-id').value = '';
         document.getElementById('video-preview').style.display = 'none';
         portadaUrl = null;
+        bannerUrl = bannerOrigUrl = null;
+        bannerBlob = null; bannerDirty = false;
+        if (bannerObjUrl) { URL.revokeObjectURL(bannerObjUrl); bannerObjUrl = null; }
         renderPortada();
         setStatus(`<i class="fas fa-circle-xmark" style="color:var(--muted)"></i> Semana nueva`);
     }
@@ -1155,6 +1201,20 @@ async function saveWeek() {
         updated_at:  new Date().toISOString()
     };
 
+    // Banner: solo se toca (y solo se envía la columna banner_url) si se ha cambiado en esta sesión
+    let uploadedBannerPath = null;
+    if (bannerDirty) {
+        if (bannerBlob) {
+            uploadedBannerPath = `semana-${currentWeek}_${Date.now()}.jpg`;
+            const { error: upErr } = await sb.storage.from('banners').upload(uploadedBannerPath, bannerBlob, {
+                upsert: true, contentType: 'image/jpeg'
+            });
+            if (upErr) { toast(`Error al subir el banner: ${upErr.message}`, 'err'); return; }
+            bannerUrl = sb.storage.from('banners').getPublicUrl(uploadedBannerPath).data.publicUrl;
+        }
+        weekData.banner_url = bannerUrl || null;
+    }
+
     let error;
     if (currentData) {
         ({ error } = await sb.from('semanas').update(weekData).eq('numero', currentWeek));
@@ -1163,12 +1223,37 @@ async function saveWeek() {
     }
 
     if (error) {
-        toast(`Error al guardar: ${error.message}`, 'err');
+        if (uploadedBannerPath) {                       // deshacer la subida: no dejar archivos huérfanos
+            await sb.storage.from('banners').remove([uploadedBannerPath]);
+            bannerUrl = bannerOrigUrl;
+        }
+        const faltaColumna = /banner_url/.test(error.message || '');
+        toast(faltaColumna
+            ? 'Falta la columna banner_url en Supabase. Ejecuta el SQL indicado (alter table…) y vuelve a guardar.'
+            : `Error al guardar: ${error.message}`, 'err');
     } else {
-        currentData = weekData;
+        currentData = { ...(currentData || {}), ...weekData };
+        if (bannerDirty) {
+            if (bannerOrigUrl && bannerOrigUrl !== bannerUrl) await removeBannerFile(bannerOrigUrl);
+            bannerOrigUrl = bannerUrl;
+            bannerBlob = null; bannerDirty = false;
+            if (bannerObjUrl) { URL.revokeObjectURL(bannerObjUrl); bannerObjUrl = null; }
+            renderBanner();
+        }
         toast('✅ Semana guardada correctamente', 'ok');
         setStatus(`<i class="fas fa-circle-check" style="color:var(--success)"></i> Guardado`);
     }
+}
+
+// Borra del bucket 'banners' el archivo de un banner de semana que ya no se usa
+async function removeBannerFile(url) {
+    try {
+        const m = /\/object\/public\/banners\/(.+)$/.exec(url || '');
+        if (!m) return;
+        const path = decodeURIComponent(m[1]);
+        if (!path.startsWith('semana-')) return;      // solo archivos de banners de semana
+        await sb.storage.from('banners').remove([path]);
+    } catch (e) { console.warn('removeBannerFile:', e); }
 }
 
 function setStatus(html) {
@@ -1216,6 +1301,59 @@ function renderPortada() {
         btn.textContent   = 'Subir foto de portada';
         clearBtn.style.display = 'none';
     }
+    renderBanner();
+}
+
+// ---- Banner de la semana (recorte del hero) ----
+function renderBanner() {
+    const box = document.getElementById('banner-adjust');
+    if (!box) return;
+    box.style.display = portadaUrl ? 'block' : 'none';
+    const has  = !!(bannerBlob || bannerUrl);
+    const wrap = document.getElementById('banner-preview-wrap');
+    const img  = document.getElementById('banner-preview-img');
+    if (has) { img.src = bannerBlob ? bannerObjUrl : bannerUrl; wrap.style.display = 'block'; }
+    else     { img.removeAttribute('src'); wrap.style.display = 'none'; }
+    let msg;
+    if (bannerBlob)                  msg = 'Recorte ajustado · pendiente de guardar. Pulsa «Guardar semana».';
+    else if (bannerDirty && !has)    msg = 'Se volverá al recorte automático al guardar la semana.';
+    else if (bannerUrl)              msg = 'Recorte ajustado y guardado.';
+    else                             msg = 'Recorte automático (centrado). Ajústalo si la foto sale descuadrada.';
+    document.getElementById('banner-status').textContent = msg;
+    document.getElementById('banner-crop-text').textContent = has ? 'Reajustar recorte del banner' : 'Ajustar recorte del banner';
+    document.getElementById('banner-reset-btn').style.display = has ? 'block' : 'none';
+}
+
+// El recorte pertenece a la foto de portada: si esta cambia, el recorte anterior ya no vale
+function discardBanner() {
+    if (bannerObjUrl) { URL.revokeObjectURL(bannerObjUrl); bannerObjUrl = null; }
+    if (bannerBlob || bannerUrl) bannerDirty = true;
+    bannerBlob = null; bannerUrl = null;
+}
+
+function resetBanner() {
+    if (!confirm('¿Volver al recorte automático del banner de esta semana?')) return;
+    discardBanner();
+    renderBanner();
+}
+
+async function openWeekBannerCropper() {
+    if (!portadaUrl) { toast('Primero elige la foto de portada', 'err'); return; }
+    toast('Preparando imagen...', 'ok');
+    let dataUrl;
+    try {
+        const res = await fetch(portadaUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const blob = await res.blob();
+        dataUrl = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = e => resolve(e.target.result);
+            r.onerror = reject;
+            r.readAsDataURL(blob);
+        });
+    } catch (e) { toast(`No se pudo cargar la portada: ${e.message}`, 'err'); return; }
+    cropperPagina = 'semana';
+    launchCropper(dataUrl);
 }
 
 async function uploadPortada(file) {
@@ -1226,6 +1364,7 @@ async function uploadPortada(file) {
     if (error) { toast(`Error: ${error.message}`, 'err'); return; }
     const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
     portadaUrl = data.publicUrl;
+    discardBanner();
     renderPortada();
     toast('✅ Portada subida. Recuerda guardar la semana.', 'ok');
 }
@@ -1236,12 +1375,14 @@ async function uploadPortada(file) {
 async function loadPhotos_list() {
     const { data, error } = await sb.storage
         .from(BUCKET)
-        .list(`semana-${currentWeek}`, { sortBy: { column: 'created_at', order: 'asc' } });
+        .list(`semana-${currentWeek}`, { limit: 1000, sortBy: { column: 'created_at', order: 'asc' } });
 
     if (error || !data) return;
 
-    const photos = data.filter(f => f.name !== '.emptyFolderPlaceholder');
-    document.getElementById('photo-count').textContent = `${photos.length} fotos`;
+    const photos = sortByCapture(data.filter(f => f.name !== '.emptyFolderPlaceholder'));
+    const conFecha = photos.filter(f => capFromName(f.name)).length;
+    document.getElementById('photo-count').textContent =
+        `${photos.length} fotos` + (photos.length ? (conFecha === photos.length ? ' · orden cronológico' : ` · ${photos.length - conFecha} sin fecha de captura`) : '');
 
     const grid = document.getElementById('photo-grid');
     grid.innerHTML = '';
@@ -1254,8 +1395,11 @@ async function loadPhotos_list() {
 
         const item = document.createElement('div');
         item.className = 'photo-item' + (isPortada ? ' is-portada' : '');
+        const cd = capFromName(f.name);
+        const dateLabel = cd ? cd.toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
         item.innerHTML = `
             <img src="${url}" alt="${f.name}" loading="lazy">
+            ${dateLabel ? `<span class="photo-date">${dateLabel}</span>` : ''}
             <div class="photo-overlay">
                 <button class="photo-btn photo-btn-star" title="Usar como portada"
                     onclick="setAsPortada('${url}')">★</button>
@@ -1393,6 +1537,203 @@ async function loadStorageStats() {
     btn.classList.remove('spinning');
 }
 
+// ============================================
+// FECHA DE CAPTURA (EXIF) Y ORDEN CRONOLÓGICO
+// ============================================
+// Formato de nombre en Storage: AAAAMMDDTHHMMSS_resto.jpg  (fecha de captura, hora local de la cámara)
+const CAP_RE = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})_/;
+
+function capFromName(name) {
+    const m = CAP_RE.exec(name || '');
+    if (!m) return null;
+    return new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
+}
+function capStamp(d) {
+    const p = (n, l = 2) => String(n).padStart(l, '0');
+    return p(d.getFullYear(), 4) + p(d.getMonth() + 1) + p(d.getDate()) + 'T' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+}
+// Quita el prefijo de fecha del nombre (para renombrar sin duplicarlo)
+function stripCapPrefix(name) { return (name || '').replace(CAP_RE, ''); }
+
+// Orden: primero las fotos con fecha de captura (cronológico); después las que no la tienen (por fecha de subida)
+function sortByCapture(files) {
+    const withCap = [], without = [];
+    files.forEach(f => (capFromName(f.name) ? withCap : without).push(f));
+    withCap.sort((a, b) => capFromName(a.name) - capFromName(b.name) || (a.name < b.name ? -1 : 1));
+    without.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+    return withCap.concat(without);
+}
+
+function exifDateFromTiff(dv, t) {
+    const len = dv.byteLength;
+    if (t + 8 > len) return null;
+    const bo = dv.getUint16(t);
+    const le = bo === 0x4949;
+    if (!le && bo !== 0x4D4D) return null;
+    if (dv.getUint16(t + 2, le) !== 42) return null;
+    const u16 = o => dv.getUint16(t + o, le);
+    const u32 = o => dv.getUint32(t + o, le);
+    const ascii = (o, n) => {
+        let s = '';
+        for (let i = 0; i < n; i++) { const c = dv.getUint8(t + o + i); if (!c) break; s += String.fromCharCode(c); }
+        return s;
+    };
+    const tags = (ifd, wanted) => {
+        const out = {};
+        if (ifd <= 0 || t + ifd + 2 > len) return out;
+        const n = u16(ifd);
+        for (let i = 0; i < n; i++) {
+            const e = ifd + 2 + i * 12;
+            if (t + e + 12 > len) break;
+            const tag = u16(e);
+            if (wanted.indexOf(tag) < 0) continue;
+            const type = u16(e + 2), count = u32(e + 4);
+            if (type === 2) {
+                const off = count > 4 ? u32(e + 8) : e + 8;
+                if (t + off + count <= len) out[tag] = ascii(off, count);
+            } else if (type === 4) {
+                out[tag] = u32(e + 8);
+            }
+        }
+        return out;
+    };
+    const ifd0 = tags(u32(4), [0x0132, 0x8769]);
+    let s = null;
+    if (ifd0[0x8769]) {
+        const ex = tags(ifd0[0x8769], [0x9003, 0x9004]);   // DateTimeOriginal, DateTimeDigitized
+        s = ex[0x9003] || ex[0x9004] || null;
+    }
+    if (!s) s = ifd0[0x0132] || null;                       // DateTime (última modificación)
+    if (!s) return null;
+    const m = /^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(s);
+    if (!m || +m[1] < 1990 || +m[2] < 1 || +m[2] > 12 || +m[3] < 1 || +m[3] > 31) return null;
+    return new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
+}
+
+function readExifDateFromBuffer(buf) {
+    const dv = new DataView(buf);
+    const len = dv.byteLength;
+    // JPEG: el bloque EXIF está en un segmento APP1 al principio
+    if (len > 4 && dv.getUint16(0) === 0xFFD8) {
+        let p = 2;
+        while (p + 4 <= len) {
+            if (dv.getUint8(p) !== 0xFF) break;
+            const marker = dv.getUint8(p + 1);
+            if (marker === 0xDA) break;                     // empieza la imagen: ya no hay más metadatos
+            const size = dv.getUint16(p + 2);
+            if (marker === 0xE1 && p + 10 <= len && dv.getUint32(p + 4) === 0x45786966 && dv.getUint16(p + 8) === 0) {
+                return exifDateFromTiff(dv, p + 10);
+            }
+            p += 2 + size;
+        }
+        return null;
+    }
+    // HEIC/HEIF: buscar el bloque "Exif\0\0" seguido de una cabecera TIFF
+    if (len > 12 && dv.getUint32(4) === 0x66747970) {
+        const u8 = new Uint8Array(buf);
+        for (let i = 0; i + 12 < len; i++) {
+            if (u8[i] !== 0x45) continue;
+            if (u8[i + 1] === 0x78 && u8[i + 2] === 0x69 && u8[i + 3] === 0x66 && u8[i + 4] === 0 && u8[i + 5] === 0) {
+                const d = exifDateFromTiff(dv, i + 6);
+                if (d) return d;
+            }
+        }
+    }
+    return null;
+}
+
+// Devuelve { date, source }: 'exif' (fecha de captura real), 'archivo' (fecha del archivo) o 'ninguna'
+async function readCaptureDate(file) {
+    try {
+        const isHeic = /\.(heic|heif)$/i.test(file.name) || /image\/(heic|heif)/.test(file.type);
+        const part = isHeic ? file : file.slice(0, 262144);
+        const d = readExifDateFromBuffer(await part.arrayBuffer());
+        if (d) return { date: d, source: 'exif' };
+    } catch (e) { console.warn('EXIF:', e); }
+    if (file.lastModified) return { date: new Date(file.lastModified), source: 'archivo' };
+    return { date: null, source: 'ninguna' };
+}
+
+function weekRangeOf(n) {
+    const start = new Date(OBRAS_START); start.setDate(start.getDate() + (n - 1) * 7);
+    const end = new Date(start); end.setDate(end.getDate() + 7);
+    return { start, end };                                    // [inicio, fin)
+}
+function inWeek(d, n) { const r = weekRangeOf(n); return d >= r.start && d < r.end; }
+
+// Fecha con la que se ordenará la foto: la EXIF; o la fecha del archivo solo si cae dentro de esta semana
+function pickStampDate(cap, n) {
+    if (!cap || !cap.date) return null;
+    if (cap.source === 'exif') return cap.date;
+    return inWeek(cap.date, n) ? cap.date : null;
+}
+function capBadge(cap, n) {
+    const d = pickStampDate(cap, n);
+    if (!d) return '<span class="preview-file-date bad" title="Sin fecha de captura: quedará al final de la semana">sin fecha</span>';
+    const txt = d.toLocaleString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    if (cap.source !== 'exif') return `<span class="preview-file-date warn" title="No trae EXIF: se usa la fecha del archivo">≈ ${txt}</span>`;
+    if (!inWeek(d, n)) return `<span class="preview-file-date bad" title="La fecha de captura cae fuera de la semana ${n}. Revisa el reloj de la cámara.">${txt} · fuera de la semana</span>`;
+    return `<span class="preview-file-date" title="Fecha de captura (EXIF)">${txt}</span>`;
+}
+
+// Descarga solo el principio de una imagen (el EXIF está ahí)
+async function fetchHead(url, bytes = 262144) {
+    let res;
+    try { res = await fetch(url, { headers: { Range: `bytes=0-${bytes - 1}` } }); }
+    catch (e) { res = await fetch(url); }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const reader = res.body.getReader();
+    const parts = []; let got = 0;
+    while (got < bytes) { const r = await reader.read(); if (r.done) break; parts.push(r.value); got += r.value.length; }
+    try { await reader.cancel(); } catch (e) {}
+    const out = new Uint8Array(Math.min(got, bytes)); let o = 0;
+    for (const p of parts) { const n = Math.min(p.length, out.length - o); out.set(p.subarray(0, n), o); o += n; if (o >= out.length) break; }
+    return out.buffer;
+}
+
+// Para las fotos que ya estaban subidas: lee su EXIF y les añade la fecha de captura al nombre
+async function reorderWeekByCapture() {
+    const btn    = document.getElementById('btn-reorder');
+    const status = document.getElementById('reorder-status');
+    const { data, error } = await sb.storage.from(BUCKET).list(`semana-${currentWeek}`, { limit: 1000 });
+    if (error || !data) { toast('No se pudo leer la galería', 'err'); return; }
+    const files = data.filter(f => f.name !== '.emptyFolderPlaceholder' && !f.name.startsWith('portada_') && !capFromName(f.name));
+    if (!files.length) { toast('Todas las fotos de esta semana ya tienen fecha de captura (o no hay fotos que ordenar).', 'ok'); return; }
+    if (!confirm(`Se leerá la fecha EXIF de ${files.length} foto${files.length > 1 ? 's' : ''} de la semana ${currentWeek} y se renombrarán las que la tengan.\n\nLas fotos sin EXIF no se tocan. Los enlaces directos antiguos a las fotos renombradas dejarán de funcionar (la portada se actualiza sola).\n\n¿Continuar?`)) return;
+
+    btn.disabled = true;
+    let renamed = 0, noExif = 0, failed = 0, portadaChanged = false, i = 0;
+    for (const f of files) {
+        i++;
+        status.textContent = `Leyendo ${i}/${files.length}…`;
+        try {
+            const oldPath = `semana-${currentWeek}/${f.name}`;
+            const url = sb.storage.from(BUCKET).getPublicUrl(oldPath).data.publicUrl;
+            const d = readExifDateFromBuffer(await fetchHead(url));
+            if (!d) { noExif++; continue; }
+            const newName = `${capStamp(d)}_${f.name}`;
+            const { error: mvErr } = await sb.storage.from(BUCKET).move(oldPath, `semana-${currentWeek}/${newName}`);
+            if (mvErr) { failed++; console.warn('move:', f.name, mvErr.message); continue; }
+            renamed++;
+            if (portadaUrl && portadaUrl.includes(f.name)) {
+                portadaUrl = sb.storage.from(BUCKET).getPublicUrl(`semana-${currentWeek}/${newName}`).data.publicUrl;
+                portadaChanged = true;
+            }
+        } catch (e) { failed++; console.warn('EXIF:', f.name, e); }
+    }
+    if (portadaChanged) {
+        renderPortada();
+        if (currentData) {
+            const { error: pErr } = await sb.from('semanas').update({ portada_url: portadaUrl }).eq('numero', currentWeek);
+            if (pErr) toast('La portada cambió de nombre: pulsa «Guardar semana» para fijarla.', 'err');
+        }
+    }
+    status.textContent = '';
+    btn.disabled = false;
+    await loadPhotos_list();
+    toast(`${failed ? '⚠️' : '✅'} ${renamed} ordenada${renamed === 1 ? '' : 's'} por fecha de captura · ${noExif} sin EXIF` + (failed ? ` · ${failed} con error` : ''), failed ? 'err' : 'ok');
+}
+
 let pendingFiles    = [];
 let compressedBlobs = [];
 
@@ -1417,8 +1758,11 @@ async function prepareUpload(files) {
     fileList.innerHTML = '';
 
     for (const file of pendingFiles) {
+        // Se lee la fecha ANTES de comprimir/convertir: la compresión y el paso de HEIC a JPG eliminan el EXIF
+        const cap    = await readCaptureDate(file);
         const result = await compressImage(file);
         if (run !== prepRun) return;
+        result.captured = cap;
         compressedBlobs.push(result);
         totalOrig += result.originalSize;
         totalComp += result.compressedSize;
@@ -1429,12 +1773,21 @@ async function prepareUpload(files) {
         row.innerHTML = `
             <i class="fas fa-image"></i>
             <span class="preview-file-name">${file.name}</span>
+            ${capBadge(cap, currentWeek)}
             <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
             <span class="preview-arrow">→</span>
             <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
             <span class="preview-file-pct">${result.skipped ? 'sin cambios' : '−' + pct + '%'}</span>`;
         fileList.appendChild(row);
     }
+
+    // Resumen de fechas de captura
+    const nTot  = compressedBlobs.length;
+    const nExif = compressedBlobs.filter(r => r.captured && r.captured.source === 'exif').length;
+    const nSin  = compressedBlobs.filter(r => !pickStampDate(r.captured, currentWeek)).length;
+    fileList.insertAdjacentHTML('afterbegin',
+        `<div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;"><i class="fas fa-clock"></i> ${nExif} de ${nTot} con fecha de captura (EXIF)` +
+        (nSin ? ` · ${nSin} sin fecha (irán al final de la semana)` : ' · se ordenarán cronológicamente') + '</div>');
 
     // Stats globales
     const totalPct = Math.round((1 - totalComp / totalOrig) * 100);
@@ -1480,25 +1833,30 @@ async function doUpload() {
     btn.disabled      = true;
     bar.style.display = 'block';
 
-    let done = 0;
+    let done = 0, failed = 0;
     let totalOrig = 0, totalComp = 0;
 
     for (const result of compressedBlobs) {
         totalOrig += result.originalSize;
         totalComp += result.compressedSize;
-        const path = `semana-${currentWeek}/${Date.now()}_${result.name}`;
-        await sb.storage.from(BUCKET).upload(path, result.blob, {
+        // El nombre lleva la fecha de captura (AAAAMMDDTHHMMSS_) para poder ordenar cronológicamente
+        const stampDate = pickStampDate(result.captured, currentWeek);
+        const stamp = stampDate ? capStamp(stampDate) + '_' : '';
+        const path = `semana-${currentWeek}/${stamp}${Date.now()}_${result.name}`;
+        const { error: upErr } = await sb.storage.from(BUCKET).upload(path, result.blob, {
             upsert: true, contentType: result.type || 'image/jpeg'
         });
-        done++;
-        fill.style.width = (done / compressedBlobs.length * 100) + '%';
+        if (upErr) { failed++; console.warn('Subida fallida:', result.name, upErr.message); }
+        else done++;
+        fill.style.width = ((done + failed) / compressedBlobs.length * 100) + '%';
     }
 
     bar.style.display = 'none';
     fill.style.width  = '0';
 
     const saving = Math.round((1 - totalComp / totalOrig) * 100);
-    toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
+    if (failed) toast(`⚠️ ${failed} foto${failed > 1 ? 's' : ''} no se ${failed > 1 ? 'pudieron' : 'pudo'} subir. Subidas correctamente: ${done}.`, 'err');
+    else toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
 
     // Limpiar preview
     document.getElementById('preview-panel').style.display = 'none';
@@ -1639,6 +1997,7 @@ async function deletePhoto(path, btn) {
     document.getElementById('photo-count').textContent = `${count} fotos`;
     if (wasPortada) {
         portadaUrl = null;
+        discardBanner();
         renderPortada();
         toast('Foto eliminada. Era la portada, así que también se ha quitado. Recuerda guardar la semana.', 'ok');
     } else {
@@ -1647,6 +2006,7 @@ async function deletePhoto(path, btn) {
 }
 
 async function setAsPortada(url) {
+    if (url !== portadaUrl) discardBanner();
     portadaUrl = url;
     renderPortada();
     document.querySelectorAll('.photo-item').forEach(el => el.classList.remove('is-portada'));
@@ -1656,6 +2016,7 @@ async function setAsPortada(url) {
 function clearPortada() {
     if (!confirm('¿Quitar la foto de portada de esta semana?')) return;
     portadaUrl = null;
+    discardBanner();
     renderPortada();
     document.querySelectorAll('.photo-item').forEach(el => el.classList.remove('is-portada'));
     toast('Portada eliminada. Recuerda guardar la semana.', 'ok');
@@ -1775,9 +2136,17 @@ async function openCropper(pagina, file) {
         reader.readAsDataURL(blob);
     });
 
-    // Preparar modal
+    launchCropper(dataUrl);
+}
+
+// Abre el modal de recorte (16:5) con una imagen ya cargada. Sirve para banners de página y de semana.
+function launchCropper(dataUrl) {
     const modal   = document.getElementById('cropper-modal');
     const cropImg = document.getElementById('cropper-img');
+    const cbtn    = document.getElementById('cropper-confirm-btn');
+    if (cbtn) cbtn.innerHTML = cropperPagina === 'semana'
+        ? '<i class="fas fa-check"></i> Confirmar recorte'
+        : '<i class="fas fa-check"></i> Confirmar recorte y subir';
 
     // Destruir instancia anterior
     if (cropperInstance) { try { cropperInstance.destroy(); } catch(e){} cropperInstance = null; }
@@ -1838,23 +2207,34 @@ async function confirmCrop() {
             canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.9);
         });
 
-        // Cerrar modal antes de subir
-        closeCropper();
+        if (pagina === 'semana') {
+            // Banner de semana: no se sube ahora, se sube al pulsar «Guardar semana»
+            closeCropper();
+            if (bannerObjUrl) URL.revokeObjectURL(bannerObjUrl);
+            bannerBlob   = blob;
+            bannerObjUrl = URL.createObjectURL(blob);
+            bannerDirty  = true;
+            renderBanner();
+            toast('✅ Recorte listo. Pulsa «Guardar semana» para publicarlo.', 'ok');
+        } else {
+            // Cerrar modal antes de subir
+            closeCropper();
 
-        // Preview inmediato
-        showBannerImg(pagina, URL.createObjectURL(blob));
-        toast('Subiendo imagen...', 'ok');
+            // Preview inmediato
+            showBannerImg(pagina, URL.createObjectURL(blob));
+            toast('Subiendo imagen...', 'ok');
 
-        const path = `${pagina}_${Date.now()}.jpg`;
-        const { error: uploadError } = await sb.storage.from('banners').upload(path, blob, {
-            upsert: true,
-            contentType: 'image/jpeg'
-        });
-        if (uploadError) throw uploadError;
+            const path = `${pagina}_${Date.now()}.jpg`;
+            const { error: uploadError } = await sb.storage.from('banners').upload(path, blob, {
+                upsert: true,
+                contentType: 'image/jpeg'
+            });
+            if (uploadError) throw uploadError;
 
-        const { data: urlData } = sb.storage.from('banners').getPublicUrl(path);
-        showBannerImg(pagina, urlData.publicUrl);
-        toast('✅ Imagen lista. Haz clic en "Guardar banner".', 'ok');
+            const { data: urlData } = sb.storage.from('banners').getPublicUrl(path);
+            showBannerImg(pagina, urlData.publicUrl);
+            toast('✅ Imagen lista. Haz clic en "Guardar banner".', 'ok');
+        }
 
     } catch(e) {
         console.error('confirmCrop error:', e);
