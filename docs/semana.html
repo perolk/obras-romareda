@@ -444,9 +444,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             document.title = `Semana ${WEEK_NUM} · Obras Romareda`;
             const [meta, photos] = await Promise.all([loadMeta(), loadPhotos()]);
-            renderHero(meta, photos.length);
+            // Una semana sin fotos no se muestra: se vuelve a la portada (si falló la carga, se enseña la página como siempre)
+            if (photos && photos.length === 0) { window.location.replace('index.html'); return; }
+            const list = photos || [];
+            renderHero(meta, list.length);
             renderVideo(meta);
-            renderPhotos(photos);
+            renderPhotos(list);
             renderNav();
         });
 
@@ -457,7 +460,7 @@
 
         async function loadPhotos() {
             const { data, error } = await sb.storage.from(BUCKET).list(`semana-${WEEK_NUM}`, { limit: 1000, sortBy: { column: 'created_at', order: 'asc' } });
-            if (error || !data) return [];
+            if (error || !data) return null;      // null = no se pudo cargar (distinto de "sin fotos")
             return sortByCapture(data.filter(f => f.name !== '.emptyFolderPlaceholder'));
         }
 
@@ -503,18 +506,44 @@
             });
         }
 
+        // ¿Queda alguna foto en la semana n? (ignora .emptyFolderPlaceholder). Ante un error de red, no oculta.
+        const _photoCache = new Map();
+        function weekHasPhotos(n) {
+            if (!_photoCache.has(n)) {
+                _photoCache.set(n, sb.storage.from(BUCKET).list(`semana-${n}`, { limit: 2 })
+                    .then(({ data, error }) => error || !data ? true : data.some(f => f.name !== '.emptyFolderPlaceholder'))
+                    .catch(() => true));
+            }
+            return _photoCache.get(n);
+        }
+
+        // Semana más cercana (anterior o siguiente) que exista y tenga fotos; null si no hay
+        async function findAdjacentWeek(dir) {
+            let q = sb.from('semanas').select('numero');
+            q = dir < 0 ? q.lt('numero', WEEK_NUM).order('numero', { ascending: false })
+                        : q.gt('numero', WEEK_NUM).order('numero', { ascending: true });
+            const { data } = await q;
+            const rows = data || [];
+            for (let i = 0; i < rows.length; i += 4) {
+                const chunk = rows.slice(i, i + 4);
+                const ok = await Promise.all(chunk.map(w => weekHasPhotos(w.numero)));
+                const k = ok.indexOf(true);
+                if (k >= 0) return chunk[k].numero;
+            }
+            return null;
+        }
+
         async function renderNav() {
-            const { data: p } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM - 1).limit(1);
-            const { data: n } = await sb.from('semanas').select('numero').eq('numero', WEEK_NUM + 1).limit(1);
+            const [pn, nn] = await Promise.all([findAdjacentWeek(-1), findAdjacentWeek(1)]);
             const prev = document.getElementById('nav-prev');
             const next = document.getElementById('nav-next');
-            if (p && p.length > 0) {
-                prev.href = `semana.html?n=${WEEK_NUM - 1}`;
-                document.getElementById('nav-prev-label').textContent = `Semana ${WEEK_NUM - 1}`;
+            if (pn !== null) {
+                prev.href = `semana.html?n=${pn}`;
+                document.getElementById('nav-prev-label').textContent = `Semana ${pn}`;
             } else { prev.classList.add('disabled'); }
-            if (n && n.length > 0) {
-                next.href = `semana.html?n=${WEEK_NUM + 1}`;
-                document.getElementById('nav-next-label').textContent = `Semana ${WEEK_NUM + 1}`;
+            if (nn !== null) {
+                next.href = `semana.html?n=${nn}`;
+                document.getElementById('nav-next-label').textContent = `Semana ${nn}`;
             } else { next.classList.add('disabled'); }
         }
 

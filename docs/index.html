@@ -533,18 +533,64 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         // =========================================
+        // =========================================
+        // SEMANAS CON FOTOS
+        // La tabla 'semanas' conserva la fila aunque se borren todas las fotos:
+        // solo se muestran las semanas que aún tienen alguna foto en el almacenamiento.
+        // =========================================
+        const _weekPhotoCache = new Map();
+        let _weekFoldersPromise = null;
+
+        // Números de semana que tienen carpeta en el bucket (null si no se pudo consultar)
+        function weekFolders() {
+            if (!_weekFoldersPromise) {
+                _weekFoldersPromise = sb.storage.from('fotos').list('', { limit: 1000 })
+                    .then(({ data, error }) => {
+                        if (error || !data) return null;
+                        const s = new Set();
+                        data.forEach(f => { const m = /^semana-(\d+)$/.exec(f.name); if (m && !f.id) s.add(+m[1]); });
+                        return s;
+                    })
+                    .catch(() => null);
+            }
+            return _weekFoldersPromise;
+        }
+
+        // ¿Queda alguna foto en la semana n? (ignora el marcador .emptyFolderPlaceholder). Ante un error de red, no oculta.
+        function weekHasPhotos(n) {
+            if (!_weekPhotoCache.has(n)) {
+                _weekPhotoCache.set(n, sb.storage.from('fotos').list(`semana-${n}`, { limit: 2 })
+                    .then(({ data, error }) => error || !data ? true : data.some(f => f.name !== '.emptyFolderPlaceholder'))
+                    .catch(() => true));
+            }
+            return _weekPhotoCache.get(n);
+        }
+
+        // De una lista de semanas (ya ordenada) devuelve solo las que tienen fotos; con 'max', las primeras 'max'
+        async function filterWeeksWithPhotos(rows, max) {
+            const folders = await weekFolders();
+            const cand = folders ? rows.filter(w => folders.has(w.numero)) : rows;
+            const step = max || 10, out = [];
+            for (let i = 0; i < cand.length && (!max || out.length < max); i += step) {
+                const chunk = cand.slice(i, i + step);
+                const ok = await Promise.all(chunk.map(w => weekHasPhotos(w.numero)));
+                chunk.forEach((w, k) => { if (ok[k] && (!max || out.length < max)) out.push(w); });
+            }
+            return out;
+        }
+
         async function loadActualidad() {
             const featured = document.getElementById('actualidad-featured');
             const prev     = document.getElementById('actualidad-prev');
             if (!featured || !prev) return;
 
-            const { data, error } = await sb
+            const { data: allWeeks, error } = await sb
                 .from('semanas')
                 .select('numero, portada_url, video_id')
-                .order('numero', { ascending: false })
-                .limit(4);
+                .order('numero', { ascending: false });
 
-            console.log('loadActualidad:', { data, error });
+            // Solo semanas que todavía tienen fotos (las 4 más recientes)
+            const data = (error || !allWeeks) ? [] : await filterWeeksWithPhotos(allWeeks, 4);
 
             if (error || !data || data.length === 0) {
                 featured.innerHTML = `
@@ -682,7 +728,8 @@
             }
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            const { data } = await sb.from('semanas').select('numero, portada_url').order('numero', { ascending: false });
+            const { data: allRows } = await sb.from('semanas').select('numero, portada_url').order('numero', { ascending: false });
+            const data = allRows ? await filterWeeksWithPhotos(allRows) : [];
             const grid = document.getElementById('all-weeks-grid');
             if (!data || data.length === 0) {
                 grid.innerHTML = '<div style="color:rgba(255,255,255,.5);text-align:center;padding:2rem;grid-column:1/-1;">Aún no hay semanas publicadas.</div>';
