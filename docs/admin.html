@@ -474,6 +474,9 @@
             <button class="btn btn-outline" id="tab-btn-proyecto" onclick="switchTab('proyecto')" style="font-size:.8rem; padding:6px 14px;">
                 <i class="fas fa-drafting-compass"></i> El Proyecto
             </button>
+            <button class="btn btn-outline" id="tab-btn-especiales" onclick="switchTab('especiales')" style="font-size:.8rem; padding:6px 14px;">
+                <i class="fas fa-star"></i> Especiales
+            </button>
         </div>
         <button class="btn btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
     </header>
@@ -957,6 +960,200 @@
         </div>
     </div>
 
+    <!-- TAB: ESPECIALES -->
+    <div id="tab-especiales" style="display:none; padding:2rem; max-width:1000px; margin:0 auto;">
+
+        <!-- Selector de especial -->
+        <div class="week-bar">
+            <label>Especial</label>
+            <select class="input" id="esp-select" onchange="onEspSelectChange(this.value)"
+                style="max-width:320px;margin:0;background:var(--card);color:var(--text);border:1px solid var(--border);">
+            </select>
+            <div class="week-save-status" id="esp-status">
+                <i class="fas fa-circle-question"></i> Cargando...
+            </div>
+            <button class="btn btn-success" onclick="saveEspecial()" style="margin-left:auto;display:none;" id="esp-save-btn">
+                <i class="fas fa-save"></i> Guardar especial
+            </button>
+        </div>
+
+        <!-- Alta de un especial nuevo -->
+        <div class="card" id="esp-new-card" style="margin-bottom:1.5rem;display:none;">
+            <div class="card-title"><i class="fas fa-star"></i> Nuevo especial</div>
+            <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">TÍTULO</label>
+            <input class="input" type="text" id="esp-new-titulo" placeholder="Ej: Desmontaje de las torres de iluminación"
+                oninput="updateEspSlugPreview()" style="margin-bottom:1rem;">
+            <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">FECHA DEL MOMENTO</label>
+            <input class="input" type="date" id="esp-new-fecha" style="margin-bottom:1rem;max-width:220px;">
+            <div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;">URL: especial.html?s=<span id="esp-slug-preview" style="color:var(--light);font-weight:600;">—</span></div>
+            <button class="btn btn-success" onclick="createEspecial()">
+                <i class="fas fa-plus"></i> Crear especial
+            </button>
+        </div>
+
+        <div id="esp-editor" style="display:none;">
+            <div class="grid-2">
+                <!-- Título, fecha y resumen -->
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <div class="card-title"><i class="fas fa-align-left"></i> Título, fecha y resumen</div>
+                    <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">TÍTULO</label>
+                    <input class="input" type="text" id="esp-titulo" style="margin-bottom:1rem;">
+                    <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">FECHA DEL MOMENTO</label>
+                    <input class="input" type="date" id="esp-fecha" style="margin-bottom:1rem;max-width:220px;">
+                    <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">RESUMEN (opcional — se mostrará bajo el banner)</label>
+                    <textarea class="input" id="esp-resumen" rows="4" style="resize:vertical;"
+                        placeholder="Escribe aquí un resumen de este momento…"></textarea>
+                </div>
+
+                <!-- Vídeo de YouTube -->
+                <div class="card" style="margin-bottom:1.5rem;">
+                    <div class="card-title"><i class="fab fa-youtube"></i> Vídeo de YouTube</div>
+                    <div class="video-input-wrap">
+                        <input class="input" type="text" id="esp-video-id"
+                            placeholder="ID del vídeo (ej: 5QnT7rXV6u0)"
+                            oninput="previewEspVideo()" style="margin-bottom:0; flex:1;">
+                        <button class="btn btn-outline" onclick="clearEspVideo()" title="Quitar vídeo">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="video-preview" id="esp-video-preview">
+                        <iframe id="esp-video-iframe" src="" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <!-- Foto de portada -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-image"></i> Foto de portada</div>
+                    <div id="esp-portada-wrap">
+                        <div class="portada-placeholder" id="esp-portada-placeholder"
+                             onclick="document.getElementById('esp-portada-file').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <img id="esp-portada-img" class="portada-current" style="display:none;" alt="Portada">
+                    </div>
+                    <input type="file" id="esp-portada-file" accept="image/*" style="display:none;"
+                        onchange="uploadEspPortada(this.files[0])">
+                    <button class="btn btn-outline" style="width:100%;margin-top:4px;"
+                        onclick="document.getElementById('esp-portada-file').click()">
+                        <i class="fas fa-upload"></i>
+                        <span id="esp-portada-btn-text">Subir foto de portada</span>
+                    </button>
+                    <button class="btn btn-outline" id="esp-portada-clear-btn" style="width:100%;margin-top:8px;display:none;color:var(--error);border-color:var(--error);"
+                        onclick="clearEspPortada()">
+                        <i class="fas fa-trash"></i>
+                        <span>Quitar portada</span>
+                    </button>
+
+                    <!-- Banner del especial: recorte ajustable (mismo recortador que semanas/páginas) -->
+                    <div id="esp-banner-adjust" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+                        <div style="font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:6px;">BANNER DEL ESPECIAL</div>
+                        <div id="esp-banner-preview-wrap" style="display:none;aspect-ratio:16/5;border-radius:8px;overflow:hidden;margin-bottom:8px;background:#000;">
+                            <img id="esp-banner-preview-img" alt="Banner del especial" style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                        <div id="esp-banner-status" style="font-size:.78rem;color:var(--muted);margin-bottom:8px;line-height:1.4;"></div>
+                        <button class="btn btn-outline" style="width:100%;" onclick="openEspBannerCropper()">
+                            <i class="fas fa-crop-alt"></i> <span id="esp-banner-crop-text">Ajustar recorte del banner</span>
+                        </button>
+                        <button class="btn btn-outline" id="esp-banner-reset-btn" style="width:100%;margin-top:8px;display:none;" onclick="resetEspBanner()">
+                            <i class="fas fa-rotate-left"></i> Volver al recorte automático
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compresor -->
+            <div class="compress-card">
+                <div class="compress-title"><i class="fas fa-compress-alt"></i> Compresión de imágenes</div>
+                <div class="compress-toggle-row">
+                    <div class="compress-toggle-text">Comprimir al subir
+                        <small>Desactívalo si las fotos ya vienen comprimidas: se suben tal cual. Ajuste común a todas las subidas del panel.</small>
+                    </div>
+                    <label class="switch" title="Activar o desactivar la compresión">
+                        <input type="checkbox" class="compress-switch" checked onchange="setCompressEnabled(this.checked)" aria-label="Comprimir imágenes al subir">
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+                <div class="compress-tabs">
+                    <button class="compress-tab active" id="esptab-calidad" onclick="setEspCompressMode('calidad')">Por calidad (%)</button>
+                    <button class="compress-tab inactive" id="esptab-res" onclick="setEspCompressMode('resolucion')">Por resolución (px)</button>
+                </div>
+                <div id="esppanel-calidad">
+                    <div class="compress-slider-row">
+                        <label>Calidad</label>
+                        <input type="range" min="10" max="100" value="75" step="1" id="espslider-calidad" oninput="updateEspSlider()">
+                        <span class="compress-val" id="espval-calidad">75%</span>
+                    </div>
+                    <p class="compress-hint">70–80% es un buen equilibrio entre calidad visual y peso.</p>
+                </div>
+                <div id="esppanel-resolucion" style="display:none;">
+                    <div class="compress-slider-row">
+                        <label>Ancho máx.</label>
+                        <input type="range" min="400" max="4000" value="1920" step="100" id="espslider-res" oninput="updateEspSlider()">
+                        <span class="compress-val" id="espval-res">1920px</span>
+                    </div>
+                    <p class="compress-hint">Las imágenes más anchas se redimensionan manteniendo la proporción.</p>
+                </div>
+            </div>
+
+            <!-- Galería de fotos -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-images"></i> Galería de fotos
+                    <span id="esp-photo-count" style="margin-left:auto; font-size:.8rem; color:var(--muted);"></span>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:.75rem;flex-wrap:wrap;">
+                    <button class="btn btn-outline" id="esp-btn-reorder" style="padding:6px 12px;font-size:.8rem;"
+                        onclick="reorderEspByCapture()" title="Lee la fecha EXIF de las fotos ya subidas y las ordena cronológicamente">
+                        <i class="fas fa-clock"></i> Ordenar por fecha de captura
+                    </button>
+                    <span id="esp-reorder-status" style="font-size:.78rem;color:var(--muted);"></span>
+                </div>
+
+                <div class="dropzone" id="esp-dropzone"
+                    onclick="document.getElementById('esp-photos-file').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Arrastra las fotos aquí o <span>haz clic para seleccionarlas</span></p>
+                    <p style="margin-top:4px;">JPG, PNG, WEBP · Máx. 10MB por foto</p>
+                </div>
+                <input type="file" id="esp-photos-file" multiple accept="image/*"
+                    style="display:none;" onchange="prepareEspUpload(this.files)">
+
+                <div class="preview-panel" id="esp-preview-panel">
+                    <div class="preview-panel-title">
+                        <i class="fas fa-list"></i>
+                        <span id="esp-preview-panel-title">Vista previa</span>
+                    </div>
+                    <div id="esp-preview-file-list"></div>
+                    <div class="preview-stats">
+                        <div class="preview-stat">
+                            <div class="preview-stat-label">Original</div>
+                            <div class="preview-stat-val" id="esp-stat-orig">—</div>
+                        </div>
+                        <div class="preview-stat highlight">
+                            <div class="preview-stat-label">Comprimido</div>
+                            <div class="preview-stat-val" id="esp-stat-comp">—</div>
+                        </div>
+                        <div class="preview-stat highlight">
+                            <div class="preview-stat-label">Ahorro</div>
+                            <div class="preview-stat-val" id="esp-stat-pct">—</div>
+                        </div>
+                    </div>
+                    <button class="btn-upload-preview" id="esp-btn-upload-final" onclick="doEspUpload()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span id="esp-btn-upload-label">Subir fotos</span>
+                    </button>
+                </div>
+
+                <div class="upload-bar" id="esp-upload-bar">
+                    <div class="upload-bar-fill" id="esp-upload-fill"></div>
+                </div>
+
+                <div class="photo-grid" id="esp-photo-grid"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal nueva sección -->
     <div id="new-section-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);align-items:center;justify-content:center;" onclick="if(event.target===this){hideNewSectionModal();document.body.style.overflow='';}">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:90%;max-width:420px;">
@@ -1251,7 +1448,7 @@ async function removeBannerFile(url) {
         const m = /\/object\/public\/banners\/(.+)$/.exec(url || '');
         if (!m) return;
         const path = decodeURIComponent(m[1]);
-        if (!path.startsWith('semana-')) return;      // solo archivos de banners de semana
+        if (!path.startsWith('semana-') && !path.startsWith('especial-')) return;   // solo archivos de banners de semana/especial
         await sb.storage.from('banners').remove([path]);
     } catch (e) { console.warn('removeBannerFile:', e); }
 }
@@ -1922,6 +2119,7 @@ async function setCompressEnabled(on) {
     if (pendingFiles.length)     await prepareUpload(pendingFiles);
     if (histPendingFiles.length) await prepareHistUpload(histPendingFiles);
     if (proyPendingFiles.length && proyUploadSection) await prepareSecUpload(proyUploadSection, proyPendingFiles);
+    if (espPendingFiles.length)  await prepareEspUpload(espPendingFiles);
 }
 document.addEventListener('DOMContentLoaded', applyCompressUI);
 
@@ -2055,14 +2253,14 @@ function switchTab(tab) {
     if (modal) { modal.style.display = 'none'; modal.style.visibility = 'hidden'; document.body.style.overflow = ''; }
     // Cerrar cualquier otro modal
     document.querySelectorAll('[id$="-modal"]').forEach(m => { m.style.display = 'none'; m.style.visibility = 'hidden'; });
-    ['semanas','historia','banners','proyecto'].forEach(t => {
+    ['semanas','historia','banners','proyecto','especiales'].forEach(t => {
         const panel = document.getElementById(`tab-${t}`);
         const btn   = document.getElementById(`tab-btn-${t}`);
         if (panel) panel.style.display = t === tab ? 'block' : 'none';
         if (btn)   btn.className = t === tab ? 'btn btn-primary' : 'btn btn-outline';
     });
     Array.from(document.querySelector('main').children).forEach(el => {
-        if (['tab-historia','tab-banners','tab-proyecto'].includes(el.id)) return;
+        if (['tab-historia','tab-banners','tab-proyecto','tab-especiales'].includes(el.id)) return;
         if (el.classList && el.classList.contains('storage-grid')) return;
         el.style.display = tab === 'semanas' ? '' : 'none';
     });
@@ -2070,6 +2268,7 @@ function switchTab(tab) {
     if (tab === 'historia') loadHistStats();
     if (tab === 'banners')  loadAllBanners();
     if (tab === 'proyecto') loadProyectoTab();
+    if (tab === 'especiales') loadEspecialesTab();
 }
 
 // ============================================
@@ -2168,7 +2367,7 @@ function launchCropper(dataUrl) {
     const modal   = document.getElementById('cropper-modal');
     const cropImg = document.getElementById('cropper-img');
     const cbtn    = document.getElementById('cropper-confirm-btn');
-    if (cbtn) cbtn.innerHTML = cropperPagina === 'semana'
+    if (cbtn) cbtn.innerHTML = (cropperPagina === 'semana' || cropperPagina === 'especial')
         ? '<i class="fas fa-check"></i> Confirmar recorte'
         : '<i class="fas fa-check"></i> Confirmar recorte y subir';
 
@@ -2231,15 +2430,24 @@ async function confirmCrop() {
             canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.9);
         });
 
-        if (pagina === 'semana') {
-            // Banner de semana: no se sube ahora, se sube al pulsar «Guardar semana»
+        if (pagina === 'semana' || pagina === 'especial') {
+            // Banner de semana/especial: no se sube ahora, se sube al guardar
             closeCropper();
-            if (bannerObjUrl) URL.revokeObjectURL(bannerObjUrl);
-            bannerBlob   = blob;
-            bannerObjUrl = URL.createObjectURL(blob);
-            bannerDirty  = true;
-            renderBanner();
-            toast('✅ Recorte listo. Pulsa «Guardar semana» para publicarlo.', 'ok');
+            if (pagina === 'semana') {
+                if (bannerObjUrl) URL.revokeObjectURL(bannerObjUrl);
+                bannerBlob   = blob;
+                bannerObjUrl = URL.createObjectURL(blob);
+                bannerDirty  = true;
+                renderBanner();
+                toast('✅ Recorte listo. Pulsa «Guardar semana» para publicarlo.', 'ok');
+            } else {
+                if (espBannerObjUrl) URL.revokeObjectURL(espBannerObjUrl);
+                espBannerBlob   = blob;
+                espBannerObjUrl = URL.createObjectURL(blob);
+                espBannerDirty  = true;
+                renderEspBanner();
+                toast('✅ Recorte listo. Pulsa «Guardar especial» para publicarlo.', 'ok');
+            }
         } else {
             // Cerrar modal antes de subir
             closeCropper();
@@ -2454,6 +2662,549 @@ dz.addEventListener('drop', e => {
     dz.classList.remove('drag');
     prepareUpload(e.dataTransfer.files);
 });
+
+// ============================================
+// ESPECIALES
+// ============================================
+const ESP_BUCKET = 'especiales';
+let especialesList  = [];
+let currentEspecial = null;   // slug actual; null = modo "nuevo"
+let especialData    = null;
+let espPortadaUrl   = null;
+let espBannerUrl = null, espBannerOrigUrl = null, espBannerBlob = null, espBannerObjUrl = null, espBannerDirty = false;
+let espPendingFiles = [], espCompressedBlobs = [], espRun = 0;
+let espCompressMode = 'calidad';
+
+// Escapa texto antes de insertarlo como HTML
+function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : String(str);
+    return d.innerHTML;
+}
+
+function slugify(str) {
+    return (str || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+}
+
+function fmtEspFecha(f) {
+    if (!f) return '';
+    const d = new Date(f + 'T00:00:00');
+    return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+async function loadEspecialesTab() {
+    const { data, error } = await sb.from('especiales').select('slug,titulo,fecha').order('fecha', { ascending: false });
+    if (error) {
+        const faltaTabla = /especiales/.test(error.message || '') && /relation|does not exist|schema cache/.test(error.message || '');
+        toast(faltaTabla ? 'Falta la tabla "especiales" en Supabase. Ejecuta el SQL indicado.' : `No se pudo cargar Especiales: ${error.message}`, 'err');
+        return;
+    }
+    especialesList = data || [];
+    const sel = document.getElementById('esp-select');
+    sel.innerHTML = '<option value="">+ Nuevo especial</option>' +
+        especialesList.map(e => `<option value="${esc(e.slug)}">${esc(e.titulo)}${e.fecha ? ' · ' + fmtEspFecha(e.fecha) : ''}</option>`).join('');
+    if (currentEspecial && especialesList.some(e => e.slug === currentEspecial)) {
+        sel.value = currentEspecial;
+    } else if (especialesList.length) {
+        await loadEspecial(especialesList[0].slug);
+    } else {
+        newEspecial();
+    }
+}
+
+function onEspSelectChange(slug) {
+    if (!slug) newEspecial();
+    else loadEspecial(slug);
+}
+
+function newEspecial() {
+    currentEspecial = null;
+    especialData = null;
+    document.getElementById('esp-select').value = '';
+    document.getElementById('esp-new-card').style.display = 'block';
+    document.getElementById('esp-editor').style.display = 'none';
+    document.getElementById('esp-save-btn').style.display = 'none';
+    document.getElementById('esp-new-titulo').value = '';
+    document.getElementById('esp-new-fecha').value = '';
+    document.getElementById('esp-slug-preview').textContent = '—';
+    document.getElementById('esp-status').innerHTML = '<i class="fas fa-circle-xmark" style="color:var(--muted)"></i> Especial nuevo';
+}
+
+function updateEspSlugPreview() {
+    document.getElementById('esp-slug-preview').textContent = slugify(document.getElementById('esp-new-titulo').value) || '—';
+}
+
+async function createEspecial() {
+    const titulo = document.getElementById('esp-new-titulo').value.trim();
+    const fecha  = document.getElementById('esp-new-fecha').value || null;
+    if (!titulo) { toast('Escribe un título', 'err'); return; }
+    let slug = slugify(titulo);
+    if (!slug) { toast('El título debe tener alguna letra o número', 'err'); return; }
+    let candidate = slug, n = 2;
+    while (especialesList.some(e => e.slug === candidate)) { candidate = `${slug}-${n}`; n++; }
+    slug = candidate;
+
+    const { error } = await sb.from('especiales').insert({ slug, titulo, fecha });
+    if (error) {
+        const faltaTabla = /especiales/.test(error.message || '') && /relation|does not exist|schema cache/.test(error.message || '');
+        toast(faltaTabla
+            ? 'Falta la tabla "especiales" en Supabase. Ejecuta el SQL indicado y vuelve a intentarlo.'
+            : `Error al crear: ${error.message}`, 'err');
+        return;
+    }
+    toast('✅ Especial creado', 'ok');
+    currentEspecial = slug;
+    await loadEspecialesTab();   // refresca el desplegable (incluye el nuevo)
+    await loadEspecial(slug);    // entra en modo edición
+}
+
+async function loadEspecial(slug) {
+    currentEspecial = slug;
+    document.getElementById('esp-select').value = slug;
+    document.getElementById('esp-new-card').style.display = 'none';
+    document.getElementById('esp-editor').style.display = 'block';
+    document.getElementById('esp-save-btn').style.display = 'inline-flex';
+    document.getElementById('esp-status').innerHTML = '⏳ Cargando...';
+    document.getElementById('esp-photo-grid').innerHTML = '';
+    document.getElementById('esp-photo-count').textContent = '';
+
+    const { data, error } = await sb.from('especiales').select('*').eq('slug', slug).single();
+    especialData = data || null;
+
+    document.getElementById('esp-titulo').value   = (data && data.titulo)   || '';
+    document.getElementById('esp-fecha').value    = (data && data.fecha)    || '';
+    document.getElementById('esp-resumen').value  = (data && data.resumen) || '';
+    document.getElementById('esp-video-id').value = (data && data.video_id) || '';
+    previewEspVideo();
+
+    espPortadaUrl = (data && data.portada_url) || null;
+    espBannerUrl = espBannerOrigUrl = (data && data.banner_url) || null;
+    espBannerBlob = null; espBannerDirty = false;
+    if (espBannerObjUrl) { URL.revokeObjectURL(espBannerObjUrl); espBannerObjUrl = null; }
+    renderEspPortada();
+
+    document.getElementById('esp-status').innerHTML = error
+        ? `<i class="fas fa-circle-exclamation" style="color:var(--error)"></i> ${esc(error.message)}`
+        : '<i class="fas fa-circle-check" style="color:var(--success)"></i> Especial guardado';
+
+    await loadEspPhotos_list();
+}
+
+async function saveEspecial() {
+    if (!currentEspecial) return;
+    const titulo  = document.getElementById('esp-titulo').value.trim();
+    const fecha   = document.getElementById('esp-fecha').value || null;
+    const resumen = document.getElementById('esp-resumen').value.trim();
+    const rawVideo = document.getElementById('esp-video-id').value.trim();
+    const videoId  = extractVideoId(rawVideo);
+    if (videoId !== rawVideo) { document.getElementById('esp-video-id').value = videoId; previewEspVideo(); }
+    if (!titulo) { toast('El título no puede estar vacío', 'err'); return; }
+
+    const payload = {
+        titulo, fecha, resumen: resumen || null,
+        video_id: videoId || null,
+        portada_url: espPortadaUrl || null,
+        updated_at: new Date().toISOString()
+    };
+
+    let uploadedBannerPath = null;
+    if (espBannerDirty) {
+        if (espBannerBlob) {
+            uploadedBannerPath = `especial-${currentEspecial}_${Date.now()}.jpg`;
+            const { error: upErr } = await sb.storage.from('banners').upload(uploadedBannerPath, espBannerBlob, {
+                upsert: true, contentType: 'image/jpeg'
+            });
+            if (upErr) { toast(`Error al subir el banner: ${upErr.message}`, 'err'); return; }
+            espBannerUrl = sb.storage.from('banners').getPublicUrl(uploadedBannerPath).data.publicUrl;
+        }
+        payload.banner_url = espBannerUrl || null;
+    }
+
+    const { error } = await sb.from('especiales').update(payload).eq('slug', currentEspecial);
+    if (error) {
+        if (uploadedBannerPath) {
+            await sb.storage.from('banners').remove([uploadedBannerPath]);
+            espBannerUrl = espBannerOrigUrl;
+        }
+        toast(`Error al guardar: ${error.message}`, 'err');
+    } else {
+        especialData = { ...(especialData || {}), ...payload };
+        if (espBannerDirty) {
+            if (espBannerOrigUrl && espBannerOrigUrl !== espBannerUrl) await removeBannerFile(espBannerOrigUrl);
+            espBannerOrigUrl = espBannerUrl;
+            espBannerBlob = null; espBannerDirty = false;
+            if (espBannerObjUrl) { URL.revokeObjectURL(espBannerObjUrl); espBannerObjUrl = null; }
+            renderEspBanner();
+        }
+        toast('✅ Especial guardado correctamente', 'ok');
+        document.getElementById('esp-status').innerHTML = '<i class="fas fa-circle-check" style="color:var(--success)"></i> Guardado';
+        await loadEspecialesTab();
+    }
+}
+
+// ---- Vídeo ----
+function previewEspVideo() {
+    const id = extractVideoId(document.getElementById('esp-video-id').value.trim());
+    const preview = document.getElementById('esp-video-preview');
+    const iframe  = document.getElementById('esp-video-iframe');
+    if (id) { iframe.src = `https://www.youtube.com/embed/${id}`; preview.style.display = 'block'; }
+    else    { preview.style.display = 'none'; iframe.src = ''; }
+}
+function clearEspVideo() {
+    document.getElementById('esp-video-id').value = '';
+    previewEspVideo();
+}
+
+// ---- Portada y banner ----
+function renderEspPortada() {
+    const img = document.getElementById('esp-portada-img');
+    const ph  = document.getElementById('esp-portada-placeholder');
+    const btn = document.getElementById('esp-portada-btn-text');
+    const clearBtn = document.getElementById('esp-portada-clear-btn');
+    if (espPortadaUrl) {
+        img.src = espPortadaUrl; img.style.display = 'block'; ph.style.display = 'none';
+        btn.textContent = 'Cambiar portada'; clearBtn.style.display = 'block';
+    } else {
+        img.style.display = 'none'; ph.style.display = 'flex';
+        btn.textContent = 'Subir foto de portada'; clearBtn.style.display = 'none';
+    }
+    renderEspBanner();
+}
+
+function renderEspBanner() {
+    const box = document.getElementById('esp-banner-adjust');
+    if (!box) return;
+    box.style.display = espPortadaUrl ? 'block' : 'none';
+    const has  = !!(espBannerBlob || espBannerUrl);
+    const wrap = document.getElementById('esp-banner-preview-wrap');
+    const img  = document.getElementById('esp-banner-preview-img');
+    if (has) { img.src = espBannerBlob ? espBannerObjUrl : espBannerUrl; wrap.style.display = 'block'; }
+    else     { img.removeAttribute('src'); wrap.style.display = 'none'; }
+    let msg;
+    if (espBannerBlob)               msg = 'Recorte ajustado · pendiente de guardar. Pulsa «Guardar especial».';
+    else if (espBannerDirty && !has) msg = 'Se volverá al recorte automático al guardar.';
+    else if (espBannerUrl)           msg = 'Recorte ajustado y guardado.';
+    else                              msg = 'Recorte automático (centrado). Ajústalo si la foto sale descuadrada.';
+    document.getElementById('esp-banner-status').textContent = msg;
+    document.getElementById('esp-banner-crop-text').textContent = has ? 'Reajustar recorte del banner' : 'Ajustar recorte del banner';
+    document.getElementById('esp-banner-reset-btn').style.display = has ? 'block' : 'none';
+}
+
+function discardEspBanner() {
+    if (espBannerObjUrl) { URL.revokeObjectURL(espBannerObjUrl); espBannerObjUrl = null; }
+    if (espBannerBlob || espBannerUrl) espBannerDirty = true;
+    espBannerBlob = null; espBannerUrl = null;
+}
+
+function resetEspBanner() {
+    if (!confirm('¿Volver al recorte automático del banner de este especial?')) return;
+    discardEspBanner();
+    renderEspBanner();
+}
+
+async function openEspBannerCropper() {
+    if (!espPortadaUrl) { toast('Primero elige la foto de portada', 'err'); return; }
+    toast('Preparando imagen...', 'ok');
+    let dataUrl;
+    try {
+        const res = await fetch(espPortadaUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const blob = await res.blob();
+        dataUrl = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = e => resolve(e.target.result);
+            r.onerror = reject;
+            r.readAsDataURL(blob);
+        });
+    } catch (e) { toast(`No se pudo cargar la portada: ${e.message}`, 'err'); return; }
+    cropperPagina = 'especial';
+    launchCropper(dataUrl);
+}
+
+async function uploadEspPortada(file) {
+    if (!file || !currentEspecial) return;
+    toast('Subiendo portada...', 'ok');
+    const path = `${currentEspecial}/portada_${Date.now()}.${file.name.split('.').pop()}`;
+    const { error } = await sb.storage.from(ESP_BUCKET).upload(path, file, { upsert: true });
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    const { data } = sb.storage.from(ESP_BUCKET).getPublicUrl(path);
+    espPortadaUrl = data.publicUrl;
+    discardEspBanner();
+    renderEspPortada();
+    toast('✅ Portada subida. Recuerda guardar el especial.', 'ok');
+}
+
+// ---- Galería ----
+async function loadEspPhotos_list() {
+    if (!currentEspecial) return;
+    const { data, error } = await sb.storage.from(ESP_BUCKET)
+        .list(currentEspecial, { limit: 1000, sortBy: { column: 'created_at', order: 'asc' } });
+    if (error || !data) return;
+
+    const photos = sortByCapture(data.filter(f => f.name !== '.emptyFolderPlaceholder'));
+    const conFecha = photos.filter(f => capFromName(f.name)).length;
+    document.getElementById('esp-photo-count').textContent =
+        `${photos.length} fotos` + (photos.length ? (conFecha === photos.length ? ' · orden cronológico' : ` · ${photos.length - conFecha} sin fecha de captura`) : '');
+
+    const grid = document.getElementById('esp-photo-grid');
+    grid.innerHTML = '';
+    photos.forEach(f => {
+        const path = `${currentEspecial}/${f.name}`;
+        const { data: urlData } = sb.storage.from(ESP_BUCKET).getPublicUrl(path);
+        const url = urlData.publicUrl;
+        const isPortada = espPortadaUrl && espPortadaUrl.includes(f.name);
+        const item = document.createElement('div');
+        item.className = 'photo-item' + (isPortada ? ' is-portada' : '');
+        const cd = capFromName(f.name);
+        const dateLabel = cd ? cd.toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        item.innerHTML = `
+            <img src="${url}" alt="${esc(f.name)}" loading="lazy">
+            ${dateLabel ? `<span class="photo-date">${dateLabel}</span>` : ''}
+            <div class="photo-overlay">
+                <button class="photo-btn photo-btn-star" title="Usar como portada" onclick="setAsEspPortada('${url}')">★</button>
+                <button class="photo-btn photo-btn-del" title="Eliminar" onclick="deleteEspPhoto('${path}', this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>`;
+        grid.appendChild(item);
+    });
+}
+
+async function deleteEspPhoto(path, btn) {
+    if (!confirm('¿Eliminar esta foto?')) return;
+    const { error } = await sb.storage.from(ESP_BUCKET).remove([path]);
+    if (error) { toast(`Error: ${error.message}`, 'err'); return; }
+    const fileName = path.split('/').pop();
+    const wasPortada = espPortadaUrl && espPortadaUrl.includes(fileName);
+    btn.closest('.photo-item').remove();
+    const count = document.querySelectorAll('#esp-photo-grid .photo-item').length;
+    document.getElementById('esp-photo-count').textContent = `${count} fotos`;
+    if (wasPortada) {
+        espPortadaUrl = null;
+        discardEspBanner();
+        renderEspPortada();
+        toast('Foto eliminada. Era la portada, así que también se ha quitado. Recuerda guardar.', 'ok');
+    } else {
+        toast('Foto eliminada', 'ok');
+    }
+}
+
+async function setAsEspPortada(url) {
+    if (url !== espPortadaUrl) discardEspBanner();
+    espPortadaUrl = url;
+    renderEspPortada();
+    document.querySelectorAll('#esp-photo-grid .photo-item').forEach(el => el.classList.remove('is-portada'));
+    toast('✅ Portada seleccionada. Recuerda guardar.', 'ok');
+}
+
+function clearEspPortada() {
+    if (!confirm('¿Quitar la foto de portada de este especial?')) return;
+    espPortadaUrl = null;
+    discardEspBanner();
+    renderEspPortada();
+    document.querySelectorAll('#esp-photo-grid .photo-item').forEach(el => el.classList.remove('is-portada'));
+    toast('Portada eliminada. Recuerda guardar.', 'ok');
+}
+
+// ---- Compresor ----
+function setEspCompressMode(mode) {
+    espCompressMode = mode;
+    document.getElementById('esptab-calidad').className = mode === 'calidad' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('esptab-res').className     = mode === 'resolucion' ? 'compress-tab active' : 'compress-tab inactive';
+    document.getElementById('esppanel-calidad').style.display    = mode === 'calidad' ? 'block' : 'none';
+    document.getElementById('esppanel-resolucion').style.display = mode === 'resolucion' ? 'block' : 'none';
+}
+function updateEspSlider() {
+    document.getElementById('espval-calidad').textContent = document.getElementById('espslider-calidad').value + '%';
+    document.getElementById('espval-res').textContent     = document.getElementById('espslider-res').value + 'px';
+}
+
+async function compressEspImage(file) {
+    if (!compressEnabled) return passthroughImage(file);
+    const origName = file.name, origSize = file.size;
+    const isHeic = /\.(heic|heif)$/i.test(origName) || /image\/(heic|heif)/.test(file.type);
+    if (isHeic && typeof heic2any !== 'undefined') {
+        try {
+            const r = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+            file = Array.isArray(r) ? r[0] : r;
+        } catch(e) { console.warn('heic2any failed', e); }
+    }
+    return new Promise((resolve) => {
+        const quality  = parseInt(document.getElementById('espslider-calidad').value) / 100;
+        const maxWidth = parseInt(document.getElementById('espslider-res').value);
+        const reader   = new FileReader();
+        reader.onload  = (e) => {
+            const img  = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (espCompressMode === 'resolucion' && w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const q = espCompressMode === 'calidad' ? quality : 0.85;
+                canvas.toBlob((blob) => resolve({
+                    blob, originalSize: origSize, compressedSize: blob.size,
+                    name: origName.replace(/\.[^.]+$/, '.jpg')
+                }), 'image/jpeg', q);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function espCapBadge(cap) {
+    if (!cap || !cap.date) return '<span class="preview-file-date bad" title="Sin fecha de captura: quedará al final">sin fecha</span>';
+    const txt = cap.date.toLocaleString('es-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    if (cap.source !== 'exif') return `<span class="preview-file-date warn" title="No trae EXIF: se usa la fecha del archivo">≈ ${txt}</span>`;
+    return `<span class="preview-file-date" title="Fecha de captura (EXIF)">${txt}</span>`;
+}
+
+async function prepareEspUpload(files) {
+    if (!files || files.length === 0 || !currentEspecial) return;
+    espPendingFiles = Array.from(files);
+    espCompressedBlobs = [];
+    const run = ++espRun;
+
+    const panel    = document.getElementById('esp-preview-panel');
+    const fileList = document.getElementById('esp-preview-file-list');
+    const title    = document.getElementById('esp-preview-panel-title');
+    const btnLabel = document.getElementById('esp-btn-upload-label');
+    const btnFinal = document.getElementById('esp-btn-upload-final');
+
+    panel.style.display  = 'block';
+    fileList.innerHTML   = '<div style="color:var(--muted); font-size:.82rem; padding:8px 0;"><i class="fas fa-spinner fa-spin"></i> Calculando compresión...</div>';
+    btnFinal.disabled    = true;
+    title.textContent    = `Vista previa · ${espPendingFiles.length} foto${espPendingFiles.length > 1 ? 's' : ''} seleccionada${espPendingFiles.length > 1 ? 's' : ''}`;
+
+    let totalOrig = 0, totalComp = 0;
+    fileList.innerHTML = '';
+
+    for (const file of espPendingFiles) {
+        const cap    = await readCaptureDate(file);
+        const result = await compressEspImage(file);
+        if (run !== espRun) return;
+        result.captured = cap;
+        espCompressedBlobs.push(result);
+        totalOrig += result.originalSize;
+        totalComp += result.compressedSize;
+
+        const pct  = Math.round((1 - result.compressedSize / result.originalSize) * 100);
+        const row  = document.createElement('div');
+        row.className = 'preview-file-row';
+        row.innerHTML = `
+            <i class="fas fa-image"></i>
+            <span class="preview-file-name">${file.name}</span>
+            ${espCapBadge(cap)}
+            <span class="preview-file-orig">${formatBytes(result.originalSize)}</span>
+            <span class="preview-arrow">→</span>
+            <span class="preview-file-comp">${formatBytes(result.compressedSize)}</span>
+            <span class="preview-file-pct">${result.skipped ? 'sin cambios' : '−' + pct + '%'}</span>`;
+        fileList.appendChild(row);
+    }
+
+    const nTot  = espCompressedBlobs.length;
+    const nExif = espCompressedBlobs.filter(r => r.captured && r.captured.source === 'exif').length;
+    const nSin  = espCompressedBlobs.filter(r => !(r.captured && r.captured.date)).length;
+    fileList.insertAdjacentHTML('afterbegin',
+        `<div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;"><i class="fas fa-clock"></i> ${nExif} de ${nTot} con fecha de captura (EXIF)` +
+        (nSin ? ` · ${nSin} sin fecha (irán al final)` : ' · se ordenarán cronológicamente') + '</div>');
+
+    const totalPct = Math.round((1 - totalComp / totalOrig) * 100);
+    document.getElementById('esp-stat-orig').textContent = formatBytes(totalOrig);
+    document.getElementById('esp-stat-comp').textContent = formatBytes(totalComp);
+    document.getElementById('esp-stat-pct').textContent  = totalPct > 0 ? `−${totalPct}%` : '0%';
+
+    btnLabel.textContent = `Subir ${espPendingFiles.length} foto${espPendingFiles.length > 1 ? 's' : ''} (${formatBytes(totalComp)})`;
+    btnFinal.disabled    = false;
+    document.getElementById('esp-photos-file').value = '';
+}
+
+async function doEspUpload() {
+    if (!espCompressedBlobs.length || !currentEspecial) return;
+    const btn  = document.getElementById('esp-btn-upload-final');
+    const bar  = document.getElementById('esp-upload-bar');
+    const fill = document.getElementById('esp-upload-fill');
+    btn.disabled = true; bar.style.display = 'block';
+
+    let done = 0, failed = 0, totalOrig = 0, totalComp = 0;
+    for (const result of espCompressedBlobs) {
+        totalOrig += result.originalSize; totalComp += result.compressedSize;
+        const stamp = (result.captured && result.captured.date) ? capStamp(result.captured.date) + '_' : '';
+        const path  = `${currentEspecial}/${stamp}${Date.now()}_${result.name}`;
+        const { error: upErr } = await sb.storage.from(ESP_BUCKET).upload(path, result.blob, {
+            upsert: true, contentType: result.type || 'image/jpeg'
+        });
+        if (upErr) { failed++; console.warn('Subida fallida:', result.name, upErr.message); }
+        else done++;
+        fill.style.width = ((done + failed) / espCompressedBlobs.length * 100) + '%';
+    }
+
+    bar.style.display = 'none'; fill.style.width = '0';
+    const saving = Math.round((1 - totalComp / totalOrig) * 100);
+    if (failed) toast(`⚠️ ${failed} foto${failed > 1 ? 's' : ''} no se ${failed > 1 ? 'pudieron' : 'pudo'} subir. Subidas correctamente: ${done}.`, 'err');
+    else toast(`✅ ${done} foto${done > 1 ? 's' : ''} subida${done > 1 ? 's' : ''} · ${formatBytes(totalOrig)} → ${formatBytes(totalComp)} (−${saving}%)`, 'ok');
+
+    document.getElementById('esp-preview-panel').style.display = 'none';
+    espPendingFiles = []; espCompressedBlobs = []; btn.disabled = false;
+    await loadEspPhotos_list();
+}
+
+// ---- Ordenar por fecha de captura (fotos ya subidas) ----
+async function reorderEspByCapture() {
+    if (!currentEspecial) return;
+    const btn    = document.getElementById('esp-btn-reorder');
+    const status = document.getElementById('esp-reorder-status');
+    const { data, error } = await sb.storage.from(ESP_BUCKET).list(currentEspecial, { limit: 1000 });
+    if (error || !data) { toast('No se pudo leer la galería', 'err'); return; }
+    const files = data.filter(f => f.name !== '.emptyFolderPlaceholder' && !capFromName(f.name));
+    if (!files.length) { toast('Todas las fotos ya tienen fecha de captura (o no hay fotos que ordenar).', 'ok'); return; }
+    if (!confirm(`Se leerá la fecha EXIF de ${files.length} foto${files.length > 1 ? 's' : ''} y se renombrarán las que la tengan.\n\nLas fotos sin EXIF no se tocan. Los enlaces directos antiguos a las fotos renombradas dejarán de funcionar (la portada se actualiza sola).\n\n¿Continuar?`)) return;
+
+    btn.disabled = true;
+    let renamed = 0, noExif = 0, failed = 0, portadaChanged = false, i = 0;
+    for (const f of files) {
+        i++;
+        status.textContent = `Leyendo ${i}/${files.length}…`;
+        try {
+            const oldPath = `${currentEspecial}/${f.name}`;
+            const url = sb.storage.from(ESP_BUCKET).getPublicUrl(oldPath).data.publicUrl;
+            const d = readExifDateFromBuffer(await fetchHead(url));
+            if (!d) { noExif++; continue; }
+            const newName = `${capStamp(d)}_${f.name}`;
+            const { error: mvErr } = await sb.storage.from(ESP_BUCKET).move(oldPath, `${currentEspecial}/${newName}`);
+            if (mvErr) { failed++; console.warn('move:', f.name, mvErr.message); continue; }
+            renamed++;
+            if (espPortadaUrl && espPortadaUrl.includes(f.name)) {
+                espPortadaUrl = sb.storage.from(ESP_BUCKET).getPublicUrl(`${currentEspecial}/${newName}`).data.publicUrl;
+                portadaChanged = true;
+            }
+        } catch (e) { failed++; console.warn('EXIF:', f.name, e); }
+    }
+    if (portadaChanged) {
+        renderEspPortada();
+        if (especialData) {
+            const { error: pErr } = await sb.from('especiales').update({ portada_url: espPortadaUrl }).eq('slug', currentEspecial);
+            if (pErr) toast('La portada cambió de nombre: pulsa «Guardar especial» para fijarla.', 'err');
+        }
+    }
+    status.textContent = '';
+    btn.disabled = false;
+    await loadEspPhotos_list();
+    toast(`${failed ? '⚠️' : '✅'} ${renamed} ordenada${renamed === 1 ? '' : 's'} por fecha de captura · ${noExif} sin EXIF` + (failed ? ` · ${failed} con error` : ''), failed ? 'err' : 'ok');
+}
+
+// Arrastrar y soltar
+const edz = document.getElementById('esp-dropzone');
+if (edz) {
+    edz.addEventListener('dragover',  e => { e.preventDefault(); edz.classList.add('drag'); });
+    edz.addEventListener('dragleave', ()  => edz.classList.remove('drag'));
+    edz.addEventListener('drop', e => {
+        e.preventDefault(); edz.classList.remove('drag');
+        prepareEspUpload(e.dataTransfer.files);
+    });
+}
 
 // ============================================
 // EL PROYECTO — TAB

@@ -175,6 +175,7 @@
     const page = window.location.pathname.split('/').pop() || 'index.html';
     const isProyecto = page === 'proyecto.html';
     const isHistoria = page === 'historia.html';
+    const isEspeciales = page === 'especial.html' || page === 'especiales.html';
 
     // Build header
     const header = document.createElement('header');
@@ -189,6 +190,7 @@
                 <li><a href="index.html#videos">Actualidad</a></li>
                 <li><a href="proyecto.html"${isProyecto ? ' class="active"' : ''}>El Proyecto</a></li>
                 <li><a href="historia.html"${isHistoria ? ' class="active"' : ''}>La Vieja Romareda</a></li>
+                <li><a href="especiales.html"${isEspeciales ? ' class="active"' : ''}>Especiales</a></li>
             </ul>
             <div class="site-mobile-social">
                 <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
