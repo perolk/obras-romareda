@@ -444,9 +444,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             document.title = `Semana ${WEEK_NUM} · Obras Romareda`;
             const [meta, photos] = await Promise.all([loadMeta(), loadPhotos()]);
-            // Una semana sin fotos no se muestra: se vuelve a la portada (si falló la carga, se enseña la página como siempre)
-            if (photos && photos.length === 0) { window.location.replace('index.html'); return; }
             const list = photos || [];
+            // Se oculta solo si no tiene ni fotos ni vídeo (si falló la carga de fotos, se enseña la página como siempre)
+            if (photos && list.length === 0 && !meta.video_id) { window.location.replace('index.html'); return; }
             renderHero(meta, list.length);
             renderVideo(meta);
             renderPhotos(list);
@@ -519,16 +519,16 @@
             return _photoCache.get(n);
         }
 
-        // Semana más cercana (anterior o siguiente) que exista y tenga fotos; null si no hay
+        // Semana más cercana (anterior o siguiente) que exista y tenga fotos o vídeo; null si no hay
         async function findAdjacentWeek(dir) {
-            let q = sb.from('semanas').select('numero');
+            let q = sb.from('semanas').select('numero, video_id');
             q = dir < 0 ? q.lt('numero', WEEK_NUM).order('numero', { ascending: false })
                         : q.gt('numero', WEEK_NUM).order('numero', { ascending: true });
             const { data } = await q;
             const rows = data || [];
             for (let i = 0; i < rows.length; i += 4) {
                 const chunk = rows.slice(i, i + 4);
-                const ok = await Promise.all(chunk.map(w => weekHasPhotos(w.numero)));
+                const ok = await Promise.all(chunk.map(w => w.video_id ? Promise.resolve(true) : weekHasPhotos(w.numero)));
                 const k = ok.indexOf(true);
                 if (k >= 0) return chunk[k].numero;
             }

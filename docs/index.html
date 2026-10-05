@@ -566,14 +566,14 @@
             return _weekPhotoCache.get(n);
         }
 
-        // De una lista de semanas (ya ordenada) devuelve solo las que tienen fotos; con 'max', las primeras 'max'
+        // De una lista de semanas (ya ordenada) devuelve las que tienen fotos o vídeo; con 'max', las primeras 'max'
         async function filterWeeksWithPhotos(rows, max) {
             const folders = await weekFolders();
-            const cand = folders ? rows.filter(w => folders.has(w.numero)) : rows;
+            const cand = folders ? rows.filter(w => w.video_id || folders.has(w.numero)) : rows;
             const step = max || 10, out = [];
             for (let i = 0; i < cand.length && (!max || out.length < max); i += step) {
                 const chunk = cand.slice(i, i + step);
-                const ok = await Promise.all(chunk.map(w => weekHasPhotos(w.numero)));
+                const ok = await Promise.all(chunk.map(w => w.video_id ? Promise.resolve(true) : weekHasPhotos(w.numero)));
                 chunk.forEach((w, k) => { if (ok[k] && (!max || out.length < max)) out.push(w); });
             }
             return out;
@@ -730,7 +730,7 @@
             }
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            const { data: allRows } = await sb.from('semanas').select('numero, portada_url, banner_url').order('numero', { ascending: false });
+            const { data: allRows } = await sb.from('semanas').select('numero, portada_url, banner_url, video_id').order('numero', { ascending: false });
             const data = allRows ? await filterWeeksWithPhotos(allRows) : [];
             const grid = document.getElementById('all-weeks-grid');
             if (!data || data.length === 0) {

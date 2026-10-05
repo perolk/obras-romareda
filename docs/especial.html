@@ -341,9 +341,8 @@
         document.addEventListener('DOMContentLoaded', async () => {
             if (!SLUG) { window.location.replace('especiales.html'); return; }
             const [meta, photos] = await Promise.all([loadMeta(), loadPhotos()]);
-            // Sin fila en BD, o con fotos pero vacía: no se muestra, se vuelve al listado
+            // Solo se redirige si el slug no existe en absoluto; sin fotos sigue mostrándose (puede ser solo vídeo y texto)
             if (!meta) { window.location.replace('especiales.html'); return; }
-            if (photos && photos.length === 0) { window.location.replace('especiales.html'); return; }
             const list = photos || [];
             document.title = `${meta.titulo || 'Especial'} · Obras Romareda`;
             renderHero(meta, list.length);

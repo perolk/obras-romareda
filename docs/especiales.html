@@ -106,14 +106,6 @@
             return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // ¿Tiene fotos este especial? (igual que las semanas: si se borran todas, no se muestra). Ante un error de red, no se oculta.
-        async function hasPhotos(slug) {
-            try {
-                const { data, error } = await sb.storage.from(BUCKET).list(slug, { limit: 2 });
-                return error || !data ? true : data.some(f => f.name !== '.emptyFolderPlaceholder');
-            } catch (e) { return true; }
-        }
-
         async function load() {
             const grid = document.getElementById('esp-grid');
             const { data, error } = await sb.from('especiales').select('slug,titulo,fecha,portada_url,banner_url').order('fecha', { ascending: false });
@@ -125,13 +117,7 @@
                 grid.innerHTML = '<div class="esp-empty"><i class="fas fa-star" aria-hidden="true"></i>Todavía no hay momentos especiales publicados.</div>';
                 return;
             }
-            const checks = await Promise.all(data.map(e => hasPhotos(e.slug)));
-            const rows = data.filter((e, i) => checks[i]);
-            if (!rows.length) {
-                grid.innerHTML = '<div class="esp-empty"><i class="fas fa-star" aria-hidden="true"></i>Todavía no hay momentos especiales publicados.</div>';
-                return;
-            }
-            grid.innerHTML = rows.map(e => {
+            grid.innerHTML = data.map(e => {
                 const img = e.banner_url || e.portada_url;
                 return `<a class="esp-card" href="especial.html?s=${encodeURIComponent(e.slug)}">
                     <div class="esp-card-img-wrap">
