@@ -358,7 +358,8 @@
         async function loadPhotos() {
             const { data, error } = await sb.storage.from(BUCKET).list(SLUG, { limit: 1000, sortBy: { column: 'created_at', order: 'asc' } });
             if (error || !data) return null;      // null = no se pudo cargar (distinto de "sin fotos")
-            return sortByCapture(data.filter(f => f.name !== '.emptyFolderPlaceholder'));
+            // La foto de portada no se muestra en la galería pública (solo se usa como banner/portada)
+            return sortByCapture(data.filter(f => f.name !== '.emptyFolderPlaceholder' && !f.name.startsWith('portada_')));
         }
 
         function renderHero(meta, photoCount) {
