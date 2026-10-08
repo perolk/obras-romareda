@@ -10,8 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -29,7 +28,7 @@
             --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
+        body { font-family: 'Barlow', sans-serif; color: var(--text); background: var(--bg); }
 
         /* BANNER — idéntico al de proyecto */
         #page-banner {
@@ -163,7 +162,7 @@
             font-size: .9rem;
             font-weight: 700;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Barlow', sans-serif;
             transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
         }
         @media (hover: hover) and (pointer: fine) {
@@ -250,6 +249,8 @@
             .masonry { columns: 2 150px; }
         }
     </style>
+    <meta name="robots" content="noindex, follow">
+    <link rel="stylesheet" href="alumni.css">
 </head>
 <body>
 
@@ -313,6 +314,13 @@
         const PAGE_SIZE = 24;
         const sb        = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Escapa texto antes de insertarlo como HTML (evita que un caracter como < o " rompa la página o inyecte código)
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str == null ? '' : String(str);
+            return d.innerHTML;
+        }
+
         let allFiles = [], shown = 0;
         let lbPhotos = [], lbIdx = 0;
 
@@ -361,8 +369,8 @@
                 item.onclick = () => lbOpen(allFiles.map(f => getUrl(f.name)), idx);
                 item.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') lbOpen(allFiles.map(f => getUrl(f.name)), idx); };
                 item.innerHTML = `
-                    <img src="${url}" alt="La Vieja Romareda" loading="${idx < 8 ? 'eager' : 'lazy'}">
-                    <div class="overlay"><span>${f.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, '')}</span></div>`;
+                    <img src="${esc(url)}" alt="La Vieja Romareda" loading="${idx < 8 ? 'eager' : 'lazy'}">
+                    <div class="overlay"><span>${esc(f.name.replace(/^\d+_/, '').replace(/\.[^.]+$/, ''))}</span></div>`;
                 masonry.appendChild(item);
             });
             shown += batch.length;

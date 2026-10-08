@@ -1,0 +1,173 @@
+/* ==========================================================================
+   OBRAS ROMAREDA · Variante E3 "Señalética"
+   Titulares y cifras: Alumni Sans 800 (mayúsculas)
+   Texto:              Barlow
+   Etiquetas y datos:  JetBrains Mono
+   Logotipo:           Calibri / Carlito cursiva (NO se toca)
+   Se carga al final de <head>, después de los estilos de cada página.
+   ========================================================================== */
+
+:root {
+    --f-display: 'Alumni Sans', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+    --f-body:    'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono:    'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --on-blue-muted: rgba(255, 255, 255, .76);
+}
+
+body, button, input, textarea, select { font-family: var(--f-body); }
+
+/* ───────── TITULARES (Alumni Sans, mayúsculas) ───────── */
+h1, h2, h3, h4, h5,
+.hero h1, .section-title, .week-title, .page-header h1,
+#banner-content h1, #banner-title, .error-number,
+.actualidad-title, .actualidad-prev-title, .esp-card-title,
+.week-nav-name, .seccion-block h3,
+.week-video-section h2, .week-photos-section h2, .share-sheet h3 {
+    font-family: var(--f-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .015em;
+    line-height: 1.02;
+    text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
+.hero h1 { font-size: clamp(4.2rem, 12vw, 9rem); line-height: .98; }
+.section-title { font-size: clamp(2.6rem, 5.2vw, 4rem); }
+.week-title, #banner-content h1, #banner-title { font-size: clamp(3rem, 8vw, 5.2rem); }
+.page-header h1 { font-size: clamp(3rem, 8vw, 4.6rem); }
+.error-number { font-size: clamp(8rem, 30vw, 15rem); letter-spacing: 0; line-height: .9; }
+.actualidad-title { font-size: 1.8rem; line-height: 1.05; }
+.actualidad-prev-title { font-size: 1.3rem; line-height: 1.05; }
+.esp-card-title { font-size: 1.65rem; line-height: 1.05; }
+.week-nav-name { font-size: 1.5rem; }
+.seccion-block h3 { font-size: 1.75rem; }
+.week-video-section h2, .week-photos-section h2 { font-size: 2.1rem; }
+.share-sheet h3 { font-size: 1.6rem; }
+
+/* ───────── CONTADOR "DÍA N DE OBRAS" (el marcador) ───────── */
+.construction-counter {
+    display: inline-flex;
+    align-items: baseline;   /* etiquetas sobre la misma línea base que las cifras */
+    gap: 1rem;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    font-family: var(--f-mono);
+    font-weight: 500;
+    font-size: .82rem;
+    line-height: 1;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--on-blue-muted);
+}
+.construction-counter span {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(7.5rem, 24vw, 15.5rem);
+    line-height: .8;
+    letter-spacing: 0;
+    color: #fff;
+    text-transform: none;
+}
+.construction-counter,
+.hero-content .construction-counter { margin-bottom: .5rem; }
+
+/* ───────── ETIQUETAS Y METADATOS (JetBrains Mono) ───────── */
+.week-badge, .banner-badge, .actualidad-cover-badge, .esp-card-badge,
+.actualidad-sidebar-label, .actualidad-meta,
+.actualidad-prev-week, .actualidad-prev-count,
+.week-nav-label, .dato-label, .esp-card-date,
+.week-meta, .gallery-count {
+    font-family: var(--f-mono);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .75rem;
+}
+.week-meta { font-size: .8rem; letter-spacing: .04em; text-transform: none; }
+.gallery-count { text-transform: none; letter-spacing: .04em; }
+.render-item .caption, .masonry-item .overlay, #lb-caption {
+    font-family: var(--f-mono);
+    font-size: .78rem;
+    letter-spacing: .03em;
+}
+
+/* contraste mínimo sobre azul (antes 40–65 % de blanco) */
+.actualidad-meta, .actualidad-text,
+.actualidad-prev-week, .actualidad-prev-count { color: var(--on-blue-muted); }
+
+/* medida de línea cómoda en descripciones largas */
+#week-descripcion-text { max-width: 68ch; }
+.actualidad-text { font-size: .95rem; line-height: 1.6; }
+
+/* ───────── BOTONES: rectos, rotulados ───────── */
+.cta-btn, .actualidad-btn, .ver-todas-btn, .load-more-btn, .btn-home, .share-btn {
+    border-radius: 4px;
+    font-family: var(--f-mono);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .82rem;
+}
+
+/* ───────── FORMAS: esquinas rectas (4 px) ───────── */
+.actualidad-card, .actualidad-prev-item,
+.actualidad-skeleton, .actualidad-prev-skeleton, .esp-skeleton,
+.esp-card, .video-wrapper, .week-nav-btn { border-radius: 4px; }
+.render-item, .photo-item, .masonry-item, .render-item img { border-radius: 2px; }
+.week-badge, .banner-badge, .esp-card-badge, .actualidad-cover-badge { border-radius: 2px; }
+
+/* ───────── DATOS TÉCNICOS: tabla de filetes en lugar de tarjetas ───────── */
+.dato-card {
+    background: none;
+    border: 0;
+    border-top: 1px solid var(--text, #14181f);
+    border-radius: 0;
+    text-align: left;
+    padding: 1rem 0 0;
+}
+.dato-num {
+    font-family: var(--f-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    line-height: 1;
+    font-size: clamp(2rem, 7vw, 4.4rem);
+    color: var(--text, #14181f);
+    margin-bottom: .5rem;
+}
+@media (max-width: 600px) {
+    .dato-card { padding: .8rem 0 0; }
+    .dato-num { font-size: clamp(1.8rem, 8vw, 2.6rem); }
+    .dato-label { font-size: .75rem; letter-spacing: .06em; }
+}
+
+/* ───────── RETOQUES ───────── */
+/* badge sobre azul claro: texto oscuro para contraste suficiente */
+.actualidad-cover-badge { color: #06203f; }
+
+/* título de la ventana "Todas las semanas" (lleva tamaño en línea; Alumni Sans necesita más) */
+#all-weeks-modal h2 { font-size: 2.2rem !important; }
+
+/* ───────── ACTUALIDAD: la columna de semanas anteriores llega hasta el borde inferior de la tarjeta destacada ───────── */
+@media (min-width: 769px) {
+    .actualidad-container { align-items: stretch; }
+
+    /* la tarjeta destacada ocupa todo el alto de su celda */
+    #actualidad-featured { display: flex; }
+    #actualidad-featured > .actualidad-card,
+    #actualidad-featured > .actualidad-skeleton { flex: 1; }
+
+    /* las semanas anteriores se reparten el alto disponible y el botón queda abajo */
+    #actualidad-prev { flex: 1; display: flex; flex-direction: column; }
+    .actualidad-prev-item { flex: 1; min-height: 56px; }
+    .actualidad-prev-thumb,
+    .actualidad-prev-thumb-ph { align-self: stretch; height: auto; min-height: 56px; width: 96px; }
+}
+
+/* la fecha de las semanas anteriores nunca desborda la tarjeta */
+.actualidad-prev-week { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

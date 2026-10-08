@@ -43,10 +43,11 @@
         .site-nav-list a {
             color: rgba(255,255,255,0.7);
             text-decoration: none;
-            font-family: 'Inter',sans-serif;
+            font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
             font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.01em;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
             white-space: nowrap;
             transition: color 140ms ease;
         }
