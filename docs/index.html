@@ -24,8 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
     
     <style>
         /* ── VARIABLES ── */
@@ -43,14 +42,14 @@
         html { scrollbar-gutter: stable; }
         h1, h2, h3, .section-title { font-optical-sizing: auto; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Barlow', sans-serif;
             color: var(--text-dark);
             background-color: var(--bg-light);
             min-height: 100vh;
             line-height: 1.6;
         }
         h1, h2, h3, h4, h5 {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Barlow', sans-serif;
             font-weight: 700;
             color: var(--zaragoza-blue);
             line-height: 1.2;
@@ -313,7 +312,7 @@
             border: 1px solid rgba(255,255,255,0.18);
             color: rgba(255,255,255,0.65); border-radius: 30px;
             font-weight: 600; cursor: pointer; font-size: 0.82rem;
-            font-family: 'Inter', sans-serif; transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
+            font-family: 'Barlow', sans-serif; transition: background 160ms var(--ease-out), color 160ms var(--ease-out);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .ver-todas-btn:hover { background: rgba(255,255,255,0.13); color: white; }
@@ -370,25 +369,27 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- 9. Precargar imagen del hero para carga instantánea -->
-    <link rel="preload" as="image" href="img/01.jpg">
+    <link rel="preload" as="image" href="/obras-romareda/img/01.jpg">
+    <meta name="robots" content="noindex, follow">
+    <link rel="stylesheet" href="alumni.css">
 </head>
 <body>
 <section class="hero">
     <div class="hero-slides" id="heroSlides">
-        <div class="hero-slide active" style="background-image:url('img/01.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/02.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/03.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/04.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/05.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/06.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/07.jpg');"></div>
-        <div class="hero-slide" style="background-image:url('img/08.jpg');"></div>
+        <div class="hero-slide active" style="background-image:url('/obras-romareda/img/01.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/02.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/03.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/04.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/05.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/06.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/07.jpg');"></div>
+        <div class="hero-slide" style="background-image:url('/obras-romareda/img/08.jpg');"></div>
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-        <h1>El Futuro Comienza Hoy</h1>
+        <h1>Construyendo el Futuro</h1>
         <div class="construction-counter">
-            Día <span id="days-count">0</span> de obras
+            Día <span id="days-count">0</span> de las obras
         </div>
         <p>Sigue el proceso de construcción de la nueva Romareda</p>
         <a href="#videos" class="cta-btn" aria-label="Ver los últimos avances de las obras">Ver Últimos Avances</a>
@@ -440,7 +441,7 @@
         const CURRENT_WEEK_NUM = 71; 
 
         // ✅ MEJORA MEDIA: Fecha de inicio centralizada aquí, fácil de editar
-        // Formato: 'YYYY-MM-DD' - Fecha oficial de inicio de obras
+        // Formato: 'YYYY-MM-DD' - Fecha oficial de inicio de las obras
         const OBRAS_START_DATE = '2024-07-08';
 
         // 2. AÑADE LOS DATOS DE LAS NUEVAS SEMANAS AQUÍ ARRIBA
@@ -621,7 +622,7 @@
                         <div class="actualidad-cover-badge">★ Semana ${w.numero} · Última</div>
                     </div>
                     <div class="actualidad-body">
-                        <div class="actualidad-meta">Semana ${w.numero}${w.video_id ? ' · Con vídeo' : ''}</div>
+                        <div class="actualidad-meta">${weekRangeLabel(w.numero)}${w.video_id ? ' · Con vídeo' : ''}</div>
                         <div class="actualidad-title">Avances de la semana ${w.numero}</div>
                         <div class="actualidad-text">Fotos y evolución de las obras esta semana.</div>
                         <span class="actualidad-btn">
@@ -629,6 +630,20 @@
                         </span>
                     </div>
                 </a>`;
+        }
+
+        // Rango de fechas de la semana n (a partir de OBRAS_START_DATE), p. ej. "7–13 oct 2024"
+        function weekRangeLabel(n) {
+            const s = new Date(OBRAS_START_DATE + 'T00:00:00');
+            s.setDate(s.getDate() + (n - 1) * 7);
+            const e = new Date(s);
+            e.setDate(e.getDate() + 6);
+            const f = (x, o) => x.toLocaleDateString('es-ES', o);
+            const sameYear  = s.getFullYear() === e.getFullYear();
+            const sameMonth = sameYear && s.getMonth() === e.getMonth();
+            if (sameMonth) return `${s.getDate()}–${f(e, { day: 'numeric', month: 'short' })} ${e.getFullYear()}`;
+            if (sameYear)  return `${f(s, { day: 'numeric', month: 'short' })} – ${f(e, { day: 'numeric', month: 'short' })} ${e.getFullYear()}`;
+            return `${f(s, { day: 'numeric', month: 'short', year: 'numeric' })} – ${f(e, { day: 'numeric', month: 'short', year: 'numeric' })}`;
         }
 
         function renderPrevItem(w, idx = 0) {
@@ -642,7 +657,7 @@
             a.innerHTML = `
                 ${thumbHtml}
                 <div class="actualidad-prev-body">
-                    <div class="actualidad-prev-week">Semana ${w.numero}</div>
+                    <div class="actualidad-prev-week">${weekRangeLabel(w.numero)}</div>
                     <div class="actualidad-prev-title">Semana ${w.numero}</div>
                     <div class="actualidad-prev-count">${w.video_id ? '▶ Con vídeo' : 'Ver fotos'}</div>
                 </div>
