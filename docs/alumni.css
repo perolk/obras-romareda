@@ -48,8 +48,9 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
 /* ───────── CONTADOR "DÍA N DE OBRAS" (el marcador) ───────── */
 .construction-counter {
     display: inline-flex;
-    align-items: baseline;   /* etiquetas sobre la misma línea base que las cifras */
-    gap: 1rem;
+    flex-direction: column;  /* DÍA arriba · cifra · DE OBRAS abajo */
+    align-items: center;
+    gap: 1.1rem;
     background: none;
     border: 0;
     border-radius: 0;
@@ -58,9 +59,10 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
     backdrop-filter: none;
     font-family: var(--f-mono);
     font-weight: 500;
-    font-size: .82rem;
+    font-size: .95rem;
     line-height: 1;
-    letter-spacing: .08em;
+    letter-spacing: .32em;
+    padding-left: .32em;
     text-transform: uppercase;
     color: var(--on-blue-muted);
 }
