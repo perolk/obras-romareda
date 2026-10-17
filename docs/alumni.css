@@ -37,7 +37,7 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
 .week-title, #banner-content h1, #banner-title { font-size: clamp(3rem, 8vw, 5.2rem); }
 .page-header h1 { font-size: clamp(3rem, 8vw, 4.6rem); }
 .error-number { font-size: clamp(8rem, 30vw, 15rem); letter-spacing: 0; line-height: .9; }
-.actualidad-title { font-size: 1.8rem; line-height: 1.05; }
+.actualidad-title { font-size: 2.8rem; line-height: .95; letter-spacing: .01em; }
 .actualidad-prev-title { font-size: 2.1rem; line-height: .95; letter-spacing: .01em; }
 .actualidad-prev-body { padding: 0 18px; }
 .actualidad-prev-thumb, .actualidad-prev-thumb-ph { width: 132px; height: 96px; }
@@ -165,6 +165,11 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
     #actualidad-featured { display: flex; }
     #actualidad-featured > .actualidad-card,
     #actualidad-featured > .actualidad-skeleton { flex: 1; }
+
+    /* la foto de portada absorbe el alto sobrante: más imagen, menos vacío */
+    #actualidad-featured > .actualidad-card { display: flex; flex-direction: column; }
+    .actualidad-cover-wrap { height: auto; flex: 1; min-height: 300px; }
+    .actualidad-cover-wrap > .actualidad-cover, .actualidad-cover-wrap > .actualidad-cover-placeholder { position: absolute; inset: 0; }
 
     /* las semanas anteriores se reparten el alto disponible y el botón queda abajo */
     #actualidad-prev { flex: 1; display: flex; flex-direction: column; }
