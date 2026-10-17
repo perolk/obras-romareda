@@ -152,7 +152,7 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
 
 /* ───────── RETOQUES ───────── */
 /* badge sobre azul claro: texto oscuro para contraste suficiente */
-.actualidad-cover-badge { color: #06203f; }
+.actualidad-cover-badge { background: #fff; color: #06203f; }
 
 /* título de la ventana "Todas las semanas" (lleva tamaño en línea; Alumni Sans necesita más) */
 #all-weeks-modal h2 { font-size: 2.2rem !important; }
