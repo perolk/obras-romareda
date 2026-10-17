@@ -38,7 +38,9 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
 .page-header h1 { font-size: clamp(3rem, 8vw, 4.6rem); }
 .error-number { font-size: clamp(8rem, 30vw, 15rem); letter-spacing: 0; line-height: .9; }
 .actualidad-title { font-size: 1.8rem; line-height: 1.05; }
-.actualidad-prev-title { font-size: 1.3rem; line-height: 1.05; }
+.actualidad-prev-title { font-size: 2.1rem; line-height: .95; letter-spacing: .01em; }
+.actualidad-prev-body { padding: 0 18px; }
+.actualidad-prev-thumb, .actualidad-prev-thumb-ph { width: 132px; height: 96px; }
 .esp-card-title { font-size: 1.65rem; line-height: 1.05; }
 .week-nav-name { font-size: 1.5rem; }
 .seccion-block h3 { font-size: 1.75rem; }
@@ -166,9 +168,9 @@ h1 { font-size: clamp(2.6rem, 7vw, 3.4rem); }
 
     /* las semanas anteriores se reparten el alto disponible y el botón queda abajo */
     #actualidad-prev { flex: 1; display: flex; flex-direction: column; }
-    .actualidad-prev-item { flex: 1; min-height: 56px; }
+    .actualidad-prev-item { flex: 1; min-height: 104px; }
     .actualidad-prev-thumb,
-    .actualidad-prev-thumb-ph { align-self: stretch; height: auto; min-height: 56px; width: 96px; }
+    .actualidad-prev-thumb-ph { align-self: stretch; height: auto; min-height: 96px; width: 168px; }
 }
 
 /* la fecha de las semanas anteriores nunca desborda la tarjeta */
