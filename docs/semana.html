@@ -312,7 +312,7 @@
         <div id="banner-bg"></div>
         <div id="banner-overlay"></div>
         <div id="banner-content">
-            <div id="hero-badge" class="week-badge">Semana —</div>
+            <div id="hero-badge" class="week-badge">Días — de las obras</div>
             <h1 id="hero-title" class="week-title">Cargando…</h1>
             <div class="week-meta">
                 <span><i class="fas fa-calendar" aria-hidden="true"></i> <span id="hero-date"></span></span>
@@ -470,7 +470,7 @@
             // Banner con recorte ajustado desde el admin; si no lo hay, la portada (recorte automático centrado)
             const bannerSrc = meta.banner_url || meta.portada_url;
             if (bannerSrc) document.getElementById('banner-bg').style.backgroundImage = `url('${bannerSrc}')`;
-            document.getElementById('hero-badge').textContent  = `Semana ${WEEK_NUM}`;
+            document.getElementById('hero-badge').textContent  = `Días ${(WEEK_NUM - 1) * 7 + 1} – ${WEEK_NUM * 7} de las obras`;
             document.getElementById('hero-title').textContent  = `Semana ${WEEK_NUM}`;
             document.getElementById('hero-date').textContent   = `${dates.start} – ${dates.end}`;
             document.getElementById('hero-photos').textContent = `${photoCount} fotos`;
