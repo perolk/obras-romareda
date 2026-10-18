@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00529F">
+    <title>Todas las semanas · Obras Romareda</title>
+    <meta name="description" content="Todas las semanas de obra de la nueva Romareda, ordenadas por mes.">
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Carlito:ital,wght@1,700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --blue: #00529F; --light: #4DA9FF; --ease-out: cubic-bezier(0.23, 1, 0.32, 1); --bar: 64px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scrollbar-gutter: stable; }
+        body { font-family: 'Barlow', sans-serif; background: var(--blue); color: #fff; min-height: 100vh; line-height: 1.5; display: flex; flex-direction: column; }
+        main { flex: 1; }
+        .wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, 5%); padding-right: max(16px, 5%); }
+        .top { padding-top: 2.5rem; padding-bottom: 1.2rem; }
+        .back { display: inline-flex; gap: .5rem; align-items: center; color: rgba(255,255,255,.76); text-decoration: none; font-size: .78rem; margin-bottom: 1.2rem; }
+        .back:hover { color: #fff; }
+        .top h1 { color: #fff; line-height: .9; }
+        .sub { margin-top: .7rem; color: rgba(255,255,255,.76); font-size: .8rem; }
+        .tools-bar { position: sticky; top: var(--bar); z-index: 20; background: var(--blue); border-bottom: 1px solid rgba(255,255,255,.18); }
+        .tools { display: flex; gap: .8rem; flex-wrap: wrap; align-items: center; justify-content: space-between; padding-top: .8rem; padding-bottom: .8rem; }
+        .tabs { display: flex; gap: .4rem; flex-wrap: wrap; }
+        .tab { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.3); border-radius: 4px; padding: .5rem .9rem; cursor: pointer; }
+        .tab:hover { background: rgba(255,255,255,.12); }
+        .tab[aria-pressed="true"] { background: #fff; color: #06203f; border-color: #fff; }
+        .tab:focus-visible, .jump input:focus-visible, .card:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+        .jump { display: flex; align-items: center; gap: .5rem; font-family: 'JetBrains Mono', monospace; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.76); }
+        .jump input { width: 5.5rem; font-family: 'JetBrains Mono', monospace; font-size: .9rem; color: #fff; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.3); border-radius: 4px; padding: .5rem .6rem; }
+        .miss { color: #ffe39a; text-transform: none; letter-spacing: 0; }
+        .month { font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); padding: 2rem 0 .8rem; display: flex; gap: .8rem; align-items: baseline; }
+        .month::after { content: ""; flex: 1; border-top: 1px solid rgba(255,255,255,.18); align-self: center; }
+        .month small { font-size: .72rem; opacity: .85; order: 3; letter-spacing: .08em; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .card { position: relative; display: block; text-decoration: none; color: #fff; border-radius: 4px; overflow: hidden; aspect-ratio: 4 / 3; background: #0b2a52; border: 1px solid rgba(255,255,255,.18); scroll-margin-top: calc(var(--bar) + 80px); }
+        .thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 260ms var(--ease-out); }
+        .thumb-ph { background: rgba(255,255,255,.06); }
+        .card:hover .thumb { transform: scale(1.05); }
+        .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,20,44,.05) 30%, rgba(4,20,44,.88)); }
+        .num { position: absolute; left: .9rem; bottom: 2.3rem; color: #fff; line-height: .8; }
+        .num span { display: block; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: .66rem; letter-spacing: .16em; margin-bottom: .35rem; opacity: .85; }
+        .num b { font-family: 'Alumni Sans', sans-serif; font-weight: 800; font-size: 3.6rem; }
+        .range { position: absolute; left: .9rem; bottom: .75rem; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.9); }
+        .vid { position: absolute; top: .6rem; right: .6rem; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: .66rem; letter-spacing: .1em; background: #fff; color: #06203f; padding: .25rem .5rem; border-radius: 2px; }
+        .card.hit { outline: 3px solid #fff; outline-offset: 2px; }
+        .empty { padding: 3rem 0; color: rgba(255,255,255,.8); font-family: 'JetBrains Mono', monospace; font-size: .85rem; text-align: center; }
+        .grid-end { padding-bottom: 3rem; }
+        footer { background: var(--blue); color: white; padding: 4rem 10%; text-align: center; border-top: 8px solid var(--light); }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 20px; }
+        .footer-links a { color: white; font-size: 1.5rem; }
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .num b { font-size: 2.7rem; }
+            .num { bottom: 2rem; }
+            .range { font-size: .62rem; }
+            footer { padding: 3rem 5%; }
+        }
+        @media (prefers-reduced-motion: reduce) { .thumb { transition: none; } }
+    </style>
+    <link rel="stylesheet" href="alumni.css">
+</head>
+<body>
+<main>
+    <div class="wrap top">
+        <a class="back" href="index.html#videos"><i class="fas fa-arrow-left" aria-hidden="true"></i> Volver a la última actualización</a>
+        <h1>Todas las semanas</h1>
+        <p class="sub" id="sub"></p>
+    </div>
+    <div class="tools-bar">
+        <div class="wrap tools">
+            <div class="tabs" id="tabs" role="group" aria-label="Filtrar por año"></div>
+            <label class="jump">Ir a semana <input id="jump" type="number" min="1" inputmode="numeric" placeholder="n.º"><span class="miss" id="miss" hidden>No existe</span></label>
+        </div>
+    </div>
+    <div class="wrap grid-end" id="content"><div class="empty"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Cargando…</div></div>
+</main>
+<footer>
+    <div class="logo" style="margin-bottom: 20px; color:white; font-family:'Calibri','Carlito',sans-serif; font-weight:700; font-style:italic; font-size:1.8rem;">@ObrasRomareda</div>
+    <div class="footer-links">
+        <a href="https://twitter.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Twitter de ObrasRomareda"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+        <a href="https://instagram.com/ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="Instagram de ObrasRomareda"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://youtube.com/@ObrasRomareda" target="_blank" rel="noopener noreferrer" aria-label="YouTube de ObrasRomareda"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+    </div>
+    <p>Web no oficial · Renders e imágenes técnicas: IDOM</p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://vakpbedvlvxzybxqival.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZha3BiZWR2bHZ4enlieHFpdmFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NDUzNDEsImV4cCI6MjEwMjUyMTM0MX0.fCZyl9nMGrqtNEHSLx8pZEeFPL4jzzzSKKHtTYQqrw0';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const OBRAS_START_DATE = '2024-07-08';
+
+        const _weekPhotoCache = new Map();
+        let _weekFoldersPromise = null;
+
+        // Números de semana que tienen carpeta en el bucket (null si no se pudo consultar)
+        function weekFolders() {
+            if (!_weekFoldersPromise) {
+                _weekFoldersPromise = sb.storage.from('fotos').list('', { limit: 1000 })
+                    .then(({ data, error }) => {
+                        if (error || !data) return null;
+                        const s = new Set();
+                        data.forEach(f => { const m = /^semana-(\d+)$/.exec(f.name); if (m && !f.id) s.add(+m[1]); });
+                        return s;
+                    })
+                    .catch(() => null);
+            }
+            return _weekFoldersPromise;
+        }
+
+        // ¿Queda alguna foto en la semana n? (ignora el marcador .emptyFolderPlaceholder). Ante un error de red, no oculta.
+        function weekHasPhotos(n) {
+            if (!_weekPhotoCache.has(n)) {
+                _weekPhotoCache.set(n, sb.storage.from('fotos').list(`semana-${n}`, { limit: 2 })
+                    .then(({ data, error }) => error || !data ? true : data.some(f => f.name !== '.emptyFolderPlaceholder'))
+                    .catch(() => true));
+            }
+            return _weekPhotoCache.get(n);
+        }
+
+        // De una lista de semanas (ya ordenada) devuelve las que tienen fotos o vídeo; con 'max', las primeras 'max'
+        async function filterWeeksWithPhotos(rows, max) {
+            const folders = await weekFolders();
+            const cand = folders ? rows.filter(w => w.video_id || folders.has(w.numero)) : rows;
+            const step = max || 10, out = [];
+            for (let i = 0; i < cand.length && (!max || out.length < max); i += step) {
+                const chunk = cand.slice(i, i + step);
+                const ok = await Promise.all(chunk.map(w => w.video_id ? Promise.resolve(true) : weekHasPhotos(w.numero)));
+                chunk.forEach((w, k) => { if (ok[k] && (!max || out.length < max)) out.push(w); });
+            }
+            return out;
+        }
+
+
+        const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+        const SHORT  = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
+        let weeks = [], filter = 'all';
+
+        function startOf(n) { const s = new Date(OBRAS_START_DATE + 'T00:00:00'); s.setDate(s.getDate() + (n - 1) * 7); return s; }
+        function rangeOf(n) {
+            const s = startOf(n), e = new Date(s); e.setDate(e.getDate() + 6);
+            if (s.getMonth() === e.getMonth()) return `${s.getDate()}–${e.getDate()} ${SHORT[e.getMonth()]}`;
+            return `${s.getDate()} ${SHORT[s.getMonth()]} – ${e.getDate()} ${SHORT[e.getMonth()]}`;
+        }
+
+        function render() {
+            const tabs = document.getElementById('tabs');
+            const years = [...new Set(weeks.map(w => w.y))].sort((a, b) => b - a);
+            tabs.innerHTML = [['all', 'Todas'], ...years.map(y => [String(y), String(y)])]
+                .map(([v, l]) => `<button class="tab" type="button" data-v="${v}" aria-pressed="${v === filter}">${l}</button>`).join('');
+            const list = weeks.filter(w => filter === 'all' || String(w.y) === filter);
+            const groups = [];
+            list.forEach(w => {
+                const k = w.y + '-' + w.m;
+                let g = groups[groups.length - 1];
+                if (!g || g.k !== k) { g = { k, y: w.y, m: w.m, items: [] }; groups.push(g); }
+                g.items.push(w);
+            });
+            document.getElementById('content').innerHTML = groups.map(g => `
+                <div class="month">${MONTHS[g.m]} ${g.y}<small>${g.items.length} ${g.items.length === 1 ? 'semana' : 'semanas'}</small></div>
+                <div class="grid">${g.items.map(w => `
+                    <a class="card" id="w${w.numero}" href="semana.html?n=${w.numero}" aria-label="Semana ${w.numero}, ${rangeOf(w.numero)}">
+                        ${w.thumb ? `<img class="thumb" alt="" loading="lazy" src="${w.thumb}">` : '<div class="thumb thumb-ph"></div>'}
+                        <div class="shade"></div>
+                        ${w.video_id ? '<span class="vid">▶ VÍDEO</span>' : ''}
+                        <div class="num"><span>SEMANA</span><b>${w.numero}</b></div>
+                        <div class="range">${rangeOf(w.numero)}</div>
+                    </a>`).join('')}
+                </div>`).join('') || '<div class="empty">No hay semanas en este año.</div>';
+        }
+
+        document.getElementById('tabs').addEventListener('click', e => {
+            const b = e.target.closest('.tab'); if (!b) return;
+            filter = b.dataset.v; render(); window.scrollTo({ top: 0 });
+        });
+        document.getElementById('jump').addEventListener('input', e => {
+            const n = parseInt(e.target.value, 10), miss = document.getElementById('miss');
+            miss.hidden = true;
+            document.querySelectorAll('.card.hit').forEach(c => c.classList.remove('hit'));
+            if (!n) return;
+            const w = weeks.find(x => x.numero === n);
+            if (!w) { miss.hidden = false; return; }
+            if (filter !== 'all' && String(w.y) !== filter) { filter = 'all'; render(); }
+            const el = document.getElementById('w' + n);
+            if (el) { el.classList.add('hit'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        });
+
+        (async function init() {
+            const { data: allRows, error } = await sb.from('semanas').select('numero, portada_url, banner_url, video_id').order('numero', { ascending: false });
+            const data = (error || !allRows) ? [] : await filterWeeksWithPhotos(allRows);
+            const content = document.getElementById('content');
+            if (!data.length) { content.innerHTML = '<div class="empty">Aún no hay semanas publicadas.</div>'; return; }
+            weeks = data.map(w => { const s = startOf(w.numero); return { ...w, thumb: w.banner_url || w.portada_url, y: s.getFullYear(), m: s.getMonth() }; });
+            const first = Math.min(...weeks.map(w => w.numero)), last = Math.max(...weeks.map(w => w.numero));
+            const s0 = startOf(first), e1 = startOf(last); e1.setDate(e1.getDate() + 6);
+            document.getElementById('sub').textContent = `${weeks.length} semanas · ${s0.getDate()} ${SHORT[s0.getMonth()]} ${s0.getFullYear()} – ${e1.getDate()} ${SHORT[e1.getMonth()]} ${e1.getFullYear()}`;
+            // una semana concreta: semanas.html#w118
+            render();
+            const m = /^#w(\d+)$/.exec(location.hash);
+            if (m) { const el = document.getElementById('w' + m[1]); if (el) el.scrollIntoView({ block: 'center' }); }
+        })();
+    </script>
+    <script src="header.js"></script>
+</body>
+</html>
