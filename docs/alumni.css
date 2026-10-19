@@ -180,3 +180,20 @@ a.ver-todas-btn { text-decoration: none; }
 
 /* la fecha de las semanas anteriores nunca desborda la tarjeta */
 .actualidad-prev-week { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* ───────── MÓVIL: tarjetas de actualidad centradas ─────────
+   La sección lleva padding en línea (5rem 10%) que ganaba al de la media query y
+   descentraba el contenido; además la columna del grid se estiraba más que la pantalla. */
+@media (max-width: 768px) {
+    .actualidad-container { grid-template-columns: minmax(0, 1fr); }
+    .actualidad-container > *, .actualidad-sidebar { min-width: 0; }
+    .actualidad-sidebar { grid-template-columns: minmax(0, 1fr); }
+    .actualidad-prev-item, .actualidad-prev-body { min-width: 0; }
+}
+@media (max-width: 600px) {
+    #videos { padding-left: 5% !important; padding-right: 5% !important; }
+    .actualidad-prev-thumb, .actualidad-prev-thumb-ph { width: 112px; height: 84px; }
+    .actualidad-prev-body { padding: 0 14px; }
+    .actualidad-prev-title { font-size: 1.9rem; }
+}
