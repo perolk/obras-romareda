@@ -197,3 +197,13 @@ a.ver-todas-btn { text-decoration: none; }
     .actualidad-prev-body { padding: 0 14px; }
     .actualidad-prev-title { font-size: 1.9rem; }
 }
+
+
+/* ───────── COLABORA (franja discreta antes del pie) ───────── */
+.gracias { background: #043a74; color: #fff; padding: 1.6rem 5%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .9rem; text-align: center; }
+.gracias-label { font-family: var(--f-mono); font-weight: 500; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--on-blue-muted); }
+.gracias-logo { display: block; width: 150px; opacity: .85; transition: opacity 160ms var(--ease-out); }
+.gracias-logo img { display: block; width: 100%; height: auto; }
+@media (hover: hover) and (pointer: fine) { .gracias-logo:hover { opacity: 1; } }
+.gracias-logo:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) { .gracias-logo { transition: none; } }
